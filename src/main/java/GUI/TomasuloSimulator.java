@@ -51,7 +51,7 @@ public class TomasuloSimulator extends Application {
         // Create control buttons
         root.getChildren().add(createControlButtons());
 
-        Scene scene = new Scene(root, 1200, 800);
+        Scene scene = new Scene(root, 800, 600);
         primaryStage.setTitle("Tomasulo Algorithm Simulator");
         primaryStage.setScene(scene);
         primaryStage.show();
