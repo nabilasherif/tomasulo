@@ -6,6 +6,6 @@ module main.tomasulo {
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
 
-    opens main.tomasulo to javafx.fxml;
-    exports main.tomasulo;
+    opens GUI to javafx.fxml;
+    exports GUI;
 }
