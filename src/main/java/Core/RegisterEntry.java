@@ -1,21 +1,21 @@
 package Core;
 
 public class RegisterEntry {
-    private int value;
+    private Object value;
     private boolean busy;
-    private String waitingStation;
+    private String Qj;
 
     public RegisterEntry() {
         this.value = 0;
         this.busy = false;
-        this.waitingStation = "";
+        this.Qj = "";
     }
 
-    public int getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -27,11 +27,11 @@ public class RegisterEntry {
         this.busy = busy;
     }
 
-    public String getWaitingStation() {
-        return waitingStation;
+    public String getQj() {
+        return Qj;
     }
 
-    public void setWaitingStation(String waitingStation) {
-        this.waitingStation = waitingStation;
+    public void setQj(String qj) {
+        this.Qj = qj;
     }
 }
