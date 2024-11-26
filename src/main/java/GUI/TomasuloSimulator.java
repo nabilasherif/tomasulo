@@ -44,7 +44,10 @@ public class TomasuloSimulator extends Application {
         root.getChildren().add(createConfigurationSection());
 
         // Create instruction input section
-        root.getChildren().add(createInstructionInputSection());
+//        root.getChildren().add(createInstructionInputSection());
+
+        // Create instruction section
+        root.getChildren().add(createInstruction());
 
         // Create tables section
         root.getChildren().add(createTablesSection());
@@ -129,15 +132,39 @@ public class TomasuloSimulator extends Application {
     }
 
 
-    private VBox createInstructionInputSection() {
-        VBox section = new VBox(5);
-        instructionInput = new TextArea();
-        instructionInput.setPrefRowCount(5);
-        section.getChildren().addAll(
-                new Label("Instructions (one per line)"),
-                instructionInput
-        );
-        return section;
+//    private VBox createInstructionInputSection() {
+//        VBox section = new VBox(5);
+//        instructionInput = new TextArea();
+//        instructionInput.setPrefRowCount(5);
+//        section.getChildren().addAll(
+//                new Label("Instructions (one per line)"),
+//                instructionInput
+//        );
+//        return section;
+//    }
+
+    private VBox createInstruction() {
+        HBox instruction = new HBox(10);
+
+        ComboBox<String> pre = new ComboBox<>();
+        pre.getItems().addAll("LOOP", "None");
+        pre.setValue("None");
+
+        ComboBox<String> operation = new ComboBox<>();
+        operation.getItems().addAll("ADD.D", "SUB.D", "MUL.D", "DIV.D", "ADDI", "SUBI", "LW", "LD", "L.S", "L.D", "SW", "SD", "S.S", "S.D");
+        operation.setValue("ADD.D");
+
+        TextField destination = new TextField("R1");
+        TextField operand1 = new TextField("R2");
+        TextField operand2 = new TextField("R3");
+        Button addButton = new Button("Add");
+
+        instruction.getChildren().addAll(pre, operation, destination, operand1, operand2, addButton);
+
+        VBox vbox = new VBox(10);
+        vbox.getChildren().addAll(new Label("Create Instruction"), instruction);
+
+        return vbox;
     }
 
     private VBox createTablesSection() {
