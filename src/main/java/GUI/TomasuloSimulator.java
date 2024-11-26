@@ -15,6 +15,7 @@ public class TomasuloSimulator extends Application {
     private int addReservationStationSize = 3;
     private int mulReservationStationSize = 2;
     private int integerReservationStationSize = 2;
+    private int clkCycles=0;
 
     // Latencies
     private Map<InstructionType, Integer> latencies = new HashMap<>();
@@ -51,7 +52,12 @@ public class TomasuloSimulator extends Application {
         // Create control buttons
         root.getChildren().add(createControlButtons());
 
-        Scene scene = new Scene(root, 800, 600);
+        // Wrap the VBox in a ScrollPane
+        ScrollPane scrollPane = new ScrollPane(root);
+        scrollPane.setFitToHeight(true);  // Allow scrolling for the entire height
+        scrollPane.setFitToWidth(true);   // Allow scrolling for the entire width
+
+        Scene scene = new Scene(scrollPane, 800, 600); // Set the ScrollPane as the scene's root
         primaryStage.setTitle("Tomasulo Algorithm Simulator");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -113,8 +119,15 @@ public class TomasuloSimulator extends Application {
         TextField blockSizeField = new TextField(String.valueOf(blockSize));
         grid.add(blockSizeField, 1, 1);
 
+        grid.add(new Label("Clock Cycle:"), 0, 2);
+        TextField clockCycleField = new TextField(String.valueOf(clkCycles));
+        clockCycleField.setEditable(false);
+        clockCycleField.setStyle("-fx-background-color: lightgray;");
+        grid.add(clockCycleField, 1, 2);
+
         return grid;
     }
+
 
     private VBox createInstructionInputSection() {
         VBox section = new VBox(5);
