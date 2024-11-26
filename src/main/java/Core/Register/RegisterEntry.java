@@ -1,4 +1,4 @@
-package Core;
+package Core.Register;
 
 public class RegisterEntry {
     private Object value;

@@ -1,4 +1,5 @@
-package Core;
+package Core.Register;
+
 import java.util.HashMap;
 
 public class RegisterFile {
