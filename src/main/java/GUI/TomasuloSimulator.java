@@ -36,7 +36,7 @@ public class TomasuloSimulator extends Application {
     public int cacheSize = 1024; // bytes
     public int blockSize = 64;   // bytes
     public int hitLatency = 1;   // cycles
-    public int missLatency = 10; // cycles
+    public int missPenalty = 10; // cycles
 
     @Override
     public void start(Stage primaryStage) {
@@ -44,19 +44,15 @@ public class TomasuloSimulator extends Application {
         root.setPadding(new Insets(10));
 
         root.getChildren().add(createConfigurationSection());
-
-        // Create tables section
         root.getChildren().add(createTablesSection());
-
-        // Create control buttons
         root.getChildren().add(createControlButtons());
 
         // Wrap the VBox in a ScrollPane
         ScrollPane scrollPane = new ScrollPane(root);
-        scrollPane.setFitToHeight(true);  // Allow scrolling for the entire height
-        scrollPane.setFitToWidth(true);   // Allow scrolling for the entire width
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
 
-        Scene scene = new Scene(scrollPane, 800, 600); // Set the ScrollPane as the scene's root
+        Scene scene = new Scene(scrollPane, 800, 600);
         primaryStage.setTitle("Tomasulo Algorithm Simulator");
         primaryStage.setScene(scene);
         primaryStage.show();
