@@ -1,12 +1,15 @@
 package Core;
+import Core.Register.*;
 import Core.Storage.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
         //this is how a station is created
+        RegisterFile registerFileInstance = new RegisterFile();
         List<ReservationStationEntry> adders = new ArrayList<>(5);
         System.out.println("Testing StoreBufferEntry:");
         StoreBufferEntry storeEntry = new StoreBufferEntry("S1");

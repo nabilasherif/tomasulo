@@ -2,13 +2,11 @@ package Core.Register;
 
 public class RegisterEntry {
     private Object value;
-    private boolean busy;
-    private String Qj;
+    private String Q;
 
     public RegisterEntry() {
         this.value = 0;
-        this.busy = false;
-        this.Qj = "";
+        this.Q = "";
     }
 
     public Object getValue() {
@@ -19,19 +17,11 @@ public class RegisterEntry {
         this.value = value;
     }
 
-    public boolean isBusy() {
-        return busy;
+    public String getQ() {
+        return Q;
     }
 
-    public void setBusy(boolean busy) {
-        this.busy = busy;
-    }
-
-    public String getQj() {
-        return Qj;
-    }
-
-    public void setQj(String qj) {
-        this.Qj = qj;
+    public void setQ(String qj) {
+        this.Q= qj;
     }
 }
