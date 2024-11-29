@@ -1,4 +1,4 @@
-package Core.Storage;
+package Core.Instruction;
 
 public class Instruction {
     private InstuctionType op;
