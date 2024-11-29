@@ -17,10 +17,8 @@ public class TomasuloSimulator extends Application {
     public int mulReservationStationSize = 2;
     public int integerReservationStationSize = 2;
     public int clkCycles=0;
-
     // Latencies
     public Map<InstructionType, Integer> latencies = new HashMap<>();
-
     // Components
     public TableView<Instruction> instructionQueueTable;
     public TableView<ReservationStation> addResStationTable;

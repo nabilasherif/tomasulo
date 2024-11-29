@@ -2,11 +2,11 @@ package Core.Register;
 
 public class RegisterEntry {
     private Object value;
-    private String Q;
+    private String q;  // Use lowercase 'q' as it's a regular instance variable
 
     public RegisterEntry() {
         this.value = 0;
-        this.Q = "";
+        this.q = "0";
     }
 
     public Object getValue() {
@@ -18,10 +18,10 @@ public class RegisterEntry {
     }
 
     public String getQ() {
-        return Q;
+        return q;
     }
 
-    public void setQ(String qj) {
-        this.Q= qj;
+    public void setQ(String q) {
+        this.q = q;
     }
 }
