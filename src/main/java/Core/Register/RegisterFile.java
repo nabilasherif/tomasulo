@@ -30,7 +30,7 @@ public class RegisterFile {
             register.setQ((String) value);
             return;
         }
-        register.setQ("");
+        register.setQ("0");
     }
 
     public HashMap<String, RegisterEntry> getRegisters() {

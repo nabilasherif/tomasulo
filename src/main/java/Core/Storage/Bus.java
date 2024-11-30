@@ -1,8 +1,8 @@
-package Core.Bus;
+package Core.Storage;
 
 public class Bus {
     private String tag;
-    private double value;
+    private Object value;
 
     public Bus() {
         this.tag = "";
@@ -13,15 +13,20 @@ public class Bus {
         return tag;
     }
 
-    public double getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(double value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public void clear(){
+        this.tag = "";
+        this.value = 0;
     }
 }

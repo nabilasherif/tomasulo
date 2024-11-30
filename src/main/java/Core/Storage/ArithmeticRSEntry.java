@@ -1,17 +1,15 @@
 package Core.Storage;
 
-public class ReservationStationEntry extends ReservationStationBaseEntry {
+public class ArithmeticRSEntry extends RSBaseEntry {
     private Object vj;
     private Object vk;
-    private String qj="0";
-    private String qk="0";
+    private String qj;
+    private String qk;
 
-    public ReservationStationEntry(String name) {
+    public ArithmeticRSEntry(String name) {
         super(name);
-        this.vj = null;
-        this.vk = null;
-        this.qj = "0";
-        this.qk = "0";
+        this.qj = "";
+        this.qk = "";
     }
 
     public void setVj(Object value) {
@@ -32,22 +30,20 @@ public class ReservationStationEntry extends ReservationStationBaseEntry {
     public void setQj(String qj) {
         this.qj = qj;
     }
+
     public String getQj() {
         return qj;
     }
+
     public void setQk(String qk) {
         this.qk = qk;
     }
+
     public String getQk() {
         return qk;
     }
 
-    @Override
     public void clear() {
-        super.clear();
-        this.vj = null;
-        this.vk = null;
-        this.qj = "0";
-        this.qk = "0";
+        super.setBusy(0);
     }
 }
