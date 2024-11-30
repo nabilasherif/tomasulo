@@ -2,7 +2,7 @@ package Core.Register;
 
 public class RegisterEntry {
     private Object value;
-    private String q;  // Use lowercase 'q' as it's a regular instance variable
+    private String q;
 
     public RegisterEntry() {
         this.value = 0;
@@ -23,5 +23,9 @@ public class RegisterEntry {
 
     public void setQ(String q) {
         this.q = q;
+    }
+
+    public void isValid(){
+        this.q = "0";
     }
 }

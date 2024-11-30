@@ -32,5 +32,4 @@ public class StoreRSEntry extends RSBaseEntry {
     public String getQ() {
         return q;
     }
-
 }

@@ -14,5 +14,4 @@ public class LoadRSEntry extends RSBaseEntry {
     public int getAddress() {
         return this.address;
     }
-
 }
