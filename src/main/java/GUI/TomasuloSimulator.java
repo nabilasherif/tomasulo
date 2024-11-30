@@ -1,6 +1,13 @@
 package GUI;
 
+import Core.Instruction.InstructionQueueInstance;
+import Core.InstructionFileParser;
+import Core.Register.RegisterEntry;
+import Core.Storage.ArithmeticRSEntry;
+import Core.Storage.LoadRSEntry;
+import Core.Storage.StoreRSEntry;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -8,8 +15,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.*;
+import Core.Instruction.InstructionType;
 
 public class TomasuloSimulator extends Application {
+    //core components
+    List<InstructionQueueInstance> instructionQueueInstances = new ArrayList<>();
+
     // Configuration parameters
     public int loadBufferSize = 3;
     public int storeBufferSize =3;
@@ -19,14 +30,16 @@ public class TomasuloSimulator extends Application {
     public int clkCycles=0;
     // Latencies
     public Map<InstructionType, Integer> latencies = new HashMap<>();
-    // Components
-    public TableView<Instruction> instructionQueueTable;
-    public TableView<ReservationStation> addResStationTable;
-    public TableView<ReservationStation> mulResStationTable;
-    public TableView<ReservationStation> intResStationTable;
-    public TableView<LoadReservationStation> loadBufferTable;
-    public TableView<StoreReservationStation> storeBufferTable;
-    public TableView<Register> registerTable;
+
+    //#region Components
+    public TableView<InstructionQueueInstance> instructionQueueTable;
+    public TableView<ArithmeticRSEntry> addResStationTable;
+    public TableView<ArithmeticRSEntry> mulResStationTable;
+    public TableView<ArithmeticRSEntry> intResStationTable;
+    public TableView<LoadRSEntry> loadBufferTable;
+    public TableView<StoreRSEntry> storeBufferTable;
+    public TableView<RegisterEntry> registerTable;
+    //#endregion
 
     private TextField clockCycleField;
 
@@ -36,8 +49,14 @@ public class TomasuloSimulator extends Application {
     public int hitLatency = 1;   // cycles
     public int missPenalty = 10; // cycles
 
+    private void initializeCore() {
+        instructionQueueInstances = InstructionFileParser.fillInstructionsQueue("src/main/java/Core/test1.txt");
+        instructionQueueTable = createInstructionQueueTable();
+    }
+
     @Override
     public void start(Stage primaryStage) {
+        initializeCore();
         VBox root = new VBox(10);
         root.setPadding(new Insets(10));
 
@@ -123,7 +142,6 @@ public class TomasuloSimulator extends Application {
         return grid;
     }
 
-
     private GridPane createCacheConfigInputs() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -152,13 +170,12 @@ public class TomasuloSimulator extends Application {
         return grid;
     }
 
-
     private VBox createTablesSection() {
         VBox tables = new VBox(10);
 
         Label instLabel = new Label("Instruction queue table");
         instLabel.setStyle("-fx-font-weight: bold;");
-        instructionQueueTable = createInstructionQueueTable();
+        instructionQueueTable.setItems(FXCollections.observableList(instructionQueueInstances));
         Label registerLabel = new Label("Register table");
         registerLabel.setStyle("-fx-font-weight: bold;");
         registerTable = createRegisterTable();
@@ -213,54 +230,8 @@ public class TomasuloSimulator extends Application {
         return button;
     }
 
-    enum InstructionType {
-        ADD, SUB, MUL, DIV,ADDI, SUBI,LOAD, STORE, BRANCH
-    }
-
-    static class ReservationStation {
-        String tag;
-        int busy;
-        InstructionType op;
-        String Vj;
-        String Vk;
-        String Qj;
-        String Qk;
-        String A;
-    }
-
-    static class LoadReservationStation {
-        String tag;
-        int busy;
-        String address;
-    }
-
-    static class StoreReservationStation {
-        String tag;
-        int busy;
-        String address;
-        String value;
-        String q;
-    }
-
-    static class Register {
-        String name;
-        String value;
-        String q;
-    }
-
-    static class Instruction {
-        InstructionType type;
-        String dest;
-        String src1;
-        String src2;
-        int address;
-        int issueTime;
-        int executeTime;
-        int writeTime;
-    }
-
-    private TableView<ReservationStation> createReservationStationTable() {
-        TableView<ReservationStation> table = new TableView<>();
+    private TableView<ArithmeticRSEntry> createReservationStationTable() {
+        TableView<ArithmeticRSEntry> table = new TableView<>();
         table.getColumns().addAll(
                 createColumn("Name", "name"),
                 createColumn("Busy", "busy"),
@@ -268,14 +239,13 @@ public class TomasuloSimulator extends Application {
                 createColumn("Vj", "vj"),
                 createColumn("Vk", "vk"),
                 createColumn("Qj", "qj"),
-                createColumn("Qk", "qk"),
-                createColumn("Dest", "dest")
+                createColumn("Qk", "qk")
         );
         return table;
     }
 
-    private TableView<LoadReservationStation> createLoadBufferTable() {
-        TableView<LoadReservationStation> table = new TableView<>();
+    private TableView<LoadRSEntry> createLoadBufferTable() {
+        TableView<LoadRSEntry> table = new TableView<>();
         table.getColumns().addAll(
                 createColumn("Tag", "tag"),
                 createColumn("Busy", "busy"),
@@ -284,8 +254,8 @@ public class TomasuloSimulator extends Application {
         return table;
     }
 
-    private TableView<StoreReservationStation> createStoreBufferTable() {
-        TableView<StoreReservationStation> table = new TableView<>();
+    private TableView<StoreRSEntry> createStoreBufferTable() {
+        TableView<StoreRSEntry> table = new TableView<>();
         table.getColumns().addAll(
                 createColumn("Tag", "tag"),
                 createColumn("Busy", "busy"),
@@ -296,8 +266,8 @@ public class TomasuloSimulator extends Application {
         return table;
     }
 
-    private TableView<Register> createRegisterTable() {
-        TableView<Register> table = new TableView<>();
+    private TableView<RegisterEntry> createRegisterTable() {
+        TableView<RegisterEntry> table = new TableView<>();
         table.getColumns().addAll(
                 createColumn("Name", "name"),
                 createColumn("Value", "value"),
@@ -306,16 +276,16 @@ public class TomasuloSimulator extends Application {
         return table;
     }
 
-    private TableView<Instruction> createInstructionQueueTable() {
-        TableView<Instruction> table = new TableView<>();
+    private TableView<InstructionQueueInstance> createInstructionQueueTable() {
+        TableView<InstructionQueueInstance> table = new TableView<>();
         table.getColumns().addAll(
-                createColumn("Type", "type"),
-                createColumn("Dest", "dest"),
-                createColumn("Src1", "src1"),
-                createColumn("Src2", "src2"),
-                createColumn("Issue", "issueTime"),
-                createColumn("Execute", "executeTime"),
-                createColumn("Write", "writeTime")
+                createColumn("Type", "instruction.op"),  // Assuming `op` is part of `Instruction`
+                createColumn("Dest", "instruction.dest"),
+                createColumn("Src1", "instruction.j"),
+                createColumn("Src2", "instruction.k"),
+                createColumn("Issue", "issue"),
+                createColumn("Execute", "execution"),  // This would require a custom cell value factory for lists
+                createColumn("Write", "write")
         );
         return table;
     }

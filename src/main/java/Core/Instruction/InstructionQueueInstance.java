@@ -9,7 +9,7 @@ public class InstructionQueueInstance {
     private List<Integer> execution;
     private int write;
 
-    public InstructionQueueInstance(Instruction instruction, int issue,  int write) {
+    public InstructionQueueInstance(Instruction instruction) {
         this.instruction = instruction;
         this.execution = new ArrayList<>();
     }

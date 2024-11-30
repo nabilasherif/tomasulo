@@ -1,23 +1,23 @@
 package Core.Instruction;
 
 public class Instruction {
-    private InstuctionType op;
+    private InstructionType op;
     private String dest;
     private String j;
     private String k;
 
-    public Instruction(InstuctionType op, String dest, String j, String k) {
+    public Instruction(InstructionType op, String dest, String j, String k) {
         this.op = op;
         this.dest = dest;
         this.j = j;
         this.k = k;
     }
 
-    public InstuctionType getOp() {
+    public InstructionType getOp() {
         return op;
     }
 
-    public void setOp(InstuctionType op) {
+    public void setOp(InstructionType op) {
         this.op = op;
     }
 
