@@ -34,6 +34,13 @@ public class InstructionFileParser {
         // Split the instruction by space (e.g., "L.D F4,F2,100" becomes ["L.D", "F4,F2,100"])
         String[] parts = line.split(" ");
 
+        boolean isLoop= false;
+
+        if (parts[0].equals("LOOP")){
+            isLoop = true;
+            parts = Arrays.copyOfRange(parts, 1, parts.length);
+        }
+
         String opString = parts[0];
         InstructionType op = InstructionType.fromString(opString);
 
@@ -46,7 +53,7 @@ public class InstructionFileParser {
         String j = operands.length > 1 ? operands[1] : ""; // First operand (e.g., F2)
         String k = operands.length > 2 ? operands[2] : "";
 
-        return new Instruction(op, dest, j, k);
+        return new Instruction(op, dest, j, k,isLoop);
     }
 
     //this fill the instruction queue with the instructions from the file but all has 0 for issue and write cycle
@@ -73,7 +80,7 @@ public class InstructionFileParser {
 
         for (Instruction instruction : instructions) {
             System.out.println("Op: " + instruction.getOp() + ", Dest: " + instruction.getDest()
-                    + ", J: " + instruction.getJ() + ", K: " + instruction.getK());
+                    + ", J: " + instruction.getJ() + ", K: " + instruction.getK()+ " is a loop "+instruction.isLoop());
         }
     }
 }

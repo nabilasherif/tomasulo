@@ -5,12 +5,14 @@ public class Instruction {
     private String dest;
     private String j;
     private String k;
+    private boolean isLoop;
 
-    public Instruction(InstructionType op, String dest, String j, String k) {
+    public Instruction(InstructionType op, String dest, String j, String k, boolean isLoop) {
         this.op = op;
         this.dest = dest;
         this.j = j;
         this.k = k;
+        this.isLoop = isLoop;
     }
 
     public InstructionType getOp() {
@@ -43,5 +45,9 @@ public class Instruction {
 
     public void setK(String k) {
         this.k = k;
+    }
+
+    public boolean isLoop() {
+        return isLoop;
     }
 }
