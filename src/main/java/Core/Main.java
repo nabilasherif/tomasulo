@@ -5,10 +5,12 @@ import Core.Storage.*;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) {
 
+    public static double[] memory = new double[1024];
+    public static RegisterFile registerFile  = new RegisterFile();
+
+    public static void main(String[] args) {
         //this is how a station is created
-        RegisterFile registerFileInstance = new RegisterFile();
         List<ArithmeticRSEntry> adders = new ArrayList<>(5);
 
         String filePath = "src/main/java/Core/test1.txt";
