@@ -2,20 +2,19 @@ package Core;
 
 import Core.Instruction.InstructionQueueInstance;
 import Core.Instruction.InstructionType;
-import Core.Instruction.Instruction;
 
 import java.io.*;
 import java.util.*;
 
 public class InstructionFileParser {
 
-    public static List<Instruction> parseInstructionsFromFile(String filePath) {
-        List<Instruction> instructions = new ArrayList<>();
+    public static List<InstructionQueueInstance> parseInstructionsFromFile(String filePath) {
+        List<InstructionQueueInstance> instructions = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                Instruction instruction = parseInstructionLine(line);
+                InstructionQueueInstance instruction = parseInstructionLine(line);
                 if (instruction != null) {
                     instructions.add(instruction);
                 }
@@ -27,7 +26,7 @@ public class InstructionFileParser {
         return instructions;
     }
 
-    static Instruction parseInstructionLine(String line) {
+    static InstructionQueueInstance parseInstructionLine(String line) {
         // Trim the line to remove leading/trailing whitespace
         line = line.trim();
 
@@ -46,7 +45,7 @@ public class InstructionFileParser {
         String j = operands.length > 1 ? operands[1] : ""; // First operand (e.g., F2)
         String k = operands.length > 2 ? operands[2] : "";
 
-        return new Instruction(op, dest, j, k);
+        return new InstructionQueueInstance(op, dest, j, k);
     }
 
     //this fill the instruction queue with the instructions from the file but all has 0 for issue and write cycle
@@ -55,10 +54,9 @@ public class InstructionFileParser {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                Instruction instruction = parseInstructionLine(line);
+                InstructionQueueInstance instruction = parseInstructionLine(line);
                 if (instruction != null) {
-                    InstructionQueueInstance queueInstance = new InstructionQueueInstance(instruction);
-                    instructionQueue.add(queueInstance);
+                    instructionQueue.add(instruction);
                 }
             }
         } catch (IOException e) {
@@ -69,9 +67,9 @@ public class InstructionFileParser {
 
     public static void main(String[] args) {
         String filePath = "src/main/java/Core/test1.txt";
-        List<Instruction> instructions = parseInstructionsFromFile(filePath);
+        List<InstructionQueueInstance> instructions = parseInstructionsFromFile(filePath);
 
-        for (Instruction instruction : instructions) {
+        for (InstructionQueueInstance instruction : instructions) {
             System.out.println("Op: " + instruction.getOp() + ", Dest: " + instruction.getDest()
                     + ", J: " + instruction.getJ() + ", K: " + instruction.getK());
         }

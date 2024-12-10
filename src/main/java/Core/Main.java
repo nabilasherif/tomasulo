@@ -5,6 +5,31 @@ import Core.Storage.*;
 import java.util.*;
 
 public class Main {
+    public static int addLatency;
+    public static int subLatency;
+    public static int multLatency;
+    public static int divLatency;
+    public static int storeLatency;
+    public static int loadLatency=1;
+    public static int loadPenalty=5;
+    public static int addReservationStationSize;
+    public static int multReservationStationSize;
+    public static int intReservationStationSize;
+    public static int storeBufferSize;
+    public static int loadBufferSize;
+    public static int blockSize;
+    public static int cacheSize;
+    public static Memory memory=new Memory(2024, blockSize);
+    public static Cache cache=new Cache(cacheSize,blockSize,memory);
+    public static RegisterFile registerFile=new RegisterFile();
+    public static Queue<Bus> bus=new LinkedList<>();
+    public static ArithmeticRSEntry[]  addSubFP;
+    public static ArithmeticRSEntry[]  mulDivFP;
+    public static ArithmeticRSEntry[]  integerRS;
+    public static LoadRSEntry[]  loadBuffer;
+    public static StoreRSEntry[] storeBuffer;
+    public static InstructionQueueInstance[] instructionQueue;
+
     public static void main(String[] args) {
 
         //this is how a station is created
@@ -15,10 +40,10 @@ public class Main {
         List<InstructionQueueInstance> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
 
         for (InstructionQueueInstance queueInstance : instructionQueue) {
-            System.out.println("Op: " + queueInstance.getInstruction().getOp()
-                    + ", Dest: " + queueInstance.getInstruction().getDest()
-                    + ", J: " + queueInstance.getInstruction().getJ()
-                    + ", K: " + queueInstance.getInstruction().getK()
+            System.out.println("Op: " + queueInstance.getOp()
+                    + ", Dest: " + queueInstance.getDest()
+                    + ", J: " + queueInstance.getJ()
+                    + ", K: " + queueInstance.getK()
                     + ", Issue Cycle: " + queueInstance.getIssue()
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
