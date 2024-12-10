@@ -15,10 +15,10 @@ public class Main {
         List<InstructionQueueInstance> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
 
         for (InstructionQueueInstance queueInstance : instructionQueue) {
-            System.out.println("Op: " + queueInstance.getInstruction().getOp()
-                    + ", Dest: " + queueInstance.getInstruction().getDest()
-                    + ", J: " + queueInstance.getInstruction().getJ()
-                    + ", K: " + queueInstance.getInstruction().getK()
+            System.out.println("Op: " + queueInstance.getOp()
+                    + ", Dest: " + queueInstance.getDest()
+                    + ", J: " + queueInstance.getJ()
+                    + ", K: " + queueInstance.getK()
                     + ", Issue Cycle: " + queueInstance.getIssue()
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
