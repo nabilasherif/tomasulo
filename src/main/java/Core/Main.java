@@ -5,6 +5,7 @@ import Core.Storage.*;
 import java.util.*;
 
 public class Main {
+    public static int blockSize=8;
     public static void main(String[] args) {
 
         //this is how a station is created
