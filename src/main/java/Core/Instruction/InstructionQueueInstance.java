@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class InstructionQueueInstance {
-    private Instruction instruction;
+    public Instruction instruction;
     private int issue;
     private List<Integer> execution;
     private int write;
