@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Cache {
-    private final Memory memory;
-    private final int blockSize;
     private Map<Integer, byte[]> cache;
+    private final int blockSize;
+    private final Memory memory;
 
-    public Cache(Memory memory, int blockSize) {
-        this.memory = memory;
+    public Cache(int size, int blockSize,Memory memory) {
+        this.cache = new HashMap<>(size);
         this.blockSize = blockSize;
-        this.cache = new HashMap<>();
+        this.memory = memory;
     }
 
     // load the block from cache or memory (cache miss will load from memory)
@@ -89,7 +89,7 @@ public class Cache {
 
     public static void main(String[] args) {
         Memory memory = new Memory(16, 8);
-        Cache cache = new Cache(memory, 8);
+        Cache cache = new Cache(24,8,memory);
         byte[] block = new byte[8];
         for (int i = 0; i < 8; i++) {
             block[i] = (byte) (i + 1);
