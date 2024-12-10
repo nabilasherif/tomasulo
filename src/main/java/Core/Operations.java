@@ -3,7 +3,6 @@ package Core;
 import static Core.Main.cache;
 import static Core.Main.registerFile;
 
-
 public class Operations {
 
     //a will be the content inside the register, b immediate

@@ -5,7 +5,7 @@ import Core.Storage.*;
 import java.util.*;
 
 public class Main {
-    int blockSize=8;
+    static int blockSize=8;
     public static Memory memory=new Memory(2024, blockSize);
     public static Cache cache=new Cache(memory,blockSize);
     public static RegisterFile registerFile=new RegisterFile();
