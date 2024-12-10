@@ -5,7 +5,11 @@ import Core.Storage.*;
 import java.util.*;
 
 public class Main {
-    public static int blockSize=8;
+    int blockSize=8;
+    public static Memory memory=new Memory(2024, blockSize);
+    public static Cache cache=new Cache(memory,blockSize);
+    public static RegisterFile registerFile=new RegisterFile();
+
     public static void main(String[] args) {
 
         //this is how a station is created
