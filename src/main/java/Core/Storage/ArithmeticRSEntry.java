@@ -1,6 +1,9 @@
 package Core.Storage;
 
+import Core.Instruction.InstructionType;
+
 public class ArithmeticRSEntry extends RSBaseEntry {
+    private InstructionType op;
     private Object vj;
     private Object vk;
     private String qj;
@@ -10,6 +13,14 @@ public class ArithmeticRSEntry extends RSBaseEntry {
         super(name);
         this.qj = "";
         this.qk = "";
+    }
+
+    public InstructionType getOp() {
+        return op;
+    }
+
+    public void setOp(InstructionType op) {
+        this.op = op;
     }
 
     public void setVj(Object value) {
@@ -46,4 +57,5 @@ public class ArithmeticRSEntry extends RSBaseEntry {
     public void clear() {
         super.setBusy(0);
     }
+
 }
