@@ -50,7 +50,7 @@ public class TomasuloSimulator extends Application {
     public int missPenalty = 10; // cycles
 
     private void initializeCore() {
-        instructionQueueInstances = InstructionFileParser.fillInstructionsQueue("src/main/java/Core/test1.txt");
+        instructionQueueInstances = InstructionFileParser.fillInstructionsQueue("src/main/java/Core/program.txt");
         instructionQueueTable = createInstructionQueueTable();
     }
 

@@ -120,7 +120,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        String filePath = "src/main/java/Core/test1.txt";
+        String filePath = "src/main/java/Core/program.txt";
         List<InstructionQueueInstance> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
         int cycle = 0;
         int pc = 0;

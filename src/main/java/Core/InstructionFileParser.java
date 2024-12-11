@@ -66,7 +66,7 @@ public class InstructionFileParser {
     }
 
     public static void main(String[] args) {
-        String filePath = "src/main/java/Core/test1.txt";
+        String filePath = "src/main/java/Core/program.txt";
         List<InstructionQueueInstance> instructions = parseInstructionsFromFile(filePath);
 
         for (InstructionQueueInstance instruction : instructions) {
