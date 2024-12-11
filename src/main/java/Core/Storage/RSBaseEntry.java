@@ -1,8 +1,6 @@
 package Core.Storage;
 
-import Core.Instruction.Instruction;
 import Core.Instruction.InstructionQueueInstance;
-import Core.Status;
 
 public class RSBaseEntry {
     private String tag;
