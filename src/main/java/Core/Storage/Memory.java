@@ -1,8 +1,7 @@
 package Core.Storage;
 
-import java.nio.ByteBuffer;
-
 public class Memory {
+
     public byte[] memory;
     public final int blockSize;
 
@@ -49,7 +48,6 @@ public class Memory {
         // Write the block data to memory
         System.arraycopy(data, 0, memory, blockStartAddress, blockSize);
     }
-
 
     // Check if the address is within bounds
     private boolean isValidAddress(int address) {

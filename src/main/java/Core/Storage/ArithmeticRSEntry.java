@@ -79,5 +79,4 @@ public class ArithmeticRSEntry extends RSBaseEntry {
         System.out.println("Result: " + this.result);
         System.out.println("-------------------------");
     }
-
 }

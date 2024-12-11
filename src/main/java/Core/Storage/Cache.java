@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Cache {
+
     private Map<Integer, byte[]> cache;
     private final int blockSize;
     private final Memory memory;
@@ -86,7 +87,6 @@ public class Cache {
         writeBack(address, block);
     }
 
-
     public static void main(String[] args) {
         Memory memory = new Memory(16, 8);
         Cache cache = new Cache(24,8,memory);
@@ -107,7 +107,6 @@ public class Cache {
         System.out.println("Byte at address 4 after writing to cache: " + cache.readByte(4));
         cache.writeByte(12, (byte) 123);
         System.out.println("Byte at address 12 (direct memory write): " + cache.readByte(12));
-
         System.out.println("Reading byte at address 12 (cache miss): " + cache.readByte(12));
     }
 }

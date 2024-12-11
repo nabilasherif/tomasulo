@@ -3,12 +3,12 @@ package Core.Storage;
 import Core.Instruction.Instruction;
 
 public class RSBaseEntry {
+
     private String tag;
     private boolean busy;
     public int remainingCycles;
     public Instruction instruction;
     public double result;
-
 
     public RSBaseEntry(String tag, Instruction instruction) {
         this.tag = tag;
@@ -16,7 +16,6 @@ public class RSBaseEntry {
         this.remainingCycles = Integer.MAX_VALUE;
         this.instruction = instruction;
     }
-
 
     public String getTag() {
         return tag;
