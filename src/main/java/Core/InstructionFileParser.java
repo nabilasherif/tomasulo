@@ -40,6 +40,7 @@ public class InstructionFileParser {
             return null;
         }
 
+
         String[] operands = parts[1].split(",");
         String dest = operands[0]; // Destination register (e.g., F4)
         String j = operands.length > 1 ? operands[1] : ""; // First operand (e.g., F2)
@@ -57,6 +58,10 @@ public class InstructionFileParser {
                 InstructionQueueInstance instruction = parseInstructionLine(line);
                 if (instruction != null) {
                     instructionQueue.add(instruction);
+
+//                    InstructionQueueInstance queueInstance = new InstructionQueueInstance(instruction.getOp(),instruction.getDest(), instruction.getJ(), instruction.getK());
+//                    instructionQueue.add(queueInstance);
+
                 }
             }
         } catch (IOException e) {
