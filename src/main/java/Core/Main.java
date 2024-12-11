@@ -17,8 +17,6 @@ public class Main {
     public static int addReservationStationSize= 3;
     public static int addLatency = 4; // TODO: MAKE THIS AN INPUT
 
-
-
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
         for (RSBaseEntry rs : reservationStation) {
             if (!rs.isBusy()) {
@@ -61,8 +59,6 @@ public class Main {
                 }else{
                     addRS.get(i).setQj(jQ);
                 }
-
-
                 return addRS.get(i).getTag();
             }
         }

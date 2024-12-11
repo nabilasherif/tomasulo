@@ -6,7 +6,6 @@ import Core.Status;
 
 public class RSBaseEntry {
     private String tag;
-//    private int remainingCycles;
     private boolean busy;
     public int remainingCycles;
     public InstructionQueueInstance instruction;
@@ -41,7 +40,6 @@ public class RSBaseEntry {
         this.remainingCycles = remainingCycles;
     }
 
-    //we can make this toggle between 0 and 1 instead
     public void setBusy(boolean busy) {
         this.busy = busy;
     }
@@ -58,6 +56,4 @@ public class RSBaseEntry {
         this.remainingCycles = remainingCycles;
         this.instruction = instruction;
     }
-
-
 }
