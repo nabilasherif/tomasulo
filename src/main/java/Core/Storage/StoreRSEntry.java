@@ -1,13 +1,13 @@
 package Core.Storage;
 
-import Core.Instruction.InstructionQueueInstance;
+import Core.Instruction.Instruction;
 
 public class StoreRSEntry extends RSBaseEntry {
     private Integer address;
     private Object value;
     private String q;
 
-    public StoreRSEntry(String tag, InstructionQueueInstance instruction) {
+    public StoreRSEntry(String tag, Instruction instruction) {
         super(tag, instruction);
     }
 

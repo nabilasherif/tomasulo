@@ -5,7 +5,8 @@ import Core.Status;
 import java.util.List;
 import java.util.ArrayList;
 
-public class InstructionQueueInstance {
+// TODO RENAME TO INSTRUCTION
+public class Instruction {
     private InstructionType op;
     private String dest;
     private String j;
@@ -15,7 +16,7 @@ public class InstructionQueueInstance {
     private int write;
     private Status status;
 
-    public InstructionQueueInstance(InstructionType op, String dest, String j, String k) {
+    public Instruction(InstructionType op, String dest, String j, String k) {
         this.op = op;
         this.dest = dest;
         this.j = j;
@@ -87,8 +88,8 @@ public class InstructionQueueInstance {
         this.status = status;
     }
 
-    public InstructionQueueInstance deepClone() {
-        InstructionQueueInstance clone = new InstructionQueueInstance(this.op, this.dest, this.j, this.k);
+    public Instruction deepClone() {
+        Instruction clone = new Instruction(this.op, this.dest, this.j, this.k);
         clone.setIssue(this.issue);
         clone.setExecution(new ArrayList<>(this.execution));
         clone.setWrite(this.write);

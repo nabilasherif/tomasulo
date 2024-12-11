@@ -1,16 +1,16 @@
 package Core.Storage;
 
-import Core.Instruction.InstructionQueueInstance;
+import Core.Instruction.Instruction;
 
 public class RSBaseEntry {
     private String tag;
     private boolean busy;
     public int remainingCycles;
-    public InstructionQueueInstance instruction;
+    public Instruction instruction;
     public double result;
 
 
-    public RSBaseEntry(String tag, InstructionQueueInstance instruction) {
+    public RSBaseEntry(String tag, Instruction instruction) {
         this.tag = tag;
         this.busy = false;
         this.remainingCycles = Integer.MAX_VALUE;
@@ -49,7 +49,7 @@ public class RSBaseEntry {
         this.instruction = null;
     }
 
-    public void setValues(boolean busy, int remainingCycles, InstructionQueueInstance instruction) {
+    public void setValues(boolean busy, int remainingCycles, Instruction instruction) {
         this.busy = busy;
         this.remainingCycles = remainingCycles;
         this.instruction = instruction;

@@ -11,7 +11,7 @@ public class Main {
     public static int cacheSize= 3;
     public static Memory memory=new Memory(2024, blockSize);
     public static Cache cache=new Cache(cacheSize,blockSize,memory);
-    public static  ArrayList<ArithmeticRSEntry> addRS = new ArrayList<>();
+    public static ArrayList<ArithmeticRSEntry> addRS = new ArrayList<>();
     public static HashMap<String, RegisterEntry> registerFile2 = new RegisterFile().getRegisters();
     public static RegisterFile registerFile=new RegisterFile();
     public static int addReservationStationSize= 3;
@@ -35,7 +35,7 @@ public class Main {
         return true;
     }
 
-    public static String addToRS(InstructionQueueInstance instruction){
+    public static String addToRS(Instruction instruction){
         // TODO: REPEAT THIS FOR EACH TYPE OF RESERVATION STATION
         // TODO: MAKE THIS NEATER FOR THE LOVE OF GOD
         for (int i=0; i < addRS.size(); i++) {
@@ -73,6 +73,7 @@ public class Main {
             // If the remaining cycles = 0, change the status to executed
             if(currentRS.remainingCycles == 0){
                 currentRS.instruction.setStatus(Status.EXECUTED);
+                //TODO THINK ABOUT HOW WE WILL IMPLEMENT EXECUTION & INTEGRATE WITH OPERATIONS CLASS
                 currentRS.result= currentRS.execute();
             }
             // If the vj and the vk are available, start executing and decrease the remaning cycles by 1
@@ -86,6 +87,7 @@ public class Main {
     public static void writeToBusExcept(String exception ){
         // TODO: MAKE SURE THAT YOU DO NOT WRITE MORE THAN ONE THING AT ONCE
         // TODO: WRITE BACK IN REGISTER FILE
+        //TODO: THINK BIG THOUGHTS
         // Go through all reservation stations and see if anything should be placed in bus
         for(ArithmeticRSEntry rs : addRS){
             if(rs.getTag().equals(exception))
@@ -121,7 +123,7 @@ public class Main {
     public static void main(String[] args) {
 
         String filePath = "src/main/java/Core/program.txt";
-        List<InstructionQueueInstance> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
+        List<Instruction> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
         int cycle = 0;
         int pc = 0;
 
@@ -129,7 +131,7 @@ public class Main {
         // TODO: INITIALISE ALL INPUTS FUNCTION FOR INITIALISING ALL GLOBAL VARIABLES
         initReservationStations();
 
-        for (InstructionQueueInstance queueInstance : instructionQueue) {
+        for (Instruction queueInstance : instructionQueue) {
             System.out.println("Op: " + queueInstance.getOp()
                     + ", Dest: " + queueInstance.getDest()
                     + ", J: " + queueInstance.getJ()
@@ -138,15 +140,13 @@ public class Main {
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
 
-        /// HANDLE INTEGRATION WITH FE
+        // TODO HANDLE INTEGRATION WITH FE
         while(pc < instructionQueue.size() || !allStationsEmpty()){
-
             String tag= "";
-            boolean issued = false;
             cycle++;
             if (pc < instructionQueue.size()) {
-                InstructionQueueInstance currentInstruction = instructionQueue.get(pc);
-                InstructionQueueInstance clonedInstruction = currentInstruction.deepClone();
+                Instruction currentInstruction = instructionQueue.get(pc);
+                Instruction clonedInstruction = currentInstruction.deepClone();
                 // TODO: GO THROUGH EACH TYPE OF RESERVATION STATION BASED ON THE INCOMING INSTRUCTION TYPE
 
                 // checking if there is an empty reservation station slot
@@ -155,7 +155,6 @@ public class Main {
                     tag = addToRS(clonedInstruction);
                     clonedInstruction.setStatus(Status.ISSUED);
                     pc++;
-                    issued = true;
                 }
             }
 
@@ -163,6 +162,7 @@ public class Main {
             // If i just executed something in the current cycle, I don't want to write it back in the same cycle
 
             executeAllExcept(tag);
+            // TODO FIX THE WRITE TO BUS
             writeToBusExcept(tag);
             System.out.println("Cycle " + cycle);
 

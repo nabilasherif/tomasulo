@@ -1,8 +1,7 @@
 package Core.Storage;
 
 import Core.Instruction.InstructionType;
-import Core.Instruction.InstructionQueueInstance;
-import Core.Status;
+import Core.Instruction.Instruction;
 
 
 public class ArithmeticRSEntry extends RSBaseEntry {
@@ -12,7 +11,7 @@ public class ArithmeticRSEntry extends RSBaseEntry {
     private String qj;
     private String qk;
 
-    public ArithmeticRSEntry(String name, InstructionQueueInstance instruction) {
+    public ArithmeticRSEntry(String name, Instruction instruction) {
         super(name, instruction);
         this.qj = "";
         this.qk = "";
@@ -63,6 +62,8 @@ public class ArithmeticRSEntry extends RSBaseEntry {
 
 
     public double execute(){
+        //check the type add or sub or bne or BEQ
+        //TODO: ASK ABOUT WHETHER BNE AND BEQ ENTER THE RESERVATION STATION OR NOT
         return (Double)this.vj + (Double) this.vk;
     }
 

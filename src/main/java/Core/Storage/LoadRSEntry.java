@@ -1,11 +1,11 @@
 package Core.Storage;
 
-import Core.Instruction.InstructionQueueInstance;
+import Core.Instruction.Instruction;
 
 public class LoadRSEntry extends RSBaseEntry {
     private Integer address;
 
-    public LoadRSEntry(String tag, InstructionQueueInstance instruction) {
+    public LoadRSEntry(String tag, Instruction instruction) {
         super(tag,instruction);
     }
 

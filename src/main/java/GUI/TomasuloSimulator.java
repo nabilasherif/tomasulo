@@ -1,6 +1,6 @@
 package GUI;
 
-import Core.Instruction.InstructionQueueInstance;
+import Core.Instruction.Instruction;
 import Core.InstructionFileParser;
 import Core.Register.RegisterEntry;
 import Core.Storage.ArithmeticRSEntry;
@@ -19,7 +19,7 @@ import Core.Instruction.InstructionType;
 
 public class TomasuloSimulator extends Application {
     //core components
-    List<InstructionQueueInstance> instructionQueueInstances = new ArrayList<>();
+    List<Instruction> instructions = new ArrayList<>();
 
     // Configuration parameters
     public int loadBufferSize = 3;
@@ -32,7 +32,7 @@ public class TomasuloSimulator extends Application {
     public Map<InstructionType, Integer> latencies = new HashMap<>();
 
     //#region Components
-    public TableView<InstructionQueueInstance> instructionQueueTable;
+    public TableView<Instruction> instructionQueueTable;
     public TableView<ArithmeticRSEntry> addResStationTable;
     public TableView<ArithmeticRSEntry> mulResStationTable;
     public TableView<ArithmeticRSEntry> intResStationTable;
@@ -50,7 +50,7 @@ public class TomasuloSimulator extends Application {
     public int missPenalty = 10; // cycles
 
     private void initializeCore() {
-        instructionQueueInstances = InstructionFileParser.fillInstructionsQueue("src/main/java/Core/program.txt");
+        instructions = InstructionFileParser.fillInstructionsQueue("src/main/java/Core/program.txt");
         instructionQueueTable = createInstructionQueueTable();
     }
 
@@ -175,7 +175,7 @@ public class TomasuloSimulator extends Application {
 
         Label instLabel = new Label("Instruction queue table");
         instLabel.setStyle("-fx-font-weight: bold;");
-        instructionQueueTable.setItems(FXCollections.observableList(instructionQueueInstances));
+        instructionQueueTable.setItems(FXCollections.observableList(instructions));
         Label registerLabel = new Label("Register table");
         registerLabel.setStyle("-fx-font-weight: bold;");
         registerTable = createRegisterTable();
@@ -276,8 +276,8 @@ public class TomasuloSimulator extends Application {
         return table;
     }
 
-    private TableView<InstructionQueueInstance> createInstructionQueueTable() {
-        TableView<InstructionQueueInstance> table = new TableView<>();
+    private TableView<Instruction> createInstructionQueueTable() {
+        TableView<Instruction> table = new TableView<>();
         table.getColumns().addAll(
                 createColumn("Type", "instruction.op"),  // Assuming `op` is part of `Instruction`
                 createColumn("Dest", "instruction.dest"),
