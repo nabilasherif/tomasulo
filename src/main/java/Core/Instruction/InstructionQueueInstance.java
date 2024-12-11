@@ -1,5 +1,7 @@
 package Core.Instruction;
 
+import Core.Status;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -11,6 +13,7 @@ public class InstructionQueueInstance {
     private int issue;
     private List<Integer> execution;
     private int write;
+    private Status status;
 
     public InstructionQueueInstance(InstructionType op, String dest, String j, String k) {
         this.op = op;
@@ -18,6 +21,7 @@ public class InstructionQueueInstance {
         this.j = j;
         this.k = k;
         this.execution = new ArrayList<>();
+        this.status = status;
     }
 
     public InstructionType getOp() {
@@ -75,4 +79,21 @@ public class InstructionQueueInstance {
     public void setWrite(int write) {
         this.write = write;
     }
+    public Status getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public InstructionQueueInstance deepClone() {
+        InstructionQueueInstance clone = new InstructionQueueInstance(this.op, this.dest, this.j, this.k);
+        clone.setIssue(this.issue);
+        clone.setExecution(new ArrayList<>(this.execution));
+        clone.setWrite(this.write);
+        clone.setStatus(this.status);
+        return clone;
+    }
+
 }

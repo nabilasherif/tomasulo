@@ -1,6 +1,9 @@
 package Core.Storage;
 
 import Core.Instruction.InstructionType;
+import Core.Instruction.InstructionQueueInstance;
+import Core.Status;
+
 
 public class ArithmeticRSEntry extends RSBaseEntry {
     private InstructionType op;
@@ -9,8 +12,8 @@ public class ArithmeticRSEntry extends RSBaseEntry {
     private String qj;
     private String qk;
 
-    public ArithmeticRSEntry(String name) {
-        super(name);
+    public ArithmeticRSEntry(String name, InstructionQueueInstance instruction) {
+        super(name, instruction);
         this.qj = "";
         this.qk = "";
     }
@@ -55,7 +58,25 @@ public class ArithmeticRSEntry extends RSBaseEntry {
     }
 
     public void clear() {
-        super.setBusy(0);
+        super.setBusy(false);
+    }
+
+
+    public double execute(){
+        return (Double)this.vj + (Double) this.vk;
+    }
+
+    public void printRSDetails() {
+        System.out.println("Tag: " + this.getTag());
+        System.out.println("Busy: " + this.isBusy());
+        System.out.println("Remaining Cycles: " + this.getRemainingCycles());
+        System.out.println("Instruction Status: " + (this.instruction != null ? this.instruction.getStatus() : "No Instruction"));
+        System.out.println("Vj: " + this.getVj());
+        System.out.println("Vk: " + this.getVk());
+        System.out.println("Qj: " + this.getQj());
+        System.out.println("Qk: " + this.getQk());
+        System.out.println("Result: " + this.result);
+        System.out.println("-------------------------");
     }
 
 }

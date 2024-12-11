@@ -1,14 +1,25 @@
 package Core.Storage;
 
+import Core.Instruction.Instruction;
+import Core.Instruction.InstructionQueueInstance;
+import Core.Status;
+
 public class RSBaseEntry {
     private String tag;
-    private int busy;
-    private int remainingCycles;
+//    private int remainingCycles;
+    private boolean busy;
+    public int remainingCycles;
+    public InstructionQueueInstance instruction;
+    public double result;
 
-    public RSBaseEntry(String tag) {
+
+    public RSBaseEntry(String tag, InstructionQueueInstance instruction) {
         this.tag = tag;
-        this.busy = 0;
+        this.busy = false;
+        this.remainingCycles = Integer.MAX_VALUE;
+        this.instruction = instruction;
     }
+
 
     public String getTag() {
         return tag;
@@ -18,7 +29,7 @@ public class RSBaseEntry {
         this.tag = tag;
     }
 
-    public int isBusy() {
+    public boolean isBusy() {
         return busy;
     }
 
@@ -31,12 +42,21 @@ public class RSBaseEntry {
     }
 
     //we can make this toggle between 0 and 1 instead
-    public void setBusy(int busy) {
+    public void setBusy(boolean busy) {
         this.busy = busy;
     }
 
     public void clear(){
-        this.busy = 0;
+        this.busy = false;
+        this.tag = null;
+        this.remainingCycles = Integer.MAX_VALUE;
+        this.instruction = null;
+    }
+
+    public void setValues(boolean busy, int remainingCycles, InstructionQueueInstance instruction) {
+        this.busy = busy;
+        this.remainingCycles = remainingCycles;
+        this.instruction = instruction;
     }
 
 

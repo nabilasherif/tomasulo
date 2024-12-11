@@ -1,7 +1,7 @@
 package Core.Register;
 
 public class RegisterEntry {
-    private Object value;
+    private double value;
     private String q;
 
     public RegisterEntry() {
@@ -9,11 +9,11 @@ public class RegisterEntry {
         this.q = "0";
     }
 
-    public Object getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(double value) {
         this.value = value;
     }
 
