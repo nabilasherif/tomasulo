@@ -53,4 +53,8 @@ public class RSBaseEntry {
         this.remainingCycles = remainingCycles;
         this.instruction = instruction;
     }
+
+    public double execute() {
+        return 0;
+    }
 }

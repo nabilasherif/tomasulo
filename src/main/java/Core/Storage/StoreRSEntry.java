@@ -3,6 +3,7 @@ package Core.Storage;
 import Core.Instruction.Instruction;
 
 public class StoreRSEntry extends RSBaseEntry {
+
     private Integer address;
     private Object value;
     private String q;
@@ -27,13 +28,12 @@ public class StoreRSEntry extends RSBaseEntry {
         return value;
     }
 
-    public void setQ(String q) {
-        this.q = q;
-    }
+    public void setQ(String q) {this.q = q;}
 
     public String getQ() {
         return q;
     }
+
     public void printRSDetails() {
         System.out.println("Tag: " + this.getTag());
         System.out.println("Busy: " + this.isBusy());

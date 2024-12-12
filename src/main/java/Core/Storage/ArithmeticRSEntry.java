@@ -2,7 +2,7 @@ package Core.Storage;
 
 import Core.Instruction.InstructionType;
 import Core.Instruction.Instruction;
-
+import Core.Operations;
 
 public class ArithmeticRSEntry extends RSBaseEntry {
     private InstructionType op;
@@ -60,15 +60,25 @@ public class ArithmeticRSEntry extends RSBaseEntry {
         super.setBusy(false);
     }
 
-
+    @Override
     public double execute(){
         //TODO: ASK ABOUT WHETHER BNE AND BEQ ENTER THE RESERVATION STATION OR NOT
-        if(instruction.getOp() == InstructionType.ADD_D || op == InstructionType.ADD_S || op == InstructionType.DADDI )
-            return (Double)this.vj + (Double) this.vk;
-        if(instruction.getOp() == InstructionType.SUB_D ||op == InstructionType.SUB_S || op == InstructionType.DSUBI )
-            return (Double)this.vj - (Double) this.vk;
+        InstructionType op = instruction.getOp();
+        switch (op) {
+            case ADD_D, DADDI: return Operations.ADD_D((Double)this.vj, (Double)this.vk);
+            case ADD_S: return Operations.ADD_S((Float)this.vj, (Float)this.vk);
+            case DSUBI, SUB_D: return Operations.SUB_D((Double)this.vj, (Double)this.vk);
+            case SUB_S: return Operations.SUB_S((Float)this.vj, (Float)this.vk);
+            case MUL_D: return Operations.MUL_D((Double)this.vj, (Double)this.vk);
+            case MUL_S: return Operations.MUL_S((Float)this.vj, (Float)this.vk);
+            case DIV_D: return Operations.DIV_D((Double)this.vj, (Double)this.vk);
+            case DIV_S: return Operations.DIV_S((Float)this.vj, (Float)this.vk);
+            case BNE: if(Operations.BNE((Long)this.vj, (Long)this.vk)) return 1.0; else return 0.0;
+            case BEQ: if(Operations.BEQ((Long)this.vj, (Long)this.vk)) return 1.0; else return 0.0;
+            default:
+                return 0.0;
+        }
         // this is for now until we know fe branches hena wala la2
-        return 0.0;
     }
 
     public void printRSDetails() {

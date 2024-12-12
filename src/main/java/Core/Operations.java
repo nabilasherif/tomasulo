@@ -6,33 +6,21 @@ import static Core.Main.registerFile;
 public class Operations {
 
     //a will be the content inside the register, b immediate
-    public static long DADDI(long a, short b) {
-        return a + b;
-    }
 
-    public static long SUBBI(long a, short b) {
-        return a - b;
-    }
+    public static long DADDI(long a, short b) {return a + b;}
 
-    public static double ADD_D(double a, double b) {
-        return a + b;
-    }
+    public static long SUBBI(long a, short b) {return a - b;}
 
-    public static float ADD_S(float a, float b) {
-        return a + b;
-    }
+    public static double ADD_D(double a, double b) {return a + b;}
 
-    public static double SUB_D(double a, double b) {
-        return a - b;
-    }
+    public static float ADD_S(float a, float b) {return a + b;}
 
-    public static float SUB_S(float a, float b) {
-        return a - b;
-    }
+    public static double SUB_D(double a, double b) {return a - b;}
 
-    public static double MUL_D(double a, double b) {
-        return a * b;
-    }
+    public static float SUB_S(float a, float b) {return a - b;}
+
+    public static double MUL_D(double a, double b) {return a * b;}
+
     public static float MUL_S(float a, float b) {
         return a * b;
     }

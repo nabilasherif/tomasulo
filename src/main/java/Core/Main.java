@@ -188,28 +188,7 @@ public class Main {
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    switch (currentRS.instruction.getOp()) {
-                        case DADDI:
-                            currentRS.result = Operations.DADDI((long) currentRS.getVj(), (short) currentRS.getVk());
-                            break;
-                        case DSUBI:
-                            currentRS.result = Operations.SUBBI((long) currentRS.getVj(), (short) currentRS.getVk());
-                            break;
-                        case ADD_D:
-                            currentRS.result = Operations.ADD_D((double) currentRS.getVj(), (double) currentRS.getVk());
-                            break;
-                        case ADD_S:
-                            currentRS.result = Operations.ADD_S((float) currentRS.getVj(), (float) currentRS.getVk());
-                            break;
-                        case SUB_D:
-                            currentRS.result = Operations.SUB_D((double) currentRS.getVj(), (double) currentRS.getVk());
-                            break;
-                        case SUB_S:
-                            currentRS.result = Operations.SUB_S((float) currentRS.getVj(), (float) currentRS.getVk());
-                            break;
-                        default:
-                            break;
-                    }
+                    currentRS.execute();
                     justFinished.add(currentRS.getTag());
                 }
             }
