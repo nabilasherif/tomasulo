@@ -80,7 +80,7 @@ public class MultRSEntry extends RSBaseEntry {
         System.out.println("Vk: " + this.getVk());
         System.out.println("Qj: " + this.getQj());
         System.out.println("Qk: " + this.getQk());
-        System.out.println("Result: " + this.result);
+        System.out.println("Result: " + this.getResult());
         System.out.println("-------------------------");
     }
 }

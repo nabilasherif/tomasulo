@@ -22,7 +22,7 @@ public class LoadRSEntry extends RSBaseEntry {
         System.out.println("Remaining Cycles: " + this.getRemainingCycles());
         System.out.println("Instruction Status: " + (this.instruction != null ? this.instruction.getStatus() : "No Instruction"));
         System.out.println("Address:" + this.address);
-        System.out.println("Result: " + this.result);
+        System.out.println("Result: " + this.getResult());
         System.out.println("-------------------------");
     }
 }

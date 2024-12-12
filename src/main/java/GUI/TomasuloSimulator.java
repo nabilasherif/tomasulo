@@ -8,6 +8,9 @@ import Core.Register.RegisterFile;
 import Core.Status;
 import Core.Storage.*;
 import javafx.application.Application;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -73,14 +76,14 @@ public class TomasuloSimulator extends Application {
         VBox root = new VBox(10);
         root.setPadding(new Insets(10));
 
-        ScrollPane scrollPane = new ScrollPane(root);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
+
 
         instructionQueueTable = createInstructionQueueTable();
         registerFileTable = createRegisterFileTable();
         cacheTable = createCacheTable();
-
+        addRSTable = createAddSubTable();
+        mulRSTable = createMulDivTable();
+        loadRSTable=createLoadRSTable();
 //        addRSTable = createAddRSTable("Add Reservation Stations", new ArrayList<>());
 //        mulRSTable = createMulRSTable("Multiply Reservation Stations", new ArrayList<>());
 //        loadRSTable = createLRSTable("Load Reservation Stations", new ArrayList<>());
@@ -151,13 +154,19 @@ public class TomasuloSimulator extends Application {
                 new HBox(10,
                         new VBox(10, new Label("Register File"), registerFileTable),
                         new VBox(10, new Label("Cache"), cacheTable)
-                )
+                ),
+                new Label("Add/Sub_RS"), addRSTable,
+                new Label("Mul/Div_RS"), mulRSTable,
+                new Label("Load_RS"),loadRSTable
+
 //                new Label("Add Reservation Station"), addRSTable,
 //                new Label("Multiply Reservation Station"), mulRSTable,
 //                new Label("Load Reservation Station"), loadRSTable,
 //                new Label("Store Reservation Station"), storeRSTable
         );
-
+        ScrollPane scrollPane = new ScrollPane(root);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
         Scene scene = new Scene(scrollPane, 800, 600);
         primaryStage.setTitle("Tomasulo Algorithm Simulator");
         primaryStage.setScene(scene);
@@ -179,6 +188,144 @@ public class TomasuloSimulator extends Application {
         vbox.getChildren().addAll(rsLabel, textField);
         return vbox;
     }
+    private TableView<StoreRSEntry> createStoreRSTable() {
+        // Create a TableView for LoadRSEntry
+        TableView<StoreRSEntry> table = new TableView<>();
+
+        // Tag Column
+        TableColumn<StoreRSEntry, String> tagCol = new TableColumn<>("Tag");
+        tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
+
+        // Busy Column
+        TableColumn<StoreRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
+        busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
+
+
+        TableColumn<StoreRSEntry, Boolean> VCol = new TableColumn<>("V");
+        VCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValue()));
+
+        TableColumn<StoreRSEntry, Boolean> QCol = new TableColumn<>("Q");
+        VCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQ()));
+
+        // Address Column
+        TableColumn<StoreRSEntry, Integer> addressCol = new TableColumn<>("Address");
+        addressCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getAddress()).asObject());
+
+        // Add all columns to the table
+        table.getColumns().addAll(tagCol, busyCol, addressCol);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        return table;
+    }
+
+    private TableView<LoadRSEntry> createLoadRSTable() {
+        // Create a TableView for LoadRSEntry
+        TableView<LoadRSEntry> table = new TableView<>();
+
+        // Tag Column
+        TableColumn<LoadRSEntry, String> tagCol = new TableColumn<>("Tag");
+        tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
+
+        // Busy Column
+        TableColumn<LoadRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
+        busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
+
+
+        // Address Column
+        TableColumn<LoadRSEntry, Integer> addressCol = new TableColumn<>("Address");
+        addressCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getAddress()).asObject());
+
+        // Add all columns to the table
+        table.getColumns().addAll(tagCol, busyCol, addressCol);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        return table;
+    }
+    private TableView<ArithmeticRSEntry> createMulDivTable() {
+        // Similar to Add/Sub TableView
+        TableView<ArithmeticRSEntry> table = new TableView<>();
+
+        // Tag Column
+        TableColumn<ArithmeticRSEntry, String> tagCol = new TableColumn<>("Tag");
+        tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
+
+        // Busy Column
+        TableColumn<ArithmeticRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
+        busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
+
+        // Remaining Cycles Column
+        TableColumn<ArithmeticRSEntry, Integer> cyclesCol = new TableColumn<>("Remaining Cycles");
+        cyclesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRemainingCycles()).asObject());
+
+        // Operation Column
+        TableColumn<ArithmeticRSEntry, String> opCol = new TableColumn<>("Operation");
+        opCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOp().toString()));
+
+        // Vj Column
+        TableColumn<ArithmeticRSEntry, String> vjCol = new TableColumn<>("Vj");
+        vjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVj() != null ? cellData.getValue().getVj().toString() : "N/A"));
+
+        // Vk Column
+        TableColumn<ArithmeticRSEntry, String> vkCol = new TableColumn<>("Vk");
+        vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : "N/A"));
+
+        // Qj Column
+        TableColumn<ArithmeticRSEntry, String> qjCol = new TableColumn<>("Qj");
+        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj()));
+
+        // Qk Column
+        TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Qk");
+        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk()));
+
+        // Add all columns to the table
+        table.getColumns().addAll(tagCol, busyCol, cyclesCol, opCol, vjCol, vkCol, qjCol, qkCol);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        return table;
+    }
+
+    private TableView<ArithmeticRSEntry> createAddSubTable() {
+        TableView<ArithmeticRSEntry> table = new TableView<>();
+
+        // Tag Column
+        TableColumn<ArithmeticRSEntry, String> tagCol = new TableColumn<>("Tag");
+        tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
+
+        // Busy Column
+        TableColumn<ArithmeticRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
+        busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
+
+        // Remaining Cycles Column
+        TableColumn<ArithmeticRSEntry, Integer> cyclesCol = new TableColumn<>("Remaining Cycles");
+        cyclesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRemainingCycles()).asObject());
+
+        // Operation Column
+        TableColumn<ArithmeticRSEntry, String> opCol = new TableColumn<>("Operation");
+        opCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOp().toString()));
+
+        // Vj Column
+        TableColumn<ArithmeticRSEntry, String> vjCol = new TableColumn<>("Vj");
+        vjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVj() != null ? cellData.getValue().getVj().toString() : "N/A"));
+
+        // Vk Column
+        TableColumn<ArithmeticRSEntry, String> vkCol = new TableColumn<>("Vk");
+        vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : "N/A"));
+
+        // Qj Column
+        TableColumn<ArithmeticRSEntry, String> qjCol = new TableColumn<>("Qj");
+        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj()));
+
+        // Qk Column
+        TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Qk");
+        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk()));
+
+        table.getColumns().addAll(tagCol, busyCol, cyclesCol ,opCol, vjCol, vkCol, qjCol, qkCol);
+
+        // Set equal-width resizing policy
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        return table;
+    }
+
 
     private TableView<Instruction> createInstructionQueueTable(){
         TableView<Instruction> tableView = new TableView<>();

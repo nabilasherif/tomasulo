@@ -42,7 +42,7 @@ public class StoreRSEntry extends RSBaseEntry {
         System.out.println("Q: " + this.getQ());
         System.out.println("Value: " + this.getValue());
         System.out.println("Address: " + (this.address != null? this.getAddress(): "not assigned yet"));
-        System.out.println("Result: " + this.result);
+        System.out.println("Result: " + this.getResult());
         System.out.println("-------------------------");
     }
 }

@@ -15,6 +15,7 @@ public class Main {
     public static ArrayList<ArithmeticRSEntry> mulDivRS=new ArrayList<>();
     public static ArrayList<LoadRSEntry> loadRS=new ArrayList<>();
     public static ArrayList<StoreRSEntry> storeRS =new ArrayList<>();
+    public static ArrayList<BranchRSEntry> branchRS = new ArrayList<>();
     public static HashMap<String, RegisterEntry> registerFile= new HashMap<>();
     // From the GUI
     public static int addReservationStationSize= 3;
@@ -32,7 +33,7 @@ public class Main {
     public static int loadPenalty;
     public static int storeReservationStationSize;
     public static int storeLatency;
-    public static ArrayList<BranchRSEntry> branchRS = new ArrayList<>();
+
     public static int branchReservationStationSize= 3;
     public static int branchLatency = 4;
     public static int branchPenalty = 1;
@@ -200,7 +201,7 @@ public class Main {
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
                     // based on operation
-                     currentRS.result= currentRS.execute();
+                     currentRS.setResult(currentRS.execute());
                     justFinished.add(currentRS.getTag());
                 }
             }
@@ -215,7 +216,7 @@ public class Main {
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                     currentRS.result= currentRS.execute();
+                     currentRS.setResult(currentRS.execute());
                     justFinished.add(currentRS.getTag());
                 }
             }
@@ -264,7 +265,7 @@ public class Main {
         if (!writeBackQueue.isEmpty()) {
             RSBaseEntry rs = writeBackQueue.poll();
             String tag = rs.getTag();
-            double value = rs.result;
+            double value = rs.getResult();
 
             // Update other reservation stations
 
