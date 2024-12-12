@@ -62,19 +62,19 @@ public class Operations {
     }
 
     public static void SW(String register,int address){
-        cache.writeWord(address , (int)registerFile.getRegisters().get(register).getValue());
+        cache.writeWord(address , (int)registerFile.get(register).getValue());
     }
 
     public static void SD(String register, int address) {
-        cache.writeDoubleWord(address,(long) registerFile.getRegisters().get(register).getValue());
+        cache.writeDoubleWord(address,(long) registerFile.get(register).getValue());
     }
 
     public static void S_S(String register, int address) {
-        cache.writeWord(address, (float)registerFile.getRegisters().get(register).getValue());
+        cache.writeWord(address, (float)registerFile.get(register).getValue());
     }
 
     public static void S_D(String register, int address) {
-        cache.writeDoubleWord(address,(double)registerFile.getRegisters().get(register).getValue());
+        cache.writeDoubleWord(address,(double)registerFile.get(register).getValue());
     }
 
     //return true if not equal so branch
