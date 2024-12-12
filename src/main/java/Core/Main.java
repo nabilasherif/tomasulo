@@ -105,7 +105,7 @@ public class Main {
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
                     // based on operation
-                    // currentRS.result= currentRS.execute();
+                     currentRS.result= currentRS.execute();
                     justFinished.add(currentRS.getTag());
                 }
             }
@@ -120,8 +120,7 @@ public class Main {
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    // based on opppp
-                    // currentRS.result= currentRS.execute();
+                     currentRS.result= currentRS.execute();
                     justFinished.add(currentRS.getTag());
                 }
             }
@@ -192,6 +191,8 @@ public class Main {
             }
 
             //Updating the register files
+
+            //TODO FIX THE WRITE BACK INTO REGISTER
             for(Map.Entry<String, RegisterEntry> entry : registerFile.entrySet()){
                 RegisterEntry current = entry.getValue();
                 if(current.getQ().equals(tag)){
@@ -214,6 +215,23 @@ public class Main {
 
     }
 
+    public static void printStaticRegisterContents(HashMap<String, RegisterEntry> registerFile) {
+        System.out.println("Register Contents:");
+        for (String registerName : registerFile.keySet()) {
+            RegisterEntry entry = registerFile.get(registerName);
+            System.out.println(registerName + ": " + entry);
+        }
+    }
+
+    public static void initRegisterFile(){
+        int i =0;
+        for(Map.Entry<String, RegisterEntry> entry : registerFile.entrySet()){
+            entry.getValue().setValue(i);
+            i++;
+        }
+        printStaticRegisterContents(registerFile);
+    }
+
     public static void initPreferences(){
 
     }
@@ -225,6 +243,7 @@ public class Main {
         List<Instruction> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
         int cycle = 0;
         int pc = 0;
+        initRegisterFile();
 
 
 
@@ -249,8 +268,8 @@ public class Main {
             String tag= "";
             cycle++;
             System.out.println("Cycle " + cycle);
-            Scanner sc = new Scanner(System.in);
-            sc.nextInt();
+//            Scanner sc = new Scanner(System.in);
+//            sc.nextInt();
             if (pc < instructionQueue.size()) {
                 Instruction currentInstruction = instructionQueue.get(pc);
                 Instruction clonedInstruction = currentInstruction.deepClone();
@@ -326,6 +345,6 @@ public class Main {
         }
 
 
-
+        printStaticRegisterContents(registerFile);
     }
 }
