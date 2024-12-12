@@ -6,6 +6,7 @@ import java.util.*;
 
 public class Main {
 
+    static boolean stall=false;
     public static int blockSize = 3;
     public static int cacheSize= 3;
     public static Memory memory=new Memory(2024, blockSize);
@@ -37,6 +38,7 @@ public class Main {
     public static int branchLatency = 4;
     public static int branchPenalty = 1;
     public static  Queue<RSBaseEntry> writeBackQueue = new LinkedList<>();
+    public static List<Instruction> instructionQueueParser = new ArrayList<>();
     public static List<Instruction> instructionQueue = new ArrayList<>();
 
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
@@ -255,7 +257,8 @@ public class Main {
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    currentRS.execute(); //not sure what to do
+                    boolean branchRes=currentRS.execute(); //not sure what to do
+                    handleBranchTrue(currentRS.instruction);
                     justFinished.add(currentRS.getTag());
                 }
             }
@@ -379,16 +382,36 @@ public class Main {
         String filePath = "src/main/java/Core/program.txt";
         instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
 
+        for (Instruction instruction : instructionQueueParser) {
+            instructionQueue.add(instruction.deepClone());
+        }
+
         Memory memory=new Memory(2024, blockSize);
         Cache cache=new Cache(cacheSize,blockSize,memory);
         initReservationStations();
         initRegisterFile();
     }
 
+    public static void handleBranchTrue(Instruction instruction){
+        int addressLoop = Integer.parseInt(instruction.getJ());
+        int addressBranch=0;
+
+        //moshkela law feh wahda tanya zayaha belzabt fa ow n store lel kol branch its index(hasa ahsan)
+        for (int i=0;i<instructionQueueParser.size();i++){
+            if(instructionQueueParser.get(i).deepClone().equals(instruction)){
+                addressBranch=i;
+            }
+        }
+
+        for (int i=addressLoop;i<=addressBranch;i++){
+            instructionQueue.add(instructionQueueParser.get(i).deepClone());
+        }
+    }
+
     public static void main(String[] args) {
 
         String filePath = "src/main/java/Core/program.txt";
-        List<Instruction> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
+        instructionQueueParser = InstructionFileParser.fillInstructionsQueue(filePath);
         int cycle = 0;
         int pc = 0;
 
@@ -406,13 +429,14 @@ public class Main {
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
         // TODO HANDLE INTEGRATION WITH FE
-        while(pc < instructionQueue.size() || !allStationsEmpty()){
+        while((pc < instructionQueue.size()) || !allStationsEmpty()){
             String tag= "";
             cycle++;
             System.out.println("Cycle " + cycle);
             Scanner sc = new Scanner(System.in);
             sc.nextInt();
-            if (pc < instructionQueue.size()) {
+            // if previous was a branch so don't issue for 1 cycle until decision is known
+            if (pc < instructionQueue.size()&&!stall) {
                 Instruction currentInstruction = instructionQueue.get(pc);
                 Instruction clonedInstruction = currentInstruction.deepClone();
                 switch (clonedInstruction.getOp()) {
@@ -464,12 +488,15 @@ public class Main {
                             tag = addToBranchRS(clonedInstruction);
                             clonedInstruction.setStatus(Status.ISSUED);
                             pc++;
+                            stall = true;
                         }
                         break;
                     default:
                         break;
                 }
                 //TODO: HANDLE BRANCH INSTRUCTIONS
+            } else {
+                stall = false;
             }
 //            HashSet<String> justExecuted = executeAllExcept(tag);
 //            writeToBusExcept(justExecuted);
