@@ -28,9 +28,7 @@ public class TomasuloSimulator extends Application {
 //    List<Instruction> instructions = new ArrayList<>();
 //    public Map<InstructionType, Integer> latencies = new HashMap<>();
 
-    public int clkCycles=0;
-
-    private TextField clockCycleField;
+    public int cycles=0;
 
     //tables
     private TableView<Instruction> instructionQueueTable;
@@ -69,6 +67,9 @@ public class TomasuloSimulator extends Application {
     private TextField blockSizeField;
 
     private Button applyInputsButton;
+    private Button nextCycleButton;
+
+    private Label cyclesLabel;
 
     @Override
     public void start(Stage primaryStage) {
@@ -132,11 +133,16 @@ public class TomasuloSimulator extends Application {
         applyInputsButton = new Button("Apply Inputs");
         applyInputsButton.setOnAction(event -> applyAllInputs());
 
+        nextCycleButton = new Button("Next Cycle");
+        nextCycleButton.setOnAction(event -> getNextCycle());
+
+        cyclesLabel = new Label("Current Cycle: " + cycles);
+
         root.getChildren().addAll(
                 new Label("Latencies (cycles):"), latencyConfigBox,
                 new Label("Reservation Station Sizes:"), rsConfigBox,
                 new Label("Cache configurations:"), cacheConfigBox,
-                applyInputsButton,
+                new HBox(10, applyInputsButton, nextCycleButton, cyclesLabel),
                 new Label("Instruction Queue"), instructionQueueTable,
                 new HBox(10,
                         new VBox(10, new Label("Register File"), registerFileTable),
@@ -361,6 +367,7 @@ public class TomasuloSimulator extends Application {
         tableView.getColumns().addAll(operationCol, destCol, jCol, kCol, issuedCol, executedCol, writebackCol);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+        tableView.setMinHeight(150);
 
         return tableView;
     }
@@ -386,6 +393,7 @@ public class TomasuloSimulator extends Application {
 
         registerFileTable.getColumns().addAll(registerNameCol, valueCol, qCol);
 
+        registerFileTable.setMinHeight(100);
         return registerFileTable;
     }
 
@@ -461,6 +469,11 @@ public class TomasuloSimulator extends Application {
         registerFileTable.setItems(registerEntries);
         instructionQueueTable.refresh();
         registerFileTable.refresh();
+    }
+
+    private void getNextCycle(){
+        cycles++;
+        cyclesLabel.setText("Current Cycle: " + cycles);
     }
 
     private void showErrorDialog(String title, String message) {
