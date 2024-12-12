@@ -242,7 +242,7 @@ public class Main {
                 justFinished.add(currentRS.getTag());
             }
         }
-
+s
         for (BranchRSEntry currentRS : branchRS) {
             if (currentRS.getTag().equals(tag)) continue;
 
@@ -405,12 +405,8 @@ public class Main {
                     + ", Issue Cycle: " + queueInstance.getIssue()
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
-
-
-
         // TODO HANDLE INTEGRATION WITH FE
         while(pc < instructionQueue.size() || !allStationsEmpty()){
-
             String tag= "";
             cycle++;
             System.out.println("Cycle " + cycle);
@@ -474,11 +470,7 @@ public class Main {
                         break;
                 }
                 //TODO: HANDLE BRANCH INSTRUCTIONS
-
-
             }
-
-
 //            HashSet<String> justExecuted = executeAllExcept(tag);
 //            writeToBusExcept(justExecuted);
             System.out.println("Cycle " + cycle);
@@ -491,8 +483,6 @@ public class Main {
                 store.printRSDetails();
 
         }
-
-
         printRegisters(registerFile);
     }
 }
