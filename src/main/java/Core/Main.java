@@ -32,6 +32,11 @@ public class Main {
     public static int loadPenalty = 8;
     public static int storeReservationStationSize= 3;
     public static int storeLatency = 4;
+    //do we add a store penalty?
+    public static ArrayList<BranchRSEntry> branchRS = new ArrayList<>();
+    public static int branchReservationStationSize= 3;
+    public static int branchLatency = 4;
+    public static int branchPenalty = 1;
     public static  Queue<RSBaseEntry> writeBackQueue = new LinkedList<>();
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
         for (RSBaseEntry rs : reservationStation) {
@@ -53,6 +58,9 @@ public class Main {
             if (rs.isBusy()) return false;
         }
         for (RSBaseEntry rs : loadRS) {
+            if (rs.isBusy()) return false;
+        }
+        for (RSBaseEntry rs : branchRS) {
             if (rs.isBusy()) return false;
         }
         return true;
@@ -151,6 +159,16 @@ public class Main {
                 String j = loadRS.get(i).instruction.getJ();//100
                 loadRS.get(i).setAddress(Integer.parseInt(j));
                 return loadRS.get(i).getTag();
+            }
+        }
+        return "";
+    }
+
+    private static String addToBranchRS(Instruction instruction) {
+        for (int i = 0; i < branchRS.size(); i++) {
+            if (!branchRS.get(i).isBusy()) {
+                branchRS.get(i).setValues(true, 1, instruction); // Assuming 1 cycle for branch evaluation
+                return branchRS.get(i).getTag();
             }
         }
         return "";
@@ -310,6 +328,9 @@ public class Main {
         for(int i =0; i < loadReservationStationSize; i++){
             loadRS.add(new LoadRSEntry("L" + i, null));
         }
+        for(int i =0; i < branchReservationStationSize; i++){
+            branchRS.add(new BranchRSEntry("B" + i, null));
+        }
     }
 
     public static void printRegisters(HashMap<String, RegisterEntry> registerFile) {
@@ -406,6 +427,14 @@ public class Main {
                     case S_D:
                         if (checkAnEmptyStation(storeRS)) {
                             tag = addToStoreRS(clonedInstruction);
+                            clonedInstruction.setStatus(Status.ISSUED);
+                            pc++;
+                        }
+                        break;
+                    case BNE:
+                    case BEQ:
+                        if (checkAnEmptyStation(branchRS)) {
+                            tag = addToBranchRS(clonedInstruction);
                             clonedInstruction.setStatus(Status.ISSUED);
                             pc++;
                         }
