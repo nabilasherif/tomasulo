@@ -29,13 +29,11 @@ public class TomasuloSimulator extends Application {
 
     private TextField clockCycleField;
 
-    RegisterFile registerFile = new RegisterFile();
-//    ObservableList<RegisterEntry> registerEntries = FXCollections.observableArrayList();
-    ObservableList<String> registerNames = FXCollections.observableArrayList();
+
 
     //tables
     private TableView<Instruction> instructionQueueTable;
-    private TableView<RegisterEntry> registerFileTable;
+    private TableView<Map.Entry<String, RegisterEntry>> registerFileTable;
     private TableView<Map.Entry<Integer, byte[]>> cacheTable;
     private TableView<ArithmeticRSEntry> addRSTable;
     private TableView<ArithmeticRSEntry> mulRSTable;
@@ -215,35 +213,25 @@ public class TomasuloSimulator extends Application {
     }
 
 
-    private TableView<RegisterEntry> createRegisterFileTable() {
-        // Create the TableView instance
-        TableView<RegisterEntry> registerFileTable = new TableView<>();
+    private TableView<Map.Entry<String, RegisterEntry>> createRegisterFileTable() {
+        TableView<Map.Entry<String, RegisterEntry>> registerFileTable = new TableView<>();
 
         // Register Name Column
-        TableColumn<RegisterEntry, String> registerNameCol = new TableColumn<>("Register");
-//        registerNameCol.setCellValueFactory(cellData -> {
-//            // Access the register name directly from the RegisterEntry
-//            return new SimpleStringProperty(cellData.);
-//        });
+        TableColumn<Map.Entry<String, RegisterEntry>, String> registerNameCol = new TableColumn<>("Register");
+        registerNameCol.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getKey())
+        );
 
         // Value Column
-        TableColumn<RegisterEntry, String> valueCol = new TableColumn<>("Value");
-        valueCol.setCellValueFactory(cellData -> {
-            // Check if value is non-zero; otherwise, return "N/A"
-            String value = cellData.getValue().getValue() != 0
-                    ? String.valueOf(cellData.getValue().getValue())
-                    : "N/A";
-            return new SimpleStringProperty(value);
-        });
+        TableColumn<Map.Entry<String, RegisterEntry>, String> valueCol = new TableColumn<>("Value");
+        valueCol.setCellValueFactory(cellData -> new SimpleStringProperty("" + cellData.getValue().getValue().getValue()));
 
         // Q Column
-        TableColumn<RegisterEntry, String> qCol = new TableColumn<>("Q");
-        qCol.setCellValueFactory(cellData -> {
-            // Return the value of the Q field
-            return new SimpleStringProperty(cellData.getValue().getQ());
-        });
+        TableColumn<Map.Entry<String, RegisterEntry>, String> qCol = new TableColumn<>("Q");
+        qCol.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getValue().getQ())
+        );
 
-        // Add all columns to the TableView
         registerFileTable.getColumns().addAll(registerNameCol, valueCol, qCol);
 
         return registerFileTable;
@@ -326,9 +314,9 @@ public class TomasuloSimulator extends Application {
 
         ObservableList<Instruction> instructions = FXCollections.observableArrayList(Main.instructionQueue);
         instructionQueueTable.setItems(instructions);
-        System.out.println("Instructions size: " + instructions.size());
 
-        ObservableList<RegisterEntry> registerEntries = FXCollections.observableArrayList(Main.registerFile.values());
+
+        ObservableList<Map.Entry<String, RegisterEntry>> registerEntries = FXCollections.observableArrayList(Main.registerFile.entrySet());
         registerFileTable.setItems(registerEntries);
         instructionQueueTable.refresh();
         registerFileTable.refresh();
