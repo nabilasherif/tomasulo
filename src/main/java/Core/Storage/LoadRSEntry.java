@@ -16,4 +16,13 @@ public class LoadRSEntry extends RSBaseEntry {
     public int getAddress() {
         return this.address;
     }
+    public void printRSDetails() {
+        System.out.println("Tag: " + this.getTag());
+        System.out.println("Busy: " + this.isBusy());
+        System.out.println("Remaining Cycles: " + this.getRemainingCycles());
+        System.out.println("Instruction Status: " + (this.instruction != null ? this.instruction.getStatus() : "No Instruction"));
+        System.out.println("Address:" + this.address);
+        System.out.println("Result: " + this.result);
+        System.out.println("-------------------------");
+    }
 }

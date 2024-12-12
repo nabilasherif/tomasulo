@@ -34,4 +34,15 @@ public class StoreRSEntry extends RSBaseEntry {
     public String getQ() {
         return q;
     }
+    public void printRSDetails() {
+        System.out.println("Tag: " + this.getTag());
+        System.out.println("Busy: " + this.isBusy());
+        System.out.println("Remaining Cycles: " + this.getRemainingCycles());
+        System.out.println("Instruction Status: " + (this.instruction != null ? this.instruction.getStatus() : "No Instruction"));
+        System.out.println("Q: " + this.getQ());
+        System.out.println("Value: " + this.getValue());
+        System.out.println("Address: " + (this.address != null? this.getAddress(): "not assigned yet"));
+        System.out.println("Result: " + this.result);
+        System.out.println("-------------------------");
+    }
 }
