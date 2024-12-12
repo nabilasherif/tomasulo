@@ -32,8 +32,6 @@ public class TomasuloSimulator extends Application {
 
     private TextField clockCycleField;
 
-
-
     //tables
     private TableView<Instruction> instructionQueueTable;
     private TableView<Map.Entry<String, RegisterEntry>> registerFileTable;
@@ -76,18 +74,13 @@ public class TomasuloSimulator extends Application {
         VBox root = new VBox(10);
         root.setPadding(new Insets(10));
 
-
-
         instructionQueueTable = createInstructionQueueTable();
         registerFileTable = createRegisterFileTable();
         cacheTable = createCacheTable();
         addRSTable = createAddSubTable();
         mulRSTable = createMulDivTable();
-        loadRSTable=createLoadRSTable();
-//        addRSTable = createAddRSTable("Add Reservation Stations", new ArrayList<>());
-//        mulRSTable = createMulRSTable("Multiply Reservation Stations", new ArrayList<>());
-//        loadRSTable = createLRSTable("Load Reservation Stations", new ArrayList<>());
-//        storeRSTable = createSRSTable("Store Reservation Stations", new ArrayList<>());
+        loadRSTable = createLoadRSTable();
+        storeRSTable = createStoreRSTable();
 
         //latencies config
         VBox latencyConfigBox = new VBox(10);
@@ -137,14 +130,6 @@ public class TomasuloSimulator extends Application {
         applyInputsButton = new Button("Apply Inputs");
         applyInputsButton.setOnAction(event -> applyAllInputs());
 
-//        String filePath = "src/main/java/Core/program.txt";
-//        List<Instruction> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
-//        ObservableList<Instruction> instructions = FXCollections.observableArrayList(instructionQueue);
-//        instructionQueueTable.setItems(instructions);
-//
-//        initializeRegisterFile();
-//        registerFileTable.setItems(registerEntries);
-
         root.getChildren().addAll(
                 new Label("Latencies (cycles):"), latencyConfigBox,
                 new Label("Reservation Station Sizes:"), rsConfigBox,
@@ -155,14 +140,10 @@ public class TomasuloSimulator extends Application {
                         new VBox(10, new Label("Register File"), registerFileTable),
                         new VBox(10, new Label("Cache"), cacheTable)
                 ),
-                new Label("Add/Sub_RS"), addRSTable,
-                new Label("Mul/Div_RS"), mulRSTable,
-                new Label("Load_RS"),loadRSTable
-
-//                new Label("Add Reservation Station"), addRSTable,
-//                new Label("Multiply Reservation Station"), mulRSTable,
-//                new Label("Load Reservation Station"), loadRSTable,
-//                new Label("Store Reservation Station"), storeRSTable
+                new Label("Add/Sub RS"), addRSTable,
+                new Label("Mul/Div RS"), mulRSTable,
+                new Label("Load Buffer"),loadRSTable,
+                new Label("Store Buffer"),storeRSTable
         );
         ScrollPane scrollPane = new ScrollPane(root);
         scrollPane.setFitToHeight(true);
@@ -188,33 +169,32 @@ public class TomasuloSimulator extends Application {
         vbox.getChildren().addAll(rsLabel, textField);
         return vbox;
     }
+
     private TableView<StoreRSEntry> createStoreRSTable() {
-        // Create a TableView for LoadRSEntry
         TableView<StoreRSEntry> table = new TableView<>();
 
-        // Tag Column
         TableColumn<StoreRSEntry, String> tagCol = new TableColumn<>("Tag");
         tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
 
-        // Busy Column
+        TableColumn<StoreRSEntry, String> operationCol = new TableColumn<>("Operation");
+        operationCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getInstruction().getOp().toString()));
+
         TableColumn<StoreRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
         busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
 
+        TableColumn<StoreRSEntry, String> addCol = new TableColumn<>("Address");
+        addCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getAddress())));
 
-        TableColumn<StoreRSEntry, Boolean> VCol = new TableColumn<>("V");
-        VCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValue()));
+        TableColumn<StoreRSEntry, String> valCol = new TableColumn<>("Value");
+        valCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getValue())));
 
-        TableColumn<StoreRSEntry, Boolean> QCol = new TableColumn<>("Q");
-        VCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQ()));
+        TableColumn<StoreRSEntry, String> qCol = new TableColumn<>("Q");
+        qCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getQ())));
 
-        // Address Column
-        TableColumn<StoreRSEntry, Integer> addressCol = new TableColumn<>("Address");
-        addressCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getAddress()).asObject());
+        TableColumn<StoreRSEntry, Integer> cyclesCol = new TableColumn<>("Remaining Cycles");
+        cyclesCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getRemainingCycles()).asObject());
 
-        // Add all columns to the table
-        table.getColumns().addAll(tagCol, busyCol, addressCol);
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
+        table.getColumns().addAll(tagCol, operationCol, busyCol, addCol, valCol, qCol, cyclesCol);
         return table;
     }
 
@@ -230,17 +210,16 @@ public class TomasuloSimulator extends Application {
         TableColumn<LoadRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
         busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
 
-
         // Address Column
         TableColumn<LoadRSEntry, Integer> addressCol = new TableColumn<>("Address");
         addressCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getAddress()).asObject());
 
-        // Add all columns to the table
         table.getColumns().addAll(tagCol, busyCol, addressCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         return table;
     }
+
     private TableView<ArithmeticRSEntry> createMulDivTable() {
         // Similar to Add/Sub TableView
         TableView<ArithmeticRSEntry> table = new TableView<>();
@@ -326,7 +305,6 @@ public class TomasuloSimulator extends Application {
         return table;
     }
 
-
     private TableView<Instruction> createInstructionQueueTable(){
         TableView<Instruction> tableView = new TableView<>();
 
@@ -358,7 +336,6 @@ public class TomasuloSimulator extends Application {
 
         return tableView;
     }
-
 
     private TableView<Map.Entry<String, RegisterEntry>> createRegisterFileTable() {
         TableView<Map.Entry<String, RegisterEntry>> registerFileTable = new TableView<>();
@@ -403,16 +380,6 @@ public class TomasuloSimulator extends Application {
         tableView.getColumns().addAll(blockAddressCol, dataCol);
         return tableView;
     }
-
-//    private void initializeRegisterFile() {
-//        Map<String, RegisterEntry> registers = registerFile.getRegisters();
-//
-//        for (Map.Entry<String, RegisterEntry> entry : registers.entrySet()) {
-//            RegisterEntry regEntry = entry.getValue();
-//            registerEntries.add(regEntry);
-//            registerNames.add(entry.getKey());
-//        }
-//    }
 
     private void applyLatencies() {
         try {
