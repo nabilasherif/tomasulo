@@ -5,6 +5,7 @@ import Core.InstructionFileParser;
 import Core.Main;
 import Core.Register.RegisterEntry;
 import Core.Register.RegisterFile;
+import Core.Status;
 import Core.Storage.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -196,14 +197,44 @@ public class TomasuloSimulator extends Application {
         TableColumn<Instruction, String> kCol = new TableColumn<>("K");
         kCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getK()));
 
-        TableColumn<Instruction, String> statusCol = new TableColumn<>("Status");
-//        statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
+        TableColumn<Instruction, String> issuedCol = new TableColumn<>("Issued");
 
-        tableView.getColumns().addAll(operationCol, destCol, jCol, kCol, statusCol);
+        issuedCol.setCellValueFactory(cellData -> {
+            Instruction instruction = cellData.getValue();
+            String issuedValue = "";
+            if (Status.ISSUED == (instruction.getStatus())) { // Assuming `getStatus` method exists in `Instruction`
+                issuedValue = String.valueOf(Main.cycle);
+            }
+            return new SimpleStringProperty(issuedValue);
+        });
+
+        TableColumn<Instruction, String> executedCol = new TableColumn<>("Executed");
+        executedCol.setCellValueFactory(cellData -> {
+            Instruction instruction = cellData.getValue();
+            String ExecutedValue = "";
+            if (Status.EXECUTED == (instruction.getStatus())) { // Assuming `getStatus` method exists in `Instruction`
+                ExecutedValue = String.valueOf(Main.cycle);
+            }
+            return new SimpleStringProperty(ExecutedValue);
+        });
+
+        TableColumn<Instruction, String> writebackCol = new TableColumn<>("Writeback");
+        writebackCol.setCellValueFactory(cellData -> {
+            Instruction instruction = cellData.getValue();
+            String WriteValue = "";
+            if (Status.WRITTEN_BACK == (instruction.getStatus())) { // Assuming `getStatus` method exists in `Instruction`
+                WriteValue = String.valueOf(Main.cycle);
+            }
+            return new SimpleStringProperty(WriteValue);
+        });
+        // Adding the updated columns to the TableView
+        tableView.getColumns().addAll(operationCol, destCol, jCol, kCol, issuedCol, executedCol, writebackCol);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
 
         return tableView;
     }
+
 
     private TableView<RegisterEntry> createRegisterFileTable() {
         TableView<RegisterEntry> registerFileTable = new TableView<>();

@@ -6,7 +6,7 @@ import Core.Storage.*;
 import java.util.*;
 
 public class Main {
-
+    public static int cycle=0;
     public static int blockSize = 3;
     public static int cacheSize= 3;
     public static Memory memory=new Memory(2024, blockSize);
