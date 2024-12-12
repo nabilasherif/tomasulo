@@ -394,7 +394,7 @@ public class Main {
 
     public static void handleBranchTrue(Instruction instruction){
         int addressLoop = Integer.parseInt(instruction.getJ());
-        int addressBranch=0;
+        int addressBranch=instructionQueueParser.size();
 
         //moshkela law feh wahda tanya zayaha belzabt fa ow n store lel kol branch its index(hasa ahsan)
         for (int i=0;i<instructionQueueParser.size();i++){
