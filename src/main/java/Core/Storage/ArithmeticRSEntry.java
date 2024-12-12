@@ -62,9 +62,13 @@ public class ArithmeticRSEntry extends RSBaseEntry {
 
 
     public double execute(){
-        //check the type add or sub or bne or BEQ
         //TODO: ASK ABOUT WHETHER BNE AND BEQ ENTER THE RESERVATION STATION OR NOT
-        return (Double)this.vj + (Double) this.vk;
+        if(instruction.getOp() == InstructionType.ADD_D || op == InstructionType.ADD_S || op == InstructionType.DADDI )
+            return (Double)this.vj + (Double) this.vk;
+        if(instruction.getOp() == InstructionType.SUB_D ||op == InstructionType.SUB_S || op == InstructionType.DSUBI )
+            return (Double)this.vj - (Double) this.vk;
+        // this is for now until we know fe branches hena wala la2
+        return 0.0;
     }
 
     public void printRSDetails() {

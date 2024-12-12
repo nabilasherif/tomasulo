@@ -8,6 +8,7 @@ public class RegisterFile {
     public RegisterFile() {
         registers = new HashMap<>();
         for (int i = 0; i < 32; i++) {
+
             registers.put("R" + i, new RegisterEntry());
         }
         for (int i = 0; i < 32; i++) {
