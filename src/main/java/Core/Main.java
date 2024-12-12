@@ -9,8 +9,8 @@ public class Main {
 
     public static int blockSize = 3;
     public static int cacheSize= 3;
-    public static Memory memory=new Memory(2024, blockSize);
-    public static Cache cache=new Cache(cacheSize,blockSize,memory);
+    public static Memory memory;
+    public static Cache cache;
     public static ArrayList<ArithmeticRSEntry> addSubRS = new ArrayList<>();
     public static ArrayList<ArithmeticRSEntry> mulDivRS = new ArrayList<>();
     public static ArrayList<LoadRSEntry> loadRS = new ArrayList<>();
@@ -43,6 +43,17 @@ public class Main {
             }
         }
         return false;
+    }
+
+    public static void init(){
+
+        String filePath = "src/main/java/Core/program.txt";
+        List<Instruction> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
+
+        Memory memory=new Memory(2024, blockSize);
+        Cache cache=new Cache(cacheSize,blockSize,memory);
+        initReservationStations();
+        initRegisterFile();
     }
 
     public static boolean allStationsEmpty() {
