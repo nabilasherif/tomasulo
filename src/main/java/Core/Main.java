@@ -11,27 +11,26 @@ public class Main {
     public static int cacheSize= 3;
     public static Memory memory;
     public static Cache cache;
-    public static ArrayList<ArithmeticRSEntry> addSubRS;
-    public static ArrayList<ArithmeticRSEntry> mulDivRS;
-    public static ArrayList<LoadRSEntry> loadRS;
-    public static ArrayList<StoreRSEntry> storeRS ;
-    public static HashMap<String, RegisterEntry> registerFile;
+    public static ArrayList<ArithmeticRSEntry> addSubRS = new ArrayList<>();
+    public static ArrayList<ArithmeticRSEntry> mulDivRS = new ArrayList<>();
+    public static ArrayList<LoadRSEntry> loadRS = new ArrayList<>();
+    public static ArrayList<StoreRSEntry> storeRS = new ArrayList<>();
+    public static HashMap<String, RegisterEntry> registerFile = new RegisterFile().getRegisters();
     // From the GUI
     public static int addReservationStationSize= 3;
-    public static int addLatency;
-    public static int addFPLatency;
-    public static int subLatency;
-    public static int subFPLatency;
-    public static int mulReservationStationSize;
-    public static int mulLatency;
-    public static int mulFPLatency;
-    public static int divLatency;
-    public static int divFPLatency;
-    public static int loadReservationStationSize;
-    public static int loadLatency;
-    public static int loadPenalty;
-    public static int storeReservationStationSize;
-    public static int storeLatency;
+    public static int addLatency = 4;
+    public static int addFPLatency = 4;
+    public static int subLatency=4;
+    public static int subFPLatency=4;
+    public static int mulReservationStationSize= 3;
+    public static int mulLatency = 4;
+    public static int divLatency = 5;
+    public static int loadReservationStationSize= 3;
+    public static int loadLatency = 4;
+    public static int loadPenalty = 8;
+    public static int storeReservationStationSize= 3;
+    public static int storeLatency = 4;
+    //do we add a store penalty?
     public static ArrayList<BranchRSEntry> branchRS = new ArrayList<>();
     public static int branchReservationStationSize= 3;
     public static int branchLatency = 4;
@@ -80,9 +79,13 @@ public class Main {
         for (int i = 0; i < addSubRS.size(); i++) {
             // If my reservation station's current entry is not busy, add the instruction to the reservation station
             if (!addSubRS.get(i).isBusy()) {
-                if(instruction.getOp() == InstructionType.ADD_D || instruction.getOp() == InstructionType.ADD_S || instruction.getOp() == InstructionType.DADDI )
+                if(instruction.getOp() == InstructionType.ADD_D || instruction.getOp() == InstructionType.ADD_S  )
+                    addSubRS.get(i).setValues(true, addFPLatency, instruction);
+                if(instruction.getOp() == InstructionType.DADDI)
                     addSubRS.get(i).setValues(true, addLatency, instruction);
-                else
+                if(instruction.getOp() == InstructionType.SUB_S || instruction.getOp() == InstructionType.SUB_D)
+                    addSubRS.get(i).setValues(true, subFPLatency, instruction);
+                if(instruction.getOp() == InstructionType.DSUBI)
                     addSubRS.get(i).setValues(true, subLatency, instruction);
                 String j = addSubRS.get(i).instruction.getJ();
                 String k = addSubRS.get(i).instruction.getK();
@@ -241,20 +244,21 @@ public class Main {
             if (currentRS.getTag().equals(tag))
                 continue;
 
-            currentRS.instruction.setStatus(Status.EXECUTING);
-            currentRS.remainingCycles--;
+            if (currentRS.instruction != null && (currentRS.instruction.getStatus()==Status.EXECUTING || currentRS.instruction.getStatus()==Status.ISSUED) ) {
+                currentRS.instruction.setStatus(Status.EXECUTING);
+                currentRS.remainingCycles--;
 
-            if (currentRS.remainingCycles == 0) {
-                currentRS.instruction.setStatus(Status.EXECUTED);
-                // call the correct write to cache with the address
-                justFinished.add(currentRS.getTag());
+                if (currentRS.remainingCycles == 0) {
+                    currentRS.instruction.setStatus(Status.EXECUTED);
+                    // call the correct write to cache with the address
+                    justFinished.add(currentRS.getTag());
+                }
             }
         }
 
         return justFinished;
     }
 
-    //TODO HANDLE WRITE BACK FOR ALL INSTRUCTION TYPES
     public static void writeToBusExcept(HashSet<String> tags) {
         // Populate the write-back queue
         populateWritebackQueue(tags);
@@ -266,7 +270,6 @@ public class Main {
             double value = rs.result;
 
             // Update other reservation stations
-
             for (ArithmeticRSEntry rs2 : addSubRS) {
                 if (rs2.getQj().equals(tag)) {
                     rs2.setVj(value);
@@ -278,6 +281,27 @@ public class Main {
 
                 }
             }
+
+            for (ArithmeticRSEntry rs2 : mulDivRS) {
+                if (rs2.getQj().equals(tag)) {
+                    rs2.setVj(value);
+                    rs2.setQj(null);
+                }
+                if (rs2.getQk().equals(tag)) {
+                    rs2.setVk(value);
+                    rs2.setQk(null);
+
+                }
+            }
+
+            for (StoreRSEntry rs2 : storeRS) {
+                if (rs2.getQ()!= null && rs2.getQ().equals(tag)) {
+                    rs2.setValue(value);
+                    rs2.setQ(null);
+                }
+            }
+
+
 
             //Updating the register files
             String destination= rs.instruction.getDest();
@@ -296,9 +320,9 @@ public class Main {
             // Update status
             rs.instruction.setStatus(Status.WRITTEN_BACK);
             rs.setBusy(false);
+//            rs.clear();
         }
     }
-
     private static void populateWritebackQueue(HashSet<String> tags) {
         for (ArithmeticRSEntry rs : addSubRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
@@ -458,8 +482,8 @@ public class Main {
             }
 
 
-//            HashSet<String> justExecuted = executeAllExcept(tag);
-//            writeToBusExcept(justExecuted);
+            HashSet<String> justExecuted = executeAllExcept(tag);
+            writeToBusExcept(justExecuted);
             System.out.println("Cycle " + cycle);
 
             for (ArithmeticRSEntry addR : addSubRS)
