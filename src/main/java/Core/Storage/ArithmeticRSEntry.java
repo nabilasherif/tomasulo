@@ -63,7 +63,7 @@ public class ArithmeticRSEntry extends RSBaseEntry {
     @Override
     public double execute(){
         //TODO: ASK ABOUT WHETHER BNE AND BEQ ENTER THE RESERVATION STATION OR NOT
-        InstructionType op = instruction.getOp();
+        InstructionType op = this.getOp();
         switch (op) {
             case ADD_D, DADDI: return Operations.ADD_D((Double)this.vj, (Double)this.vk);
             case ADD_S: return Operations.ADD_S((Float)this.vj, (Float)this.vk);

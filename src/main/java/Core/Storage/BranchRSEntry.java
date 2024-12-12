@@ -12,54 +12,33 @@ public class BranchRSEntry extends RSBaseEntry {
     private String qj;
     private String qk;
 
-    public BranchRSEntry(String name, Instruction instruction) {
-        super(name, instruction);
-    }
+    public BranchRSEntry(String name, Instruction instruction) {super(name, instruction);}
 
-    public InstructionType getOp() {
-        return op;
-    }
+    public InstructionType getOp() {return op;}
 
-    public void setOp(InstructionType op) {
-        this.op = op;
-    }
+    public void setOp(InstructionType op) {this.op = op;}
 
-    public void setVj(Object value) {
-        this.vj = value;
-    }
+    public void setVj(Object value) {this.vj = value;}
 
-    public Object getVj() {
-        return vj;
-    }
+    public Object getVj() {return vj;}
 
-    public void setVk(Object value) {
-        this.vk = value;
-    }
+    public void setVk(Object value) {this.vk = value;}
 
     public Object getVk() {return vk;}
 
-    public void setQj(String qj) {
-        this.qj = qj;
-    }
+    public void setQj(String qj) {this.qj = qj;}
 
-    public String getQj() {
-        return qj;
-    }
+    public String getQj() {return qj;}
 
-    public void setQk(String qk) {
-        this.qk = qk;
-    }
+    public void setQk(String qk) {this.qk = qk;}
 
-    public String getQk() {
-        return qk;
-    }
+    public String getQk() {return qk;}
 
-    public void clear() {
-        super.setBusy(false);
-    }
+    public void clear() {super.setBusy(false);}
 
+    @Override
     public double execute(){
-        InstructionType op = instruction.getOp();
+        InstructionType op = this.getOp();
         switch (op) {
             case BNE: if(Operations.BNE((Long)this.vj, (Long)this.vk)) return 1.0; else return 0.0;
             case BEQ: if(Operations.BEQ((Long)this.vj, (Long)this.vk)) return 1.0; else return 0.0;

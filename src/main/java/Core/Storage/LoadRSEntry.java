@@ -1,6 +1,8 @@
 package Core.Storage;
 
 import Core.Instruction.Instruction;
+import Core.Instruction.InstructionType;
+import Core.Operations;
 
 public class LoadRSEntry extends RSBaseEntry {
     private Integer address;
@@ -15,6 +17,19 @@ public class LoadRSEntry extends RSBaseEntry {
 
     public int getAddress() {
         return this.address;
+    }
+
+    @Override
+    public double execute() {
+        InstructionType op = instruction.getOp();
+        switch (op) {
+            case LW: return Operations.LW(this.getAddress());
+            case LD: return Operations.LD(this.getAddress());
+            case L_S: return Operations.L_S(this.getAddress());
+            case L_D: return Operations.L_D(this.getAddress());
+            default:
+                return 0.0;
+        }
     }
 
     public void printRSDetails() {

@@ -2,7 +2,6 @@ package Core;
 import Core.Instruction.*;
 import Core.Register.*;
 import Core.Storage.*;
-
 import java.util.*;
 
 public class Main {
@@ -12,7 +11,7 @@ public class Main {
     public static Memory memory=new Memory(2024, blockSize);
     public static Cache cache=new Cache(cacheSize,blockSize,memory);
     public static ArrayList<ArithmeticRSEntry> addSubRS = new ArrayList<>();
-    public static ArrayList<MultRSEntry> mulDivRS = new ArrayList<>();
+    public static ArrayList<ArithmeticRSEntry> mulDivRS = new ArrayList<>();
     public static ArrayList<LoadRSEntry> loadRS = new ArrayList<>();
     public static ArrayList<StoreRSEntry> storeRS = new ArrayList<>();
     public static HashMap<String, RegisterEntry> registerFile = new RegisterFile().getRegisters();
@@ -38,6 +37,8 @@ public class Main {
     public static int branchLatency = 4;
     public static int branchPenalty = 1;
     public static  Queue<RSBaseEntry> writeBackQueue = new LinkedList<>();
+    public static List<Instruction> instructionQueue = new ArrayList<>();
+
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
         for (RSBaseEntry rs : reservationStation) {
             if (!rs.isBusy()) {
@@ -189,36 +190,26 @@ public class Main {
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
                     currentRS.execute();
+                    //where to store the result
                     justFinished.add(currentRS.getTag());
                 }
             }
         }
 
-        for (MultRSEntry currentRS : mulDivRS) {
+        for (ArithmeticRSEntry currentRS : mulDivRS) {
             if (currentRS.getTag().equals(tag))
                 continue;
-            if (currentRS.getVj() != null && currentRS.getVk() != null && (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
+
+            if (currentRS.getVj() != null && currentRS.getVk() != null &&
+                    (currentRS.instruction.getStatus() == Status.EXECUTING ||
+                            currentRS.instruction.getStatus() == Status.ISSUED)) {
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    switch (currentRS.instruction.getOp()) {
-                        case MUL_D:
-                            currentRS.result = Operations.MUL_D((double) currentRS.getVj(), (double) currentRS.getVk());
-                            break;
-                        case MUL_S:
-                            currentRS.result = Operations.MUL_S((float) currentRS.getVj(), (float) currentRS.getVk());
-                            break;
-                        case DIV_D:
-                            currentRS.result = Operations.DIV_D((double) currentRS.getVj(), (double) currentRS.getVk());
-                            break;
-                        case DIV_S:
-                            currentRS.result = Operations.DIV_S((float) currentRS.getVj(), (float) currentRS.getVk());
-                            break;
-                        default:
-                            break;
-                    }
+                    //where to store the result
+                    currentRS.execute();
                     justFinished.add(currentRS.getTag());
                 }
             }
@@ -228,87 +219,49 @@ public class Main {
             if (currentRS.getTag().equals(tag))
                 continue;
 
-            if (currentRS.getValue() != null && (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
+            if (currentRS.getValue() != null &&
+                    (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    switch (currentRS.instruction.getOp()) {
-                        case SW:
-                            Operations.SW(currentRS.instruction.getDest(), currentRS.getAddress());
-                            break;
-                        case SD:
-                            Operations.SD(currentRS.instruction.getDest(), currentRS.getAddress());
-                            break;
-                        case S_S:
-                            Operations.S_S(currentRS.instruction.getDest(), currentRS.getAddress());
-                            break;
-                        case S_D:
-                            Operations.S_D(currentRS.instruction.getDest(), currentRS.getAddress());
-                            break;
-                        default:
-                            break;
-                    }
+                    currentRS.execute();
                     justFinished.add(currentRS.getTag());
                 }
             }
         }
 
         for (LoadRSEntry currentRS : loadRS) {
-            if (currentRS.getTag().equals(tag))
-                continue;
+            if (currentRS.getTag().equals(tag)) continue;
 
             currentRS.instruction.setStatus(Status.EXECUTING);
             currentRS.remainingCycles--;
 
             if (currentRS.remainingCycles == 0) {
                 currentRS.instruction.setStatus(Status.EXECUTED);
-                switch (currentRS.instruction.getOp()) {
-                    case LW:
-                        currentRS.result = Operations.LW(currentRS.getAddress());
-                        break;
-                    case LD:
-                        currentRS.result = Operations.LD(currentRS.getAddress());
-                        break;
-                    case L_S:
-                        currentRS.result = Operations.L_S(currentRS.getAddress());
-                        break;
-                    case L_D:
-                        currentRS.result = Operations.L_D(currentRS.getAddress());
-                        break;
-                    default:
-                        break;
-                }
+                currentRS.execute();
                 justFinished.add(currentRS.getTag());
             }
         }
 
         for (BranchRSEntry currentRS : branchRS) {
-            if (currentRS.getTag().equals(tag))
-                continue;
+            if (currentRS.getTag().equals(tag)) continue;
 
-            if (currentRS.getVj() != null && currentRS.getVk() != null && (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
+            if (currentRS.getVj() != null && currentRS.getVk() != null
+                    && (currentRS.instruction.getStatus() == Status.EXECUTING
+                    || currentRS.instruction.getStatus() == Status.ISSUED)) {
+
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    switch (currentRS.instruction.getOp()) {
-                        case BNE:
-                            currentRS.result = Operations.BNE((long) currentRS.getVj(), (long) currentRS.getVk()) ? 1 : 0;
-                            break;
-                        case BEQ:
-                            currentRS.result = Operations.BEQ((long) currentRS.getVj(), (long) currentRS.getVk()) ? 1 : 0;
-                            break;
-                        default:
-                            break;
-                    }
+                    currentRS.execute();
                     justFinished.add(currentRS.getTag());
                 }
             }
         }
-
         return justFinished;
     }
 
@@ -364,7 +317,7 @@ public class Main {
             }
         }
 
-        for (MultRSEntry rs : mulDivRS) {
+        for (ArithmeticRSEntry rs : mulDivRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
@@ -384,18 +337,23 @@ public class Main {
     }
 
     public static void initReservationStations(){
+        addSubRS=new ArrayList<>();
         for(int i =0; i < addReservationStationSize; i++){
             addSubRS.add(new ArithmeticRSEntry("A" + i, null));
         }
+        mulDivRS=new ArrayList<>();
         for(int i =0; i < mulReservationStationSize; i++){
-            mulDivRS.add(new MultRSEntry("M" + i, null));
+            mulDivRS.add(new ArithmeticRSEntry("M" + i, null));
         }
+        storeRS =new ArrayList<>();
         for(int i =0; i < storeReservationStationSize; i++){
             storeRS.add(new StoreRSEntry("S" + i, null));
         }
+        loadRS=new ArrayList<>();
         for(int i =0; i < loadReservationStationSize; i++){
             loadRS.add(new LoadRSEntry("L" + i, null));
         }
+        branchRS=new ArrayList<>();
         for(int i =0; i < branchReservationStationSize; i++){
             branchRS.add(new BranchRSEntry("B" + i, null));
         }
@@ -418,8 +376,15 @@ public class Main {
         printRegisters(registerFile);
     }
 
-    public static void initPreferences(){
+    public static void init(){
 
+        String filePath = "src/main/java/Core/program.txt";
+        instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
+
+        Memory memory=new Memory(2024, blockSize);
+        Cache cache=new Cache(cacheSize,blockSize,memory);
+        initReservationStations();
+        initRegisterFile();
     }
 
     public static void main(String[] args) {
@@ -430,7 +395,7 @@ public class Main {
         int pc = 0;
 
         // TODO: INITIALISE ALL INPUTS FUNCTION FOR INITIALISING ALL GLOBAL VARIABLES
-        initPreferences();
+        init();
         initReservationStations();
         initRegisterFile();
 
