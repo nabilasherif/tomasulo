@@ -32,7 +32,6 @@ public class Main {
     public static int loadPenalty = 8;
     public static int storeReservationStationSize= 3;
     public static int storeLatency = 4;
-
     public static  Queue<ArithmeticRSEntry> writeBackQueueAddRS = new LinkedList<>();
 
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
@@ -43,6 +42,7 @@ public class Main {
         }
         return false;
     }
+
 
     public static boolean allStationsEmpty() {
         for (RSBaseEntry rs : addSubRS) {
@@ -114,7 +114,6 @@ public class Main {
         for (ArithmeticRSEntry currentRS : mulDivRS) {
             if (currentRS.getTag().equals(tag))
                 continue;
-
             if (currentRS.getVj() != null && currentRS.getVk() != null && (currentRS.instruction.getStatus()==Status.EXECUTING || currentRS.instruction.getStatus()==Status.ISSUED) ) {
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
@@ -188,6 +187,7 @@ public class Main {
                 if (rs2.getQk().equals(tag)) {
                     rs2.setVk(value);
                     rs2.setQk(null);
+
                 }
             }
 
