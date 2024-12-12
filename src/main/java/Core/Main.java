@@ -11,11 +11,11 @@ public class Main {
     public static int cacheSize= 3;
     public static Memory memory;
     public static Cache cache;
-    public static ArrayList<ArithmeticRSEntry> addSubRS;
-    public static ArrayList<ArithmeticRSEntry> mulDivRS;
-    public static ArrayList<LoadRSEntry> loadRS;
-    public static ArrayList<StoreRSEntry> storeRS ;
-    public static HashMap<String, RegisterEntry> registerFile;
+    public static ArrayList<ArithmeticRSEntry> addSubRS=new ArrayList<>();
+    public static ArrayList<ArithmeticRSEntry> mulDivRS=new ArrayList<>();
+    public static ArrayList<LoadRSEntry> loadRS=new ArrayList<>();
+    public static ArrayList<StoreRSEntry> storeRS =new ArrayList<>();
+    public static HashMap<String, RegisterEntry> registerFile= new HashMap<>();
     // From the GUI
     public static int addReservationStationSize= 3;
     public static int addLatency;
@@ -353,6 +353,7 @@ public class Main {
     }
 
     public static void initRegisterFile(){
+        registerFile = new RegisterFile().getRegisters();
         int i =0;
         for(Map.Entry<String, RegisterEntry> entry : registerFile.entrySet()){
             entry.getValue().setValue(i);
