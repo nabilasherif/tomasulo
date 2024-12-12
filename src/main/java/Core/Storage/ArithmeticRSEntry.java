@@ -60,7 +60,6 @@ public class ArithmeticRSEntry extends RSBaseEntry {
         super.setBusy(false);
     }
 
-    @Override
     public double execute(){
         //TODO: ASK ABOUT WHETHER BNE AND BEQ ENTER THE RESERVATION STATION OR NOT
         InstructionType op = this.getOp();
@@ -78,7 +77,6 @@ public class ArithmeticRSEntry extends RSBaseEntry {
             default:
                 return 0.0;
         }
-        // this is for now until we know fe branches hena wala la2
     }
 
     public void printRSDetails() {
@@ -90,7 +88,7 @@ public class ArithmeticRSEntry extends RSBaseEntry {
         System.out.println("Vk: " + this.getVk());
         System.out.println("Qj: " + this.getQj());
         System.out.println("Qk: " + this.getQk());
-        System.out.println("Result: " + this.result);
+        System.out.println("Result: " + this.getResult());
         System.out.println("-------------------------");
     }
 }

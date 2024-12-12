@@ -36,15 +36,13 @@ public class BranchRSEntry extends RSBaseEntry {
 
     public void clear() {super.setBusy(false);}
 
-    @Override
-    public double execute(){
+    public boolean execute(){
         InstructionType op = this.getOp();
         switch (op) {
-            case BNE: if(Operations.BNE((Long)this.vj, (Long)this.vk)) return 1.0; else return 0.0;
-            case BEQ: if(Operations.BEQ((Long)this.vj, (Long)this.vk)) return 1.0; else return 0.0;
-            default:
-                return 0.0;
+            case BNE: return Operations.BNE((Long)this.vj, (Long)this.vk);
+            case BEQ: return Operations.BEQ((Long)this.vj, (Long)this.vk);
         }
+        return false;
     }
 
     public void printRSDetails() {
@@ -56,7 +54,7 @@ public class BranchRSEntry extends RSBaseEntry {
         System.out.println("Vk: " + this.getVk());
         System.out.println("Qj: " + this.getQj());
         System.out.println("Qk: " + this.getQk());
-        System.out.println("Result: " + this.result);
+        System.out.println("Result: " + this.getResult());
         System.out.println("-------------------------");
     }
 }

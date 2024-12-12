@@ -32,11 +32,11 @@ public class StoreRSEntry extends RSBaseEntry {
         System.out.println("Q: " + this.getQ());
         System.out.println("Value: " + this.getValue());
         System.out.println("Address: " + (this.address != null? this.getAddress(): "not assigned yet"));
-        System.out.println("Result: " + this.result);
+        System.out.println("Result: " + this.getResult());
         System.out.println("-------------------------");
     }
 
-    public double execute() {
+    public void execute() {
         InstructionType op = instruction.getOp();
         switch (op) {
             case SW:  Operations.SW(this.instruction.getDest(), this.getAddress()); break;
@@ -44,6 +44,5 @@ public class StoreRSEntry extends RSBaseEntry {
             case S_S:Operations.S_S(this.instruction.getDest(), this.getAddress());break;
             case S_D: Operations.S_D(this.instruction.getDest(), this.getAddress());break;
         }
-        return 1.0;
     }
 }

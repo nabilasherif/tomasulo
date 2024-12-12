@@ -189,8 +189,7 @@ public class Main {
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    currentRS.execute();
-                    //where to store the result
+                    currentRS.setResult(currentRS.execute());
                     justFinished.add(currentRS.getTag());
                 }
             }
@@ -208,8 +207,7 @@ public class Main {
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    //where to store the result
-                    currentRS.execute();
+                    currentRS.setResult(currentRS.execute());
                     justFinished.add(currentRS.getTag());
                 }
             }
@@ -240,7 +238,7 @@ public class Main {
 
             if (currentRS.remainingCycles == 0) {
                 currentRS.instruction.setStatus(Status.EXECUTED);
-                currentRS.execute();
+                currentRS.setResult(currentRS.execute());
                 justFinished.add(currentRS.getTag());
             }
         }
@@ -257,7 +255,7 @@ public class Main {
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    currentRS.execute();
+                    currentRS.execute(); //not sure what to do
                     justFinished.add(currentRS.getTag());
                 }
             }
@@ -274,7 +272,7 @@ public class Main {
         if (!writeBackQueue.isEmpty()) {
             RSBaseEntry rs = writeBackQueue.poll();
             String tag = rs.getTag();
-            double value = rs.result;
+            double value = rs.getResult();
 
             // Update other reservation stations
 

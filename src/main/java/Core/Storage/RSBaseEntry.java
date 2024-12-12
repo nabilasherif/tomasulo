@@ -8,7 +8,7 @@ public class RSBaseEntry {
     private boolean busy;
     public int remainingCycles;
     public Instruction instruction;
-    public double result;
+    private double result;
 
     public RSBaseEntry(String tag, Instruction instruction) {
         this.tag = tag;
@@ -54,7 +54,7 @@ public class RSBaseEntry {
         this.instruction = instruction;
     }
 
-    public double execute() {
-        return 0;
-    }
+    public void setResult(double result) {this.result = result;}
+
+    public double getResult() {return this.result;}
 }
