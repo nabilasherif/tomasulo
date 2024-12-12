@@ -136,13 +136,13 @@ public class TomasuloSimulator extends Application {
         applyInputsButton = new Button("Apply Inputs");
         applyInputsButton.setOnAction(event -> applyAllInputs());
 
-        String filePath = "src/main/java/Core/program.txt";
-        List<Instruction> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
-        ObservableList<Instruction> instructions = FXCollections.observableArrayList(instructionQueue);
-        instructionQueueTable.setItems(instructions);
-
-        initializeRegisterFile();
-        registerFileTable.setItems(registerEntries);
+//        String filePath = "src/main/java/Core/program.txt";
+//        List<Instruction> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
+//        ObservableList<Instruction> instructions = FXCollections.observableArrayList(instructionQueue);
+//        instructionQueueTable.setItems(instructions);
+//
+//        initializeRegisterFile();
+//        registerFileTable.setItems(registerEntries);
 
         root.getChildren().addAll(
                 new Label("Latencies (cycles):"), latencyConfigBox,
@@ -260,15 +260,15 @@ public class TomasuloSimulator extends Application {
         return tableView;
     }
 
-    private void initializeRegisterFile() {
-        Map<String, RegisterEntry> registers = registerFile.getRegisters();
-
-        for (Map.Entry<String, RegisterEntry> entry : registers.entrySet()) {
-            RegisterEntry regEntry = entry.getValue();
-            registerEntries.add(regEntry);
-            registerNames.add(entry.getKey());
-        }
-    }
+//    private void initializeRegisterFile() {
+//        Map<String, RegisterEntry> registers = registerFile.getRegisters();
+//
+//        for (Map.Entry<String, RegisterEntry> entry : registers.entrySet()) {
+//            RegisterEntry regEntry = entry.getValue();
+//            registerEntries.add(regEntry);
+//            registerNames.add(entry.getKey());
+//        }
+//    }
 
     private void applyLatencies() {
         try {
@@ -313,6 +313,13 @@ public class TomasuloSimulator extends Application {
         applyLatencies();
         applyReservationStationSizes();
         applyCacheConfig();
+        Main.init();
+        ObservableList<Instruction> instructions = FXCollections.observableArrayList(Main.instructionQueue);
+        instructionQueueTable.setItems(instructions);
+        ObservableList<RegisterEntry> observableList = FXCollections.observableArrayList(Main.registerFile.values());
+        registerFileTable.setItems(observableList);
+        instructionQueueTable.refresh();
+        registerFileTable.refresh();
     }
 
     private void showErrorDialog(String title, String message) {

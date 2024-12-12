@@ -37,6 +37,7 @@ public class Main {
     public static int branchLatency = 4;
     public static int branchPenalty = 1;
     public static  Queue<RSBaseEntry> writeBackQueue = new LinkedList<>();
+    public static List<Instruction> instructionQueue ;
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
         for (RSBaseEntry rs : reservationStation) {
             if (!rs.isBusy()) {
@@ -49,7 +50,7 @@ public class Main {
     public static void init(){
 
         String filePath = "src/main/java/Core/program.txt";
-        List<Instruction> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
+        instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
 
         Memory memory=new Memory(2024, blockSize);
         Cache cache=new Cache(cacheSize,blockSize,memory);
