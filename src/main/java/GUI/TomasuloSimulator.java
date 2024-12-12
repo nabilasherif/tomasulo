@@ -199,34 +199,13 @@ public class TomasuloSimulator extends Application {
 
         TableColumn<Instruction, String> issuedCol = new TableColumn<>("Issued");
 
-        issuedCol.setCellValueFactory(cellData -> {
-            Instruction instruction = cellData.getValue();
-            String issuedValue = "";
-            if (Status.ISSUED == (instruction.getStatus())) { // Assuming `getStatus` method exists in `Instruction`
-                issuedValue = String.valueOf(Main.cycle);
-            }
-            return new SimpleStringProperty(issuedValue);
-        });
+        issuedCol.setCellValueFactory(cellData -> new SimpleStringProperty("" + cellData.getValue().getIssue()));
 
         TableColumn<Instruction, String> executedCol = new TableColumn<>("Executed");
-        executedCol.setCellValueFactory(cellData -> {
-            Instruction instruction = cellData.getValue();
-            String ExecutedValue = "";
-            if (Status.EXECUTED == (instruction.getStatus())) { // Assuming `getStatus` method exists in `Instruction`
-                ExecutedValue = String.valueOf(Main.cycle);
-            }
-            return new SimpleStringProperty(ExecutedValue);
-        });
+        executedCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getExecution().toString()));
 
         TableColumn<Instruction, String> writebackCol = new TableColumn<>("Writeback");
-        writebackCol.setCellValueFactory(cellData -> {
-            Instruction instruction = cellData.getValue();
-            String WriteValue = "";
-            if (Status.WRITTEN_BACK == (instruction.getStatus())) { // Assuming `getStatus` method exists in `Instruction`
-                WriteValue = String.valueOf(Main.cycle);
-            }
-            return new SimpleStringProperty(WriteValue);
-        });
+        writebackCol.setCellValueFactory(cellData -> new SimpleStringProperty(""+cellData.getValue().getWrite()));
         // Adding the updated columns to the TableView
         tableView.getColumns().addAll(operationCol, destCol, jCol, kCol, issuedCol, executedCol, writebackCol);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
