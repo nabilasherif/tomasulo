@@ -9,30 +9,29 @@ public class Main {
 
     public static int blockSize = 3;
     public static int cacheSize= 3;
-    public static Memory memory=new Memory(2024, blockSize);
-    public static Cache cache=new Cache(cacheSize,blockSize,memory);
-    public static ArrayList<ArithmeticRSEntry> addSubRS = new ArrayList<>();
-    public static ArrayList<MultRSEntry> mulDivRS = new ArrayList<>();
-    public static ArrayList<LoadRSEntry> loadRS = new ArrayList<>();
-    public static ArrayList<StoreRSEntry> storeRS = new ArrayList<>();
-    public static HashMap<String, RegisterEntry> registerFile = new RegisterFile().getRegisters();
+    public static Memory memory;
+    public static Cache cache;
+    public static ArrayList<ArithmeticRSEntry> addSubRS;
+    public static ArrayList<ArithmeticRSEntry> mulDivRS;
+    public static ArrayList<LoadRSEntry> loadRS;
+    public static ArrayList<StoreRSEntry> storeRS ;
+    public static HashMap<String, RegisterEntry> registerFile;
     // From the GUI
     public static int addReservationStationSize= 3;
-    public static int addLatency = 4;
-    public static int addFPLatency = 4;
-    public static int subLatency=4;
-    public static int subFPLatency=4;
-    public static int mulReservationStationSize= 3;
-    public static int mulLatency = 4;
-    public static int mulFPLatency = 4;
-    public static int divLatency = 5;
-    public static int divFPLatency = 5;
-    public static int loadReservationStationSize= 3;
-    public static int loadLatency = 4;
-    public static int loadPenalty = 8;
-    public static int storeReservationStationSize= 3;
-    public static int storeLatency = 4;
-    //do we add a store penalty?
+    public static int addLatency;
+    public static int addFPLatency;
+    public static int subLatency;
+    public static int subFPLatency;
+    public static int mulReservationStationSize;
+    public static int mulLatency;
+    public static int mulFPLatency;
+    public static int divLatency;
+    public static int divFPLatency;
+    public static int loadReservationStationSize;
+    public static int loadLatency;
+    public static int loadPenalty;
+    public static int storeReservationStationSize;
+    public static int storeLatency;
     public static ArrayList<BranchRSEntry> branchRS = new ArrayList<>();
     public static int branchReservationStationSize= 3;
     public static int branchLatency = 4;
@@ -45,6 +44,17 @@ public class Main {
             }
         }
         return false;
+    }
+
+    public static void init(){
+
+        String filePath = "src/main/java/Core/program.txt";
+        List<Instruction> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
+
+        Memory memory=new Memory(2024, blockSize);
+        Cache cache=new Cache(cacheSize,blockSize,memory);
+        initReservationStations();
+        initRegisterFile();
     }
 
     public static boolean allStationsEmpty() {
@@ -195,7 +205,7 @@ public class Main {
             }
         }
 
-        for (MultRSEntry currentRS : mulDivRS) {
+        for (ArithmeticRSEntry currentRS : mulDivRS) {
             if (currentRS.getTag().equals(tag))
                 continue;
             if (currentRS.getVj() != null && currentRS.getVk() != null && (currentRS.instruction.getStatus()==Status.EXECUTING || currentRS.instruction.getStatus()==Status.ISSUED) ) {
@@ -296,7 +306,7 @@ public class Main {
             }
         }
 
-        for (MultRSEntry rs : mulDivRS) {
+        for (ArithmeticRSEntry rs : mulDivRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
@@ -320,7 +330,7 @@ public class Main {
             addSubRS.add(new ArithmeticRSEntry("A" + i, null));
         }
         for(int i =0; i < mulReservationStationSize; i++){
-            mulDivRS.add(new MultRSEntry("M" + i, null));
+            mulDivRS.add(new ArithmeticRSEntry("M" + i, null));
         }
         for(int i =0; i < storeReservationStationSize; i++){
             storeRS.add(new StoreRSEntry("S" + i, null));
