@@ -255,7 +255,50 @@ public class Main {
                 Instruction currentInstruction = instructionQueue.get(pc);
                 Instruction clonedInstruction = currentInstruction.deepClone();
                 // TODO: GO THROUGH EACH TYPE OF RESERVATION STATION BASED ON THE INCOMING INSTRUCTION TYPE
-
+                switch (clonedInstruction.getOp()) {
+                    case DADDI:
+                    case DSUBI:
+                    case ADD_D:
+                    case ADD_S:
+                    case SUB_D:
+                    case SUB_S:
+                        if (checkAnEmptyStation(addSubRS)) {
+                            tag = addToRS(clonedInstruction);
+                            clonedInstruction.setStatus(Status.ISSUED);
+                            pc++;
+                        }
+                        break;
+                    case MUL_D:
+                    case MUL_S:
+                    case DIV_D:
+                    case DIV_S:
+                        if (checkAnEmptyStation(mulDivRS)) {
+                            tag = addToRS(clonedInstruction);
+                            clonedInstruction.setStatus(Status.ISSUED);
+                            pc++;
+                        }
+                        break;
+                    case LW:
+                    case LD:
+                    case L_S:
+                    case L_D:
+                        if (checkAnEmptyStation(loadRS)) {
+                            tag = addToRS(clonedInstruction);
+                            clonedInstruction.setStatus(Status.ISSUED);
+                            pc++;
+                        }
+                        break;
+                    case SW:
+                    case SD:
+                    case S_S:
+                    case S_D:
+                        if (checkAnEmptyStation(storeRS)) {
+                            tag = addToRS(clonedInstruction);
+                            clonedInstruction.setStatus(Status.ISSUED);
+                            pc++;
+                        }
+                        break;
+                }
                 // checking if there is an empty reservation station slot
                 if (checkAnEmptyStation(addSubRS)) {
 
