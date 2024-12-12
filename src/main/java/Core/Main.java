@@ -299,6 +299,8 @@ public class Main {
                         }
                         break;
                 }
+                //TODO: HANDLE BRANCH INSTRUCTIONS
+
                 // checking if there is an empty reservation station slot
                 if (checkAnEmptyStation(addSubRS)) {
 
