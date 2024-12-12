@@ -2,8 +2,10 @@ package Core.Storage;
 
 import Core.Instruction.InstructionType;
 import Core.Instruction.Instruction;
+import Core.Operations;
 
 public class BranchRSEntry extends RSBaseEntry {
+
     private InstructionType op;
     private Object vj;
     private Object vk;
@@ -34,8 +36,7 @@ public class BranchRSEntry extends RSBaseEntry {
         this.vk = value;
     }
 
-    public Object getVk() {
-        return vk;}
+    public Object getVk() {return vk;}
 
     public void setQj(String qj) {
         this.qj = qj;
@@ -57,9 +58,14 @@ public class BranchRSEntry extends RSBaseEntry {
         super.setBusy(false);
     }
 
-    public boolean evaluateBranch() {
-        //TODO: Evaluate the branch instruction
-        return false;
+    public double execute(){
+        InstructionType op = instruction.getOp();
+        switch (op) {
+            case BNE: if(Operations.BNE((Long)this.vj, (Long)this.vk)) return 1.0; else return 0.0;
+            case BEQ: if(Operations.BEQ((Long)this.vj, (Long)this.vk)) return 1.0; else return 0.0;
+            default:
+                return 0.0;
+        }
     }
 
     public void printRSDetails() {
