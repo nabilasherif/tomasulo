@@ -154,6 +154,7 @@ public class TomasuloSimulator extends Application {
                 new Label("Store Buffer"), storeRSTable,
                 new Label("Branch RS"), branchRSTable
         );
+
         ScrollPane scrollPane = new ScrollPane(root);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
@@ -442,6 +443,7 @@ public class TomasuloSimulator extends Application {
             Main.mulReservationStationSize = Integer.parseInt(((TextField) mulDivRSField.getChildren().get(1)).getText());
             Main.loadReservationStationSize = Integer.parseInt(((TextField) loadRSField.getChildren().get(1)).getText());
             Main.storeReservationStationSize = Integer.parseInt(((TextField) storeRSField.getChildren().get(1)).getText());
+//            Main.branchReservationStationSize = Integer.parseInt(((TextField) branchRSField.getChildren().get(1)).getText());
         } catch (NumberFormatException e) {
             showErrorDialog("Input Error", "Please enter valid numeric values for reservation station sizes.");
         }
@@ -474,6 +476,26 @@ public class TomasuloSimulator extends Application {
     private void getNextCycle(){
         cycles++;
         cyclesLabel.setText("Current Cycle: " + cycles);
+
+        ObservableList<ArithmeticRSEntry> addSubRSList = FXCollections.observableArrayList(Main.addSubRS);
+        addRSTable.setItems(addSubRSList);
+        addRSTable.refresh();
+
+        ObservableList<ArithmeticRSEntry> mulDivRSList = FXCollections.observableArrayList(Main.mulDivRS);
+        mulRSTable.setItems(mulDivRSList);
+        mulRSTable.refresh();
+
+        ObservableList<LoadRSEntry> loadRSList = FXCollections.observableArrayList(Main.loadRS);
+        loadRSTable.setItems(loadRSList);
+        loadRSTable.refresh();
+
+        ObservableList<StoreRSEntry> storeRSList = FXCollections.observableArrayList(Main.storeRS);
+        storeRSTable.setItems(storeRSList);
+        storeRSTable.refresh();
+
+        ObservableList<BranchRSEntry> branchRSList = FXCollections.observableArrayList(Main.branchRS);
+        branchRSTable.setItems(branchRSList);
+        branchRSTable.refresh();
     }
 
     private void showErrorDialog(String title, String message) {

@@ -39,6 +39,7 @@ public class Main {
     public static int branchPenalty = 1;
     public static  Queue<RSBaseEntry> writeBackQueue = new LinkedList<>();
     public static List<Instruction> instructionQueue ;
+
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
         for (RSBaseEntry rs : reservationStation) {
             if (!rs.isBusy()) {
