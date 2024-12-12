@@ -242,7 +242,7 @@ public class Main {
                 justFinished.add(currentRS.getTag());
             }
         }
-s
+
         for (BranchRSEntry currentRS : branchRS) {
             if (currentRS.getTag().equals(tag)) continue;
 
