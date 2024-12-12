@@ -12,7 +12,7 @@ public class Main {
     public static Memory memory=new Memory(2024, blockSize);
     public static Cache cache=new Cache(cacheSize,blockSize,memory);
     public static ArrayList<ArithmeticRSEntry> addSubRS = new ArrayList<>();
-    public static ArrayList<ArithmeticRSEntry> mulDivRS = new ArrayList<>();
+    public static ArrayList<MultRSEntry> mulDivRS = new ArrayList<>();
     public static ArrayList<LoadRSEntry> loadRS = new ArrayList<>();
     public static ArrayList<StoreRSEntry> storeRS = new ArrayList<>();
     public static HashMap<String, RegisterEntry> registerFile = new RegisterFile().getRegisters();
@@ -177,7 +177,7 @@ public class Main {
             }
         }
 
-        for (ArithmeticRSEntry currentRS : mulDivRS) {
+        for (MultRSEntry currentRS : mulDivRS) {
             if (currentRS.getTag().equals(tag))
                 continue;
             if (currentRS.getVj() != null && currentRS.getVk() != null && (currentRS.instruction.getStatus()==Status.EXECUTING || currentRS.instruction.getStatus()==Status.ISSUED) ) {
@@ -278,7 +278,7 @@ public class Main {
             }
         }
 
-        for (ArithmeticRSEntry rs : mulDivRS) {
+        for (MultRSEntry rs : mulDivRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
@@ -302,7 +302,7 @@ public class Main {
             addSubRS.add(new ArithmeticRSEntry("A" + i, null));
         }
         for(int i =0; i < mulReservationStationSize; i++){
-            mulDivRS.add(new ArithmeticRSEntry("M" + i, null));
+            mulDivRS.add(new MultRSEntry("M" + i, null));
         }
         for(int i =0; i < storeReservationStationSize; i++){
             storeRS.add(new StoreRSEntry("S" + i, null));
