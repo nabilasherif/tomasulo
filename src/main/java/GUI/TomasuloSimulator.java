@@ -2,72 +2,162 @@ package GUI;
 
 import Core.Instruction.Instruction;
 import Core.InstructionFileParser;
+import Core.Main;
 import Core.Register.RegisterEntry;
-import Core.Storage.ArithmeticRSEntry;
-import Core.Storage.LoadRSEntry;
-import Core.Storage.StoreRSEntry;
+import Core.Register.RegisterFile;
+import Core.Storage.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.*;
 import Core.Instruction.InstructionType;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
+import java.util.List;
 
 public class TomasuloSimulator extends Application {
     //core components
-    List<Instruction> instructions = new ArrayList<>();
+//    List<Instruction> instructions = new ArrayList<>();
+//    public Map<InstructionType, Integer> latencies = new HashMap<>();
 
-    // Configuration parameters
-    public int loadBufferSize = 3;
-    public int storeBufferSize =3;
-    public int addReservationStationSize = 3;
-    public int mulReservationStationSize = 2;
-    public int integerReservationStationSize = 2;
     public int clkCycles=0;
-    // Latencies
-    public Map<InstructionType, Integer> latencies = new HashMap<>();
-
-    //#region Components
-    public TableView<Instruction> instructionQueueTable;
-    public TableView<ArithmeticRSEntry> addResStationTable;
-    public TableView<ArithmeticRSEntry> mulResStationTable;
-    public TableView<ArithmeticRSEntry> intResStationTable;
-    public TableView<LoadRSEntry> loadBufferTable;
-    public TableView<StoreRSEntry> storeBufferTable;
-    public TableView<RegisterEntry> registerTable;
-    //#endregion
 
     private TextField clockCycleField;
 
-    // Cache configuration
-    public int cacheSize = 1024; // bytes
-    public int blockSize = 64;   // bytes
-    public int hitLatency = 1;   // cycles
-    public int missPenalty = 10; // cycles
+    RegisterFile registerFile = new RegisterFile();
+    ObservableList<RegisterEntry> registerEntries = FXCollections.observableArrayList();
+    ObservableList<String> registerNames = FXCollections.observableArrayList();
 
-    private void initializeCore() {
-        instructions = InstructionFileParser.fillInstructionsQueue("src/main/java/Core/program.txt");
-        instructionQueueTable = createInstructionQueueTable();
-    }
+    //tables
+    private TableView<Instruction> instructionQueueTable;
+    private TableView<RegisterEntry> registerFileTable;
+    private TableView<Map.Entry<Integer, byte[]>> cacheTable;
+    private TableView<ArithmeticRSEntry> addRSTable;
+    private TableView<ArithmeticRSEntry> mulRSTable;
+    private TableView<LoadRSEntry> loadRSTable;
+    private TableView<StoreRSEntry> storeRSTable;
+
+    //latencies
+    private VBox addLatencyField;
+    private VBox addFPLatencyField;
+    private VBox subLatencyField;
+    private VBox subFPLatencyField;
+    private VBox loadLatencyField;
+    private VBox loadPenaltyField;
+    private VBox storeLatencyField;
+    private VBox mulLatencyField;
+    private VBox mulFPLatencyField;
+    private VBox divLatencyField;
+    private VBox divFPLatencyField;
+    private VBox branchLatencyField;
+    private HBox latencyConfigBox;
+
+    //rs
+    private VBox addSubRSField;
+    private VBox loadRSField;
+    private VBox storeRSField;
+    private VBox mulDivRSField;
+    private HBox rsConfigBox;
+
+    //cache
+    private TextField cacheSizeField;
+    private TextField blockSizeField;
+
+    private Button applyInputsButton;
 
     @Override
     public void start(Stage primaryStage) {
-        initializeCore();
         VBox root = new VBox(10);
         root.setPadding(new Insets(10));
 
-        root.getChildren().add(createConfigurationSection());
-        root.getChildren().add(createTablesSection());
-        root.getChildren().add(createControlButtons());
-
-        // Wrap the VBox in a ScrollPane
         ScrollPane scrollPane = new ScrollPane(root);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
+
+        instructionQueueTable = createInstructionQueueTable();
+        registerFileTable = createRegisterFileTable();
+        cacheTable = createCacheTable();
+
+//        addRSTable = createAddRSTable("Add Reservation Stations", new ArrayList<>());
+//        mulRSTable = createMulRSTable("Multiply Reservation Stations", new ArrayList<>());
+//        loadRSTable = createLRSTable("Load Reservation Stations", new ArrayList<>());
+//        storeRSTable = createSRSTable("Store Reservation Stations", new ArrayList<>());
+
+        //latencies config
+        VBox latencyConfigBox = new VBox(10);
+        latencyConfigBox.setSpacing(5);
+
+        addLatencyField = createLatencyField("Add Latency:");
+        subLatencyField = createLatencyField("Sub Latency:");
+        mulLatencyField = createLatencyField("Mul Latency:");
+        divLatencyField = createLatencyField("Div Latency:");
+        loadLatencyField = createLatencyField("Load Latency:");
+        loadPenaltyField = createLatencyField("Load Penalty:");
+        storeLatencyField = createLatencyField("Store Latency:");
+        branchLatencyField = createLatencyField("Branch Latency:");
+        addFPLatencyField = createLatencyField("Add FP Latency:");
+        subFPLatencyField = createLatencyField("Sub FP Latency:");
+        mulFPLatencyField = createLatencyField("Mul FP Latency:");
+        divFPLatencyField = createLatencyField("Div FP Latency:");
+
+        HBox row1 = new HBox(10);
+        row1.getChildren().addAll(addLatencyField, subLatencyField, mulLatencyField, divLatencyField);
+
+        HBox row2 = new HBox(10);
+        row2.getChildren().addAll(loadLatencyField, loadPenaltyField, storeLatencyField, branchLatencyField);
+
+        HBox row3 = new HBox(10);
+        row3.getChildren().addAll(addFPLatencyField, subFPLatencyField, mulFPLatencyField, divFPLatencyField);
+
+        latencyConfigBox.getChildren().addAll(row1, row2, row3);
+
+        //rs config
+        rsConfigBox = new HBox(10);
+        rsConfigBox.setSpacing(15);
+        addSubRSField = createRSField("Add/Sub RS Size:");
+        mulDivRSField = createRSField("Mul/Div RS Size:");
+        loadRSField = createRSField("Load RS Size:");
+        storeRSField = createRSField("Store RS Size:");
+        rsConfigBox.getChildren().addAll(addSubRSField, mulDivRSField, loadRSField, storeRSField);
+
+        //cache config
+        HBox cacheConfigBox = new HBox(10);
+        Label cacheSizeLabel = new Label("Cache Size (bytes):");
+        cacheSizeField = new TextField("1024");
+        Label blockSizeLabel = new Label("Block Size (bytes):");
+        blockSizeField = new TextField("64");
+        cacheConfigBox.getChildren().addAll(cacheSizeLabel, cacheSizeField, blockSizeLabel, blockSizeField);
+
+        applyInputsButton = new Button("Apply Inputs");
+        applyInputsButton.setOnAction(event -> applyAllInputs());
+
+        String filePath = "src/main/java/Core/program.txt";
+        List<Instruction> instructionQueue = InstructionFileParser.fillInstructionsQueue(filePath);
+        ObservableList<Instruction> instructions = FXCollections.observableArrayList(instructionQueue);
+        instructionQueueTable.setItems(instructions);
+
+        initializeRegisterFile();
+        registerFileTable.setItems(registerEntries);
+
+        root.getChildren().addAll(
+                new Label("Latencies (cycles):"), latencyConfigBox,
+                new Label("Reservation Station Sizes:"), rsConfigBox,
+                new Label("Cache configurations:"), cacheConfigBox,
+                applyInputsButton,
+                new Label("Instruction Queue"), instructionQueueTable,
+                new HBox(10,
+                        new VBox(10, new Label("Register File"), registerFileTable),
+                        new VBox(10, new Label("Cache"), cacheTable)
+                )
+//                new Label("Add Reservation Station"), addRSTable,
+//                new Label("Multiply Reservation Station"), mulRSTable,
+//                new Label("Load Reservation Station"), loadRSTable,
+//                new Label("Store Reservation Station"), storeRSTable
+        );
 
         Scene scene = new Scene(scrollPane, 800, 600);
         primaryStage.setTitle("Tomasulo Algorithm Simulator");
@@ -75,225 +165,152 @@ public class TomasuloSimulator extends Application {
         primaryStage.show();
     }
 
-    private VBox createConfigurationSection() {
-        VBox config = new VBox(5);
-        config.getChildren().addAll(
-                new Label("Latency Configurations:"),
-                createLatencyInputs(),
-                new Label("Station Sizes:"),
-                createStationSizeInputs(),
-                new Label("Cache Confgurations:"),
-                createCacheConfigInputs()
-        );
-        return config;
+    private VBox createLatencyField(String label) {
+        VBox vbox = new VBox(10);
+        Label latencyLabel = new Label(label);
+        TextField textField = new TextField();
+        vbox.getChildren().addAll(latencyLabel, textField);
+        return vbox;
     }
 
-    private GridPane createLatencyInputs() {
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(5);
-        int row = 0;
-        int col = 0;
-
-        for (InstructionType type : InstructionType.values()) {
-            grid.add(new Label(type.toString() + " Latency:"), col, row);
-
-            TextField latencyField = new TextField("1");
-            latencyField.setPrefWidth(50);
-            grid.add(latencyField, col + 1, row);
-            col += 2;
-            if (col >= 10) {
-                col = 0;
-                row++;
-            }
-        }
-        return grid;
+    private VBox createRSField(String label) {
+        VBox vbox = new VBox(10);
+        Label rsLabel = new Label(label);
+        TextField textField = new TextField();
+        vbox.getChildren().addAll(rsLabel, textField);
+        return vbox;
     }
 
-    private GridPane createStationSizeInputs() {
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(5);
+    private TableView<Instruction> createInstructionQueueTable(){
+        TableView<Instruction> tableView = new TableView<>();
 
-        int col = 0;
-        grid.add(new Label("Load RS Size:"), col, 0);
-        TextField loadField = new TextField(String.valueOf(loadBufferSize));
-        loadField.setPrefWidth(50);
-        grid.add(loadField, col + 1, 0);
-        col += 2;
+        TableColumn<Instruction, String> operationCol = new TableColumn<>("Operation");
+        operationCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOp().toString()));
 
-        grid.add(new Label("Store RS Size:"), col, 0);
-        TextField storeField = new TextField(String.valueOf(storeBufferSize));
-        storeField.setPrefWidth(50);
-        grid.add(storeField, col + 1, 0);
-        col += 2;
+        TableColumn<Instruction, String> destCol = new TableColumn<>("Destination");
+        destCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDest()));
 
-        grid.add(new Label("Add/Sub RS Size:"), col, 0);
-        TextField addSubField = new TextField(String.valueOf(addReservationStationSize));
-        addSubField.setPrefWidth(50);
-        grid.add(addSubField, col + 1, 0);
-        col += 2;
+        TableColumn<Instruction, String> jCol = new TableColumn<>("J");
+        jCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getJ()));
 
-        grid.add(new Label("Mul/Div RS Size:"), col, 0);
-        TextField mulDivField = new TextField(String.valueOf(mulReservationStationSize));
-        mulDivField.setPrefWidth(50);
-        grid.add(mulDivField, col + 1, 0);
+        TableColumn<Instruction, String> kCol = new TableColumn<>("K");
+        kCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getK()));
 
-        return grid;
+        TableColumn<Instruction, String> statusCol = new TableColumn<>("Status");
+//        statusCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().toString()));
+
+        tableView.getColumns().addAll(operationCol, destCol, jCol, kCol, statusCol);
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        return tableView;
     }
 
-    private GridPane createCacheConfigInputs() {
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(5);
+    private TableView<RegisterEntry> createRegisterFileTable() {
+        TableView<RegisterEntry> registerFileTable = new TableView<>();
 
-        int col = 0;
-
-        grid.add(new Label("Cache Size (bytes):"), col, 0);
-        TextField cacheSizeField = new TextField(String.valueOf(cacheSize));
-        cacheSizeField.setPrefWidth(50);
-        grid.add(cacheSizeField, col + 1, 0);
-        col += 2;
-
-        grid.add(new Label("Block Size (bytes):"), col, 0);
-        TextField blockSizeField = new TextField(String.valueOf(blockSize));
-        blockSizeField.setPrefWidth(50);
-        grid.add(blockSizeField, col + 1, 0);
-        col += 2;
-
-        grid.add(new Label("Clock Cycle:"), col, 0);
-        clockCycleField = new TextField(String.valueOf(clkCycles));
-        clockCycleField.setEditable(false);
-        clockCycleField.setStyle("-fx-background-color: lightgray;");
-        grid.add(clockCycleField, col + 1, 0);
-
-        return grid;
-    }
-
-    private VBox createTablesSection() {
-        VBox tables = new VBox(10);
-
-        Label instLabel = new Label("Instruction queue table");
-        instLabel.setStyle("-fx-font-weight: bold;");
-        instructionQueueTable.setItems(FXCollections.observableList(instructions));
-        Label registerLabel = new Label("Register table");
-        registerLabel.setStyle("-fx-font-weight: bold;");
-        registerTable = createRegisterTable();
-        Label addSubLabel = new Label("ADD/SUB reservation station");
-        addSubLabel.setStyle("-fx-font-weight: bold;");
-        addResStationTable = createReservationStationTable();
-        Label mulDivLabel = new Label("MUL/DIV reservation station");
-        mulDivLabel.setStyle("-fx-font-weight: bold;");
-        mulResStationTable = createReservationStationTable();
-        Label intLabel = new Label("Integer reservation station");
-        intLabel.setStyle("-fx-font-weight: bold;");
-        intResStationTable = createReservationStationTable();
-        Label loadLabel = new Label("Load reservation station");
-        loadLabel.setStyle("-fx-font-weight: bold;");
-        loadBufferTable = createLoadBufferTable();
-        Label storeLabel = new Label("Store reservation station");
-        storeLabel.setStyle("-fx-font-weight: bold;");
-        storeBufferTable = createStoreBufferTable();
-
-
-        tables.getChildren().addAll(     instLabel,
-                instructionQueueTable,
-                registerLabel,
-                registerTable,
-                addSubLabel,
-                addResStationTable,
-                mulDivLabel,
-                mulResStationTable,
-                intLabel,
-                intResStationTable,
-                loadLabel,
-                loadBufferTable,
-                storeLabel,
-                storeBufferTable
-        );
-
-        return tables;
-    }
-
-    private HBox createControlButtons() {
-        HBox button = new HBox(10);
-        Button save = new Button("Save inputs");
-        Button stepButton = new Button("Next Cycle");
-
-        stepButton.setOnAction(e -> {
-            clkCycles++;
-            clockCycleField.setText(String.valueOf(clkCycles));
+        TableColumn<RegisterEntry, String> registerNameCol = new TableColumn<>("Register");
+        registerNameCol.setCellValueFactory(cellData -> {
+            String name = registerNames.get(registerEntries.indexOf(cellData.getValue()));
+            return new SimpleStringProperty(name);
         });
 
-        button.getChildren().addAll(save, stepButton);
+        TableColumn<RegisterEntry, String> valueCol = new TableColumn<>("Value");
+        valueCol.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getValue() != 0) {
+                return new SimpleStringProperty(String.valueOf(cellData.getValue().getValue()));
+            } else {
+                return new SimpleStringProperty("N/A");
+            }
+        });
 
-        return button;
+        TableColumn<RegisterEntry, String> qCol = new TableColumn<>("Q");
+        qCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQ()));
+
+        registerFileTable.getColumns().addAll(registerNameCol, valueCol, qCol);
+        return registerFileTable;
     }
 
-    private TableView<ArithmeticRSEntry> createReservationStationTable() {
-        TableView<ArithmeticRSEntry> table = new TableView<>();
-        table.getColumns().addAll(
-                createColumn("Name", "name"),
-                createColumn("Busy", "busy"),
-                createColumn("Op", "op"),
-                createColumn("Vj", "vj"),
-                createColumn("Vk", "vk"),
-                createColumn("Qj", "qj"),
-                createColumn("Qk", "qk")
-        );
-        return table;
+    private TableView<Map.Entry<Integer, byte[]>> createCacheTable() {
+        TableView<Map.Entry<Integer, byte[]>> tableView = new TableView<>();
+
+        TableColumn<Map.Entry<Integer, byte[]>, String> blockAddressCol = new TableColumn<>("Block Address");
+        blockAddressCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getKey())));
+
+        TableColumn<Map.Entry<Integer, byte[]>, String> dataCol = new TableColumn<>("Block Data");
+        dataCol.setCellValueFactory(cellData -> {
+            byte[] blockData = cellData.getValue().getValue();
+            StringBuilder dataString = new StringBuilder();
+            for (byte b : blockData) {
+                dataString.append(b).append(" ");
+            }
+            return new SimpleStringProperty(dataString.toString());
+        });
+
+        tableView.getColumns().addAll(blockAddressCol, dataCol);
+        return tableView;
     }
 
-    private TableView<LoadRSEntry> createLoadBufferTable() {
-        TableView<LoadRSEntry> table = new TableView<>();
-        table.getColumns().addAll(
-                createColumn("Tag", "tag"),
-                createColumn("Busy", "busy"),
-                createColumn("Address", "address")
-        );
-        return table;
+    private void initializeRegisterFile() {
+        Map<String, RegisterEntry> registers = registerFile.getRegisters();
+
+        for (Map.Entry<String, RegisterEntry> entry : registers.entrySet()) {
+            RegisterEntry regEntry = entry.getValue();
+            registerEntries.add(regEntry);
+            registerNames.add(entry.getKey());
+        }
     }
 
-    private TableView<StoreRSEntry> createStoreBufferTable() {
-        TableView<StoreRSEntry> table = new TableView<>();
-        table.getColumns().addAll(
-                createColumn("Tag", "tag"),
-                createColumn("Busy", "busy"),
-                createColumn("Address", "address"),
-                createColumn("V", "v"),
-                createColumn("Q","q")
-        );
-        return table;
+    private void applyLatencies() {
+        try {
+            Main.addLatency = Integer.parseInt(((TextField) addLatencyField.getChildren().get(1)).getText());
+            Main.subLatency = Integer.parseInt(((TextField) subLatencyField.getChildren().get(1)).getText());
+            Main.mulLatency = Integer.parseInt(((TextField) mulLatencyField.getChildren().get(1)).getText());
+            Main.divLatency = Integer.parseInt(((TextField) divLatencyField.getChildren().get(1)).getText());
+            Main.loadLatency = Integer.parseInt(((TextField) loadLatencyField.getChildren().get(1)).getText());
+            Main.loadPenalty = Integer.parseInt(((TextField) loadPenaltyField.getChildren().get(1)).getText());
+            Main.storeLatency = Integer.parseInt(((TextField) storeLatencyField.getChildren().get(1)).getText());
+            Main.branchLatency = Integer.parseInt(((TextField) branchLatencyField.getChildren().get(1)).getText());
+            Main.addFPLatency = Integer.parseInt(((TextField) addFPLatencyField.getChildren().get(1)).getText());
+            Main.subFPLatency = Integer.parseInt(((TextField) subFPLatencyField.getChildren().get(1)).getText());
+            Main.mulFPLatency = Integer.parseInt(((TextField) mulFPLatencyField.getChildren().get(1)).getText());
+            Main.divFPLatency = Integer.parseInt(((TextField) divFPLatencyField.getChildren().get(1)).getText());
+        } catch (NumberFormatException e) {
+            showErrorDialog("Input Error", "Please enter valid numeric values for latencies.");
+        }
     }
 
-    private TableView<RegisterEntry> createRegisterTable() {
-        TableView<RegisterEntry> table = new TableView<>();
-        table.getColumns().addAll(
-                createColumn("Name", "name"),
-                createColumn("Value", "value"),
-                createColumn("Q", "q")
-        );
-        return table;
+    private void applyReservationStationSizes() {
+        try {
+            Main.addReservationStationSize = Integer.parseInt(((TextField) addSubRSField.getChildren().get(1)).getText());
+            Main.mulReservationStationSize = Integer.parseInt(((TextField) mulDivRSField.getChildren().get(1)).getText());
+            Main.loadReservationStationSize = Integer.parseInt(((TextField) loadRSField.getChildren().get(1)).getText());
+            Main.storeReservationStationSize = Integer.parseInt(((TextField) storeRSField.getChildren().get(1)).getText());
+        } catch (NumberFormatException e) {
+            showErrorDialog("Input Error", "Please enter valid numeric values for reservation station sizes.");
+        }
     }
 
-    private TableView<Instruction> createInstructionQueueTable() {
-        TableView<Instruction> table = new TableView<>();
-        table.getColumns().addAll(
-                createColumn("Type", "instruction.op"),  // Assuming `op` is part of `Instruction`
-                createColumn("Dest", "instruction.dest"),
-                createColumn("Src1", "instruction.j"),
-                createColumn("Src2", "instruction.k"),
-                createColumn("Issue", "issue"),
-                createColumn("Execute", "execution"),  // This would require a custom cell value factory for lists
-                createColumn("Write", "write")
-        );
-        return table;
+    private void applyCacheConfig() {
+        try {
+            Main.cacheSize = Integer.parseInt(cacheSizeField.getText());
+            Main.blockSize = Integer.parseInt(blockSizeField.getText());
+        } catch (NumberFormatException e) {
+            showErrorDialog("Input Error", "Please enter valid numeric values for cache size and block size.");
+        }
     }
 
-    private <S,T> TableColumn<S,T> createColumn(String title, String property) {
-        TableColumn<S,T> column = new TableColumn<>(title);
-        column.setCellValueFactory(new PropertyValueFactory<>(property));
-        return column;
+    private void applyAllInputs() {
+        applyLatencies();
+        applyReservationStationSizes();
+        applyCacheConfig();
+    }
+
+    private void showErrorDialog(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     public static void main(String[] args) {

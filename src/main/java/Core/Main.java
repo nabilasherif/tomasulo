@@ -32,6 +32,7 @@ public class Main {
     public static int loadPenalty = 8;
     public static int storeReservationStationSize= 3;
     public static int storeLatency = 4;
+    public static int branchLatency=3;
     public static  Queue<RSBaseEntry> writeBackQueue = new LinkedList<>();
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
         for (RSBaseEntry rs : reservationStation) {
