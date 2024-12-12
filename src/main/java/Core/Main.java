@@ -298,6 +298,8 @@ public class Main {
                             pc++;
                         }
                         break;
+                    default:
+                        break;
                 }
                 //TODO: HANDLE BRANCH INSTRUCTIONS
 
