@@ -2,6 +2,7 @@ package Core;
 import Core.Instruction.*;
 import Core.Register.*;
 import Core.Storage.*;
+
 import java.util.*;
 
 public class Main {
@@ -14,10 +15,7 @@ public class Main {
     public static ArrayList<ArithmeticRSEntry> mulDivRS = new ArrayList<>();
     public static ArrayList<LoadRSEntry> loadRS = new ArrayList<>();
     public static ArrayList<StoreRSEntry> storeRS = new ArrayList<>();
-    public static RegisterFile registerFile3=new RegisterFile();
     public static HashMap<String, RegisterEntry> registerFile = new RegisterFile().getRegisters();
-
-
     // From the GUI
     public static int addReservationStationSize= 3;
     public static int addLatency = 4;
@@ -34,6 +32,7 @@ public class Main {
     public static int loadPenalty = 8;
     public static int storeReservationStationSize= 3;
     public static int storeLatency = 4;
+    public static  Queue<ArithmeticRSEntry> writeBackQueueAddRS = new LinkedList<>();
 
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
         for (RSBaseEntry rs : reservationStation) {
@@ -44,14 +43,23 @@ public class Main {
         return false;
     }
 
-    public static boolean allStationsEmpty(){
+
+    public static boolean allStationsEmpty() {
         for (RSBaseEntry rs : addSubRS) {
-            if (rs.isBusy()) {
-                return false;
-            }
+            if (rs.isBusy()) return false;
+        }
+        for (RSBaseEntry rs : mulDivRS) {
+            if (rs.isBusy()) return false;
+        }
+        for (RSBaseEntry rs : storeRS) {
+            if (rs.isBusy()) return false;
+        }
+        for (RSBaseEntry rs : loadRS) {
+            if (rs.isBusy()) return false;
         }
         return true;
     }
+
 
     public static String addToRS(Instruction instruction){
         // TODO: REPEAT THIS FOR EACH TYPE OF RESERVATION STATION
@@ -90,7 +98,7 @@ public class Main {
             if (currentRS.getTag().equals(tag))
                 continue;
 
-            if (currentRS.getVj() != null && currentRS.getVk() != null) {
+            if (currentRS.getVj() != null && currentRS.getVk() != null && (currentRS.instruction.getStatus()==Status.EXECUTING || currentRS.instruction.getStatus()==Status.ISSUED) ) {
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
 
@@ -106,8 +114,7 @@ public class Main {
         for (ArithmeticRSEntry currentRS : mulDivRS) {
             if (currentRS.getTag().equals(tag))
                 continue;
-
-            if (currentRS.getVj() != null && currentRS.getVk() != null) {
+            if (currentRS.getVj() != null && currentRS.getVk() != null && (currentRS.instruction.getStatus()==Status.EXECUTING || currentRS.instruction.getStatus()==Status.ISSUED) ) {
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
 
@@ -124,7 +131,7 @@ public class Main {
             if (currentRS.getTag().equals(tag))
                 continue;
 
-            if (currentRS.getValue() != null) {
+            if (currentRS.getValue() != null && (currentRS.instruction.getStatus()==Status.EXECUTING || currentRS.instruction.getStatus()==Status.ISSUED) ) {
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
 
@@ -155,34 +162,50 @@ public class Main {
     }
 
 
-    public static void writeToBusExcept(String exception ){
-        // TODO: MAKE SURE THAT YOU DO NOT WRITE MORE THAN ONE THING AT ONCE
-        // TODO: WRITE BACK IN REGISTER FILE
-        //TODO: THINK BIG THOUGHTS
-        // Go through all reservation stations and see if anything should be placed in bus
-        for(ArithmeticRSEntry rs : addSubRS){
-            if(rs.getTag().equals(exception))
-                continue;
-            // If the instruction is done executing, begin writing back to all reservation stations
-            if(rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)){
-                String tag = rs.getTag();
-                double value = rs.result;
-                for(ArithmeticRSEntry rs2 : addSubRS){
-                    if(rs2.getQj().equals(tag) && rs2!= rs){
-                        rs2.setVj(value);
-                        rs2.setQj(null);
-                    }
-                    if(rs2.getQk().equals(tag ) && rs2!= rs){
-                        rs2.setVk(value);
-                        rs2.setQk(null);
-                    }
-                }
-                // do the same with reg file
-                rs.instruction.setStatus(Status.WRITTEN_BACK);
-                rs.setBusy(false);
+
+    public static void writeToBusExcept(HashSet<String> tags) {
+        // Populate the write-back queue
+        for (ArithmeticRSEntry rs : addSubRS) {
+            if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
+                writeBackQueueAddRS.add(rs);
             }
         }
+
+        // Write back a single entry from the queue
+        if (!writeBackQueueAddRS.isEmpty()) {
+            ArithmeticRSEntry rs = writeBackQueueAddRS.poll();
+            String tag = rs.getTag();
+            double value = rs.result;
+
+            // Update other reservation stations
+            // TODO TURN THIS INTO A METHOD THAT DOES IT FOR ALL RESERVATION STATIONS AND THE REGISTER FILE
+            for (ArithmeticRSEntry rs2 : addSubRS) {
+                if (rs2.getQj().equals(tag)) {
+                    rs2.setVj(value);
+                    rs2.setQj(null);
+                }
+                if (rs2.getQk().equals(tag)) {
+                    rs2.setVk(value);
+                    rs2.setQk(null);
+
+                }
+            }
+
+            //Updating the register files
+            for(Map.Entry<String, RegisterEntry> entry : registerFile.entrySet()){
+                RegisterEntry current = entry.getValue();
+                if(current.getQ().equals(tag)){
+                    current.setQ("0");
+                    current.setValue(value);
+                }
+            }
+
+            // Update status
+            rs.instruction.setStatus(Status.WRITTEN_BACK);
+            rs.setBusy(false);
+        }
     }
+
 
     public static void initReservationStations(){
         for(int i =0; i < addReservationStationSize; i++){
@@ -190,6 +213,11 @@ public class Main {
         }
 
     }
+
+    public static void initPreferences(){
+
+    }
+
 
     public static void main(String[] args) {
 
@@ -199,7 +227,9 @@ public class Main {
         int pc = 0;
 
 
+
         // TODO: INITIALISE ALL INPUTS FUNCTION FOR INITIALISING ALL GLOBAL VARIABLES
+        initPreferences();
         initReservationStations();
 
         for (Instruction queueInstance : instructionQueue) {
@@ -211,10 +241,16 @@ public class Main {
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
 
+
+
         // TODO HANDLE INTEGRATION WITH FE
         while(pc < instructionQueue.size() || !allStationsEmpty()){
+
             String tag= "";
             cycle++;
+            System.out.println("Cycle " + cycle);
+            Scanner sc = new Scanner(System.in);
+            sc.nextInt();
             if (pc < instructionQueue.size()) {
                 Instruction currentInstruction = instructionQueue.get(pc);
                 Instruction clonedInstruction = currentInstruction.deepClone();
@@ -232,9 +268,8 @@ public class Main {
             // If i just issued something in the current cycle, I don't want to execute it in the same cycle
             // If i just executed something in the current cycle, I don't want to write it back in the same cycle
 
-            executeAllExcept(tag);
-            // TODO FIX THE WRITE TO BUS
-            writeToBusExcept(tag);
+            HashSet<String> justExecuted = executeAllExcept(tag);
+            writeToBusExcept(justExecuted);
             System.out.println("Cycle " + cycle);
 
             for (ArithmeticRSEntry addR : addSubRS) addR.printRSDetails();
