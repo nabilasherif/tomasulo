@@ -6,34 +6,22 @@ import static Core.Main.registerFile;
 public class Operations {
 
     //a will be the content inside the register, b immediate
-    public static long DADDI(long a, short b) {
-        return a + b;
-    }
 
-    public static long SUBBI(long a, short b) {
-        return a - b;
-    }
+    public static long DADDI(long a, short b) {return a + b;}
 
-    public static double ADD_D(double a, double b) {
-        return a + b;
-    }
+    public static long SUBBI(long a, short b) {return a - b;}
 
-    public static float ADD_S(float a, float b) {
-        return a + b;
-    }
+    public static double ADD_D(double a, double b) {return a + b;}
 
-    public static double SUB_D(double a, double b) {
-        return a - b;
-    }
+    public static double ADD_S(double a, double b) {return a + b;}
 
-    public static float SUB_S(float a, float b) {
-        return a - b;
-    }
+    public static double SUB_D(double a, double b) {return a - b;}
 
-    public static double MUL_D(double a, double b) {
-        return a * b;
-    }
-    public static float MUL_S(float a, float b) {
+    public static double SUB_S(double a, double b) {return a - b;}
+
+    public static double MUL_D(double a, double b) {return a * b;}
+
+    public static double MUL_S(double a, double b) {
         return a * b;
     }
 
@@ -41,7 +29,7 @@ public class Operations {
         return a / b;
     }
 
-    public static float DIV_S(float a, float b) {
+    public static double DIV_S(double a, double b) {
         return a / b;
     }
 
@@ -66,7 +54,7 @@ public class Operations {
     }
 
     public static void SD(String register, int address) {
-        cache.writeDoubleWord(address,(long) registerFile.get(register).getValue());
+        cache.writeDoubleWord(address,(int) registerFile.get(register).getValue());
     }
 
     public static void S_S(String register, int address) {

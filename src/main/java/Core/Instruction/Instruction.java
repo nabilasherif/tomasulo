@@ -4,6 +4,7 @@ import Core.Status;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 
 // TODO RENAME TO INSTRUCTION
 public class Instruction {
@@ -95,6 +96,13 @@ public class Instruction {
         clone.setWrite(this.write);
         clone.setStatus(this.status);
         return clone;
+    }
+
+    public boolean equals(Instruction instruction) {
+        return  Objects.equals(op, instruction.op) &&
+                Objects.equals(dest, instruction.dest) &&
+                Objects.equals(j, instruction.j) &&
+                Objects.equals(k, instruction.k);
     }
 
 }
