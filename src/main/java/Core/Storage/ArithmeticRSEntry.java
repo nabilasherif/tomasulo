@@ -67,6 +67,7 @@ public class ArithmeticRSEntry extends RSBaseEntry {
         this.vk = null;
         this.qj = "0";
         this.qk = "0";
+        this.instruction = null;
     }
 
     public double execute(){

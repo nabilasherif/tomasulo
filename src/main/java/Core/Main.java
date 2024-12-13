@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Main {
 
-    private static String filePath = "src/main/java/Core/program5.txt";
+    private static final String filePath = "src/main/java/Core/program5.txt";
     public static boolean isProgramDone = false;
     static boolean stall=false;
     public static int blockSize = 8;
@@ -28,7 +28,7 @@ public class Main {
     public static int mulFPLatency = 3;
     public static int divFPLatency = 3;
     public static int loadReservationStationSize= 3;
-    public static int loadLatency = 6;
+    public static int loadLatency = 3;
     public static int loadPenalty = 3;
     public static int storeReservationStationSize= 3;
     public static int storeLatency = 3;
@@ -317,6 +317,7 @@ public class Main {
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
                     double branchRes= currentRS.execute(); //not sure what to do
+                    currentRS.setBusy(false);
                     if(branchRes == 1){
                         handleBranchTrue(currentRS.instruction);
                     }else{
@@ -324,7 +325,7 @@ public class Main {
                     }
                     stall = false;
 
-                    justFinished.add(currentRS.getTag());
+//                    justFinished.add(currentRS.getTag());
                 }
             }
         }
@@ -385,21 +386,21 @@ public class Main {
                 }
             }
             //Updating the register files
-//            if(rs.instruction.getOp() != InstructionType.BNE && rs.instruction.getOp() != InstructionType.BNE  ){
-//
-//            }
-            String destination= rs.instruction.getDest();
-            RegisterEntry adjustedEntry = registerFile.get(destination);
-            adjustedEntry.setValue(value);
-            adjustedEntry.setQ("0");
-            registerFile.put(destination, adjustedEntry);
-            for(Map.Entry<String, RegisterEntry> entry : registerFile.entrySet()){
-                RegisterEntry registerEntry = entry.getValue();
-                if(registerEntry.getQ().equals(tag)){
-                    registerEntry.setQ("0");
-                    registerEntry.setValue(value);
+            if(rs.instruction.getOp() != InstructionType.BNE && rs.instruction.getOp() != InstructionType.BEQ  ){
+                String destination= rs.instruction.getDest();
+                RegisterEntry adjustedEntry = registerFile.get(destination);
+                adjustedEntry.setValue(value);
+                adjustedEntry.setQ("0");
+                registerFile.put(destination, adjustedEntry);
+                for(Map.Entry<String, RegisterEntry> entry : registerFile.entrySet()){
+                    RegisterEntry registerEntry = entry.getValue();
+                    if(registerEntry.getQ().equals(tag)){
+                        registerEntry.setQ("0");
+                        registerEntry.setValue(value);
+                    }
                 }
             }
+
             // Update status
             rs.instruction.setStatus(Status.WRITTEN_BACK);
             if(rs.isBusy())
@@ -411,35 +412,36 @@ public class Main {
     private static void populateWritebackQueue(HashSet<String> tags) {
 
         for (LoadRSEntry rs : loadRS) {
-            if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
+            if (!tags.contains(rs.getTag()) && !isAlreadyInQueue(rs)
+                    && rs.isBusy() && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
         }
 
         for (ArithmeticRSEntry rs : addSubRS) {
-            if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
+            if (!tags.contains(rs.getTag()) && !isAlreadyInQueue(rs)
+                    && rs.isBusy() && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
         }
-
-//        for (StoreRSEntry rs : storeRS) {
-//            if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
-//                writeBackQueue.add(rs);
-//            }
-//        }
 
         for (ArithmeticRSEntry rs : mulDivRS) {
-            if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
+            if (!tags.contains(rs.getTag()) && !isAlreadyInQueue(rs)
+                    && rs.isBusy() && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
         }
-//
-//        for (ArithmeticRSEntry rs : branchRS) {
-//            if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
-//                writeBackQueue.add(rs);
-//            }
-//        }
     }
+
+    private static boolean isAlreadyInQueue(RSBaseEntry rs) {
+        for (RSBaseEntry entry : writeBackQueue) {
+            if (entry.getTag().equals(rs.getTag())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public static void initReservationStations(){
         addSubRS=new ArrayList<>();
@@ -531,7 +533,7 @@ public class Main {
         }
 
         for (StoreRSEntry rs : storeRS) {
-            if (rs.instruction != null && rs.instruction.getStatus() == Status.WRITTEN_BACK) {
+            if (rs.instruction != null && rs.instruction.getStatus() == Status.EXECUTED) {
                 rs.clear();
             }
         }
@@ -597,7 +599,6 @@ public class Main {
                         tag = addToBranchRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
                         clonedInstruction.setIssue(cycle);
-//                        pc++;
                         stall = true;
                     }
                     break;
@@ -634,6 +635,10 @@ public class Main {
             store.printRSDetails();
         for(ArithmeticRSEntry br : branchRS)
             br.printRSDetails();
+
+        System.out.println("WRITE BACK QUEUE");
+        printWriteBackQueue();
+
     }
 
     public static void main(String[] args) {
@@ -659,4 +664,18 @@ public class Main {
         System.out.println("Done");
         System.out.println(memory.readBlock(0));
     }
+
+    public static void printWriteBackQueue() {
+        System.out.println("Contents of writeBackQueue:");
+
+        if (writeBackQueue.isEmpty()) {
+            System.out.println("The queue is empty.");
+            return;
+        }
+
+        for (RSBaseEntry entry : writeBackQueue) {
+            System.out.println(entry.getTag()); // Assumes RSBaseEntry has a meaningful toString() method
+        }
+    }
+
 }
