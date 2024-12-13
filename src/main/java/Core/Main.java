@@ -413,8 +413,6 @@ public class Main {
         printRegisters(registerFile);
     }
 
-
-
     public static void init(){
 
         String filePath = "src/main/java/Core/program3.txt";
@@ -425,7 +423,7 @@ public class Main {
         }
 
         Memory memory=new Memory(2024, blockSize);
-        byte [] loopover = new byte[8];
+        byte [] loopover = new byte[blockSize];
         for(int i =0; i < loopover.length; i++)
             loopover[i]= (byte)i;
         memory.writeBlock(0,loopover );
