@@ -199,10 +199,10 @@ public class TomasuloSimulator extends Application {
         });
 
         TableColumn<ArithmeticRSEntry, String> vjCol = new TableColumn<>("Vj");
-        vjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVj() != null ? cellData.getValue().getVj().toString() : "N/A"));
+        vjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVj() != null ? cellData.getValue().getVj().toString() : ""));
 
         TableColumn<ArithmeticRSEntry, String> vkCol = new TableColumn<>("Vk");
-        vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : "N/A"));
+        vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : ""));
 
         TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Address");
         qkCol.setCellValueFactory(cellData -> {
@@ -496,6 +496,9 @@ public class TomasuloSimulator extends Application {
     private void getNextCycle(){
         Main.incrementCycle();
         cyclesLabel.setText("Current Cycle: " + Main.cycle);
+
+        ObservableList<Instruction> instructions = FXCollections.observableArrayList(Main.instructionQueue);
+        instructionQueueTable.setItems(instructions);
 
         ObservableList<ArithmeticRSEntry> addSubRSList = FXCollections.observableArrayList(Main.addSubRS);
         addRSTable.setItems(addSubRSList);
