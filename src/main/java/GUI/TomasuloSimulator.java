@@ -486,11 +486,31 @@ public class TomasuloSimulator extends Application {
 
         ObservableList<Instruction> instructions = FXCollections.observableArrayList(Main.instructionQueue);
         instructionQueueTable.setItems(instructions);
+        instructionQueueTable.refresh();
 
         ObservableList<Map.Entry<String, RegisterEntry>> registerEntries = FXCollections.observableArrayList(Main.registerFile.entrySet());
         registerFileTable.setItems(registerEntries);
-        instructionQueueTable.refresh();
         registerFileTable.refresh();
+
+        ObservableList<ArithmeticRSEntry> addSubRSList = FXCollections.observableArrayList(Main.addSubRS);
+        addRSTable.setItems(addSubRSList);
+        addRSTable.refresh();
+
+        ObservableList<ArithmeticRSEntry> mulDivRSList = FXCollections.observableArrayList(Main.mulDivRS);
+        mulRSTable.setItems(mulDivRSList);
+        mulRSTable.refresh();
+
+        ObservableList<LoadRSEntry> loadRSList = FXCollections.observableArrayList(Main.loadRS);
+        loadRSTable.setItems(loadRSList);
+        loadRSTable.refresh();
+
+        ObservableList<StoreRSEntry> storeRSList = FXCollections.observableArrayList(Main.storeRS);
+        storeRSTable.setItems(storeRSList);
+        storeRSTable.refresh();
+
+        ObservableList<ArithmeticRSEntry> branchRSList = FXCollections.observableArrayList(Main.branchRS);
+        branchRSTable.setItems(branchRSList);
+        branchRSTable.refresh();
     }
 
     private void getNextCycle(){
@@ -499,6 +519,10 @@ public class TomasuloSimulator extends Application {
 
         ObservableList<Instruction> instructions = FXCollections.observableArrayList(Main.instructionQueue);
         instructionQueueTable.setItems(instructions);
+
+        ObservableList<Map.Entry<String, RegisterEntry>> registerEntries = FXCollections.observableArrayList(Main.registerFile.entrySet());
+        registerFileTable.setItems(registerEntries);
+        registerFileTable.refresh();
 
         ObservableList<ArithmeticRSEntry> addSubRSList = FXCollections.observableArrayList(Main.addSubRS);
         addRSTable.setItems(addSubRSList);
