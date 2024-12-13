@@ -33,7 +33,7 @@ public class Main {
     public static int storeReservationStationSize= 3;
     public static int storeLatency = 4;
     //do we add a store penalty?
-    public static ArrayList<BranchRSEntry> branchRS = new ArrayList<>();
+    public static ArrayList<ArithmeticRSEntry> branchRS = new ArrayList<>();
     public static int branchReservationStationSize= 3;
     public static int branchLatency = 4;
     public static int branchPenalty = 1;
@@ -83,18 +83,29 @@ public class Main {
                     addSubRS.get(i).setValues(true, subFPLatency, instruction);
                 if(instruction.getOp() == InstructionType.DSUBI)
                     addSubRS.get(i).setValues(true, subLatency, instruction);
+                if(instruction.getOp() == InstructionType.BNE ||instruction.getOp() == InstructionType.BEQ)
+                    addSubRS.get(i).setValues(true, branchLatency, instruction);
                 String j = addSubRS.get(i).instruction.getJ();
                 String k = addSubRS.get(i).instruction.getK();
 
+
                 double jvalue = registerFile.get(j).getValue();
-                double kvalue = registerFile.get(k).getValue();
-                String kQ = registerFile.get(k).getQ();
-                String jQ = registerFile.get(j).getQ();
-                if(kQ.equals("0")){
-                    addSubRS.get(i).setVk(kvalue);
+
+
+                if(instruction.getOp() != InstructionType.DSUBI && instruction.getOp() != InstructionType.DADDI){
+                    double kvalue = registerFile.get(k).getValue();
+                    String kQ = registerFile.get(k).getQ();
+                    if(kQ.equals("0")){
+                        addSubRS.get(i).setVk(kvalue);
+                    }else{
+                        addSubRS.get(i).setQk(kQ);
+                    }
                 }else{
-                    addSubRS.get(i).setQk(kQ);
+                    addSubRS.get(i).setVk(Double.parseDouble(instruction.getK()));
                 }
+
+                String jQ = registerFile.get(j).getQ();
+
                 if(jQ.equals("0")){
                     addSubRS.get(i).setVj(jvalue);
                 }else{
@@ -164,7 +175,8 @@ public class Main {
             // If my reservation station's current entry is not busy, add the instruction to the reservation station
             if (!loadRS.get(i).isBusy()) {
                 //TODO ADD THE PENALTY HERE
-                loadRS.get(i).setValues(true, loadLatency, instruction);
+//                if(cache.cache.get(Integer.parseInt(instruction.getJ())   )
+                    loadRS.get(i).setValues(true, loadLatency, instruction);
                 String dest = loadRS.get(i).instruction.getDest();// f3
                 String j = loadRS.get(i).instruction.getJ();//100
                 loadRS.get(i).setAddress(Integer.parseInt(j));
@@ -254,7 +266,7 @@ public class Main {
             }
         }
 
-        for (BranchRSEntry currentRS : branchRS) {
+        for (ArithmeticRSEntry currentRS : branchRS) {
             if ( currentRS.getTag().equals(tag) || !currentRS.isBusy()) continue;
 
             if (currentRS.getQk().equals("0") && currentRS.getQj().equals("0")
@@ -266,8 +278,8 @@ public class Main {
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    boolean branchRes=currentRS.execute(); //not sure what to do
-                    if(branchRes){
+                    double branchRes=currentRS.execute(); //not sure what to do
+                    if(branchRes == 1){
                         handleBranchTrue(currentRS.instruction);
                     }
                     justFinished.add(currentRS.getTag());
@@ -277,6 +289,7 @@ public class Main {
         return justFinished;
     }
 
+
     //TODO HANDLE WRITE BACK FOR ALL INSTRUCTION TYPES
     public static void writeToBusExcept(HashSet<String> tags) {
         // Populate the write-back queue
@@ -285,6 +298,7 @@ public class Main {
         // Write back a single entry from the queue
         if (!writeBackQueue.isEmpty()) {
             RSBaseEntry rs = writeBackQueue.poll();
+            System.out.println(rs);
             String tag = rs.getTag();
             double value = rs.getResult();
 
@@ -339,13 +353,14 @@ public class Main {
     }
 
     private static void populateWritebackQueue(HashSet<String> tags) {
-        for (ArithmeticRSEntry rs : addSubRS) {
+
+        for (LoadRSEntry rs : loadRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
         }
 
-        for (ArithmeticRSEntry rs : mulDivRS) {
+        for (ArithmeticRSEntry rs : addSubRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
@@ -357,11 +372,13 @@ public class Main {
             }
         }
 
-        for (LoadRSEntry rs : loadRS) {
+        for (ArithmeticRSEntry rs : mulDivRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
         }
+
+
     }
 
     public static void initReservationStations(){
@@ -383,7 +400,7 @@ public class Main {
         }
         branchRS=new ArrayList<>();
         for(int i =1; i <= branchReservationStationSize; i++){
-            branchRS.add(new BranchRSEntry("B" + i, null));
+            branchRS.add(new ArithmeticRSEntry("B" + i, null));
         }
     }
 
@@ -406,7 +423,7 @@ public class Main {
 
     public static void init(){
 
-        String filePath = "src/main/java/Core/program2.txt";
+        String filePath = "src/main/java/Core/program3.txt";
         instructionQueueParser = InstructionFileParser.fillInstructionsQueue(filePath);
 
         for (Instruction instruction : instructionQueueParser) {
@@ -446,7 +463,6 @@ public class Main {
             System.out.println(rs.instruction);
             if (rs.instruction != null && rs.instruction.getStatus() == Status.WRITTEN_BACK) {
                 rs.clear();
-                System.out.println("WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE ");
             }
         }
 
@@ -468,7 +484,7 @@ public class Main {
             }
         }
 
-        for(BranchRSEntry rs : branchRS){
+        for(ArithmeticRSEntry rs : branchRS){
             if (rs.instruction != null && rs.instruction.getStatus() == Status.WRITTEN_BACK) {
                 rs.clear();
             }
@@ -478,7 +494,7 @@ public class Main {
 
 
     public static void incrementCycle(){
-//        clearAllWrittenBack();
+        clearAllWrittenBack();
         String tag= "0";
         cycle++;
         System.out.println("Cycle " + cycle);

@@ -39,7 +39,7 @@ public class BranchRSEntry extends RSBaseEntry {
     public String getQk() {return qk;}
 
     public boolean execute(){
-        InstructionType op = this.getOp();
+        InstructionType op = instruction.getOp();
         switch (op) {
             case BNE: return Operations.BNE((Long)this.vj, (Long)this.vk);
             case BEQ: return Operations.BEQ((Long)this.vj, (Long)this.vk);

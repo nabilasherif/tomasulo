@@ -66,12 +66,12 @@ public class Operations {
     }
 
     //return true if not equal so branch
-    public static boolean BNE(long a, long b) {
+    public static boolean BNE(double a, double b) {
         return a!=b;
     }
 
     //return true if equal so branch
-    public static boolean BEQ(long a, long b) {
+    public static boolean BEQ(double a, double b) {
         return a==b;
     }
 }
