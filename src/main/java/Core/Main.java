@@ -7,6 +7,7 @@ import java.util.*;
 public class Main {
 
     private static String filePath = "src/main/java/Core/program3.txt";
+    public static boolean isProgramDone = false;
     static boolean stall=false;
     public static int blockSize = 8;
     public static int cacheSize= 64;
@@ -592,7 +593,8 @@ public class Main {
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
         // TODO HANDLE INTEGRATION WITH FE
-        while((pc < instructionQueue.size()) || !allStationsEmpty()){
+        while(!isProgramDone){
+            isProgramDone = pc >= instructionQueue.size() && allStationsEmpty();
             incrementCycle();
         }
         printRegisters(registerFile);
