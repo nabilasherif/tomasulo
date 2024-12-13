@@ -174,7 +174,8 @@ public class Main {
                 if (cache.cacheLoadedBlockCheck(Integer.parseInt(instruction.getJ())))
                     loadRS.get(i).setValues(true, loadLatency, instruction);
                 else
-                    loadRS.get(i).setValues(true, loadLatency, instruction);
+                    loadRS.get(i).setValues(true, loadLatency + loadPenalty
+                            , instruction);
 
                 String dest = loadRS.get(i).instruction.getDest();// f3
                 String j = loadRS.get(i).instruction.getJ();//100
@@ -382,6 +383,9 @@ public class Main {
                 }
             }
             //Updating the register files
+//            if(rs.instruction.getOp() != InstructionType.BNE && rs.instruction.getOp() != InstructionType.BNE  ){
+//
+//            }
             String destination= rs.instruction.getDest();
             RegisterEntry adjustedEntry = registerFile.get(destination);
             adjustedEntry.setValue(value);
@@ -396,7 +400,8 @@ public class Main {
             }
             // Update status
             rs.instruction.setStatus(Status.WRITTEN_BACK);
-            rs.instruction.setWrite(cycle);
+            if(rs.isBusy())
+                rs.instruction.setWrite(cycle);
             rs.setBusy(false);
         }
     }
