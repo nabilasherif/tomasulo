@@ -20,18 +20,18 @@ public class Main {
     public static HashMap<String, RegisterEntry> registerFile = new RegisterFile().getRegisters();
     // From the GUI
     public static int addReservationStationSize= 3;
-    public static int addLatency = 4;
-    public static int addFPLatency = 4;
-    public static int subLatency=4;
-    public static int subFPLatency=4;
+    public static int addLatency = 3;
+    public static int addFPLatency = 3;
+    public static int subLatency=3;
+    public static int subFPLatency=3;
     public static int mulReservationStationSize= 3;
-    public static int mulFPLatency = 6;
-    public static int divFPLatency = 4;
+    public static int mulFPLatency = 3;
+    public static int divFPLatency = 3;
     public static int loadReservationStationSize= 3;
-    public static int loadLatency = 4;
-    public static int loadPenalty = 8;
+    public static int loadLatency = 6;
+    public static int loadPenalty = 3;
     public static int storeReservationStationSize= 3;
-    public static int storeLatency = 4;
+    public static int storeLatency = 3;
     //do we add a store penalty?
     public static ArrayList<ArithmeticRSEntry> branchRS = new ArrayList<>();
     public static int branchReservationStationSize= 3;
@@ -174,7 +174,7 @@ public class Main {
                 if (cache.cacheLoadedBlockCheck(Integer.parseInt(instruction.getJ())))
                     loadRS.get(i).setValues(true, loadLatency, instruction);
                 else
-                    loadRS.get(i).setValues(true, loadLatency+loadPenalty, instruction);
+                    loadRS.get(i).setValues(true, loadLatency, instruction);
 
                 String dest = loadRS.get(i).instruction.getDest();// f3
                 String j = loadRS.get(i).instruction.getJ();//100
@@ -316,6 +316,8 @@ public class Main {
                     double branchRes= currentRS.execute(); //not sure what to do
                     if(branchRes == 1){
                         handleBranchTrue(currentRS.instruction);
+                    }else{
+                        pc++;
                     }
                     stall = false;
 
