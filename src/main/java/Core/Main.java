@@ -464,7 +464,7 @@ public class Main {
         }
     }
 
-    public static void printRegisters(HashMap<String, RegisterEntry> registerFile) {
+    private static void printRegisters(HashMap<String, RegisterEntry> registerFile) {
         System.out.println("Register Contents:");
         for (String registerName : registerFile.keySet()) {
             RegisterEntry entry = registerFile.get(registerName);
