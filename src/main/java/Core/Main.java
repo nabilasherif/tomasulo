@@ -419,13 +419,30 @@ public class Main {
     }
 
     private static void populateWritebackQueue(HashSet<String> tags) {
-        for (int i = 0; i < instructionQueue.size(); i++) {
-            Instruction instruction = instructionQueue.get(i);
-            if (!tags.contains(instruction.getTag()) && !isAlreadyInQueue(instruction)
-                    && instruction.getStatus().equals(Status.EXECUTED)) {
-                writeBackQueue.add(instruction);
+        List<RSBaseEntry> readyEntries = new ArrayList<>();
+
+        for (LoadRSEntry rs : loadRS) {
+            if (!tags.contains(rs.getTag()) && !isAlreadyInQueue(rs)
+                    && rs.isBusy() && rs.instruction.getStatus().equals(Status.EXECUTED)) {
+                readyEntries.add(rs);
             }
         }
+
+        for (ArithmeticRSEntry rs : addSubRS) {
+            if (!tags.contains(rs.getTag()) && !isAlreadyInQueue(rs)
+                    && rs.isBusy() && rs.instruction.getStatus().equals(Status.EXECUTED)) {
+                readyEntries.add(rs);
+            }
+        }
+
+        for (ArithmeticRSEntry rs : mulDivRS) {
+            if (!tags.contains(rs.getTag()) && !isAlreadyInQueue(rs)
+                    && rs.isBusy() && rs.instruction.getStatus().equals(Status.EXECUTED)) {
+                readyEntries.add(rs);
+            }
+        }
+        readyEntries.sort(Comparator.comparingInt(rs -> instructionQueue.indexOf(rs.instruction)));
+        writeBackQueue.addAll(readyEntries);
     }
 
     private static boolean isAlreadyInQueue(RSBaseEntry rs) {
