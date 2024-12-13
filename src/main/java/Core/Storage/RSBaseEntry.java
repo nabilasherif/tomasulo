@@ -44,7 +44,7 @@ public class RSBaseEntry {
     public void clear(){
         this.busy = false;
         this.remainingCycles = Integer.MAX_VALUE;
-        instruction  = null;
+//        instruction  = null;
         result= 0;
     }
 

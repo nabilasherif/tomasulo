@@ -277,6 +277,7 @@ public class Main {
         return justFinished;
     }
 
+
     //TODO HANDLE WRITE BACK FOR ALL INSTRUCTION TYPES
     public static void writeToBusExcept(HashSet<String> tags) {
         // Populate the write-back queue
@@ -285,6 +286,7 @@ public class Main {
         // Write back a single entry from the queue
         if (!writeBackQueue.isEmpty()) {
             RSBaseEntry rs = writeBackQueue.poll();
+            System.out.println(rs);
             String tag = rs.getTag();
             double value = rs.getResult();
 
@@ -339,13 +341,14 @@ public class Main {
     }
 
     private static void populateWritebackQueue(HashSet<String> tags) {
-        for (ArithmeticRSEntry rs : addSubRS) {
+
+        for (LoadRSEntry rs : loadRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
         }
 
-        for (ArithmeticRSEntry rs : mulDivRS) {
+        for (ArithmeticRSEntry rs : addSubRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
@@ -357,11 +360,13 @@ public class Main {
             }
         }
 
-        for (LoadRSEntry rs : loadRS) {
+        for (ArithmeticRSEntry rs : mulDivRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
         }
+
+
     }
 
     public static void initReservationStations(){
@@ -448,7 +453,6 @@ public class Main {
             System.out.println(rs.instruction);
             if (rs.instruction != null && rs.instruction.getStatus() == Status.WRITTEN_BACK) {
                 rs.clear();
-                System.out.println("WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE WEEE R HEREEEE ");
             }
         }
 
@@ -480,7 +484,7 @@ public class Main {
 
 
     public static void incrementCycle(){
-//        clearAllWrittenBack();
+        clearAllWrittenBack();
         String tag= "0";
         cycle++;
         System.out.println("Cycle " + cycle);
