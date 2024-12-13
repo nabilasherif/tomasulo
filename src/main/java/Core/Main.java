@@ -441,8 +441,7 @@ public class Main {
         }
         return false;
     }
-
-
+    
     public static void initReservationStations(){
         addSubRS=new ArrayList<>();
         for(int i =1; i <= addReservationStationSize; i++){
@@ -500,7 +499,7 @@ public class Main {
         initRegisterFile();
     }
 
-    public static void handleBranchTrue(Instruction instruction){
+    private static void handleBranchTrue(Instruction instruction){
         int addressLoop = Integer.parseInt(instruction.getK());
         int addressBranch=instructionQueueParser.size();
 
@@ -514,10 +513,9 @@ public class Main {
             instructionQueue.add(instructionQueueParser.get(i).deepClone());
         }
         pc++;
-
     }
 
-    public static void clearAllWrittenBack(){
+    private static void clearAllWrittenBack(){
 
         for (ArithmeticRSEntry rs : mulDivRS) {
             System.out.println(rs.instruction);
@@ -605,7 +603,6 @@ public class Main {
                 default:
                     break;
             }
-
             // go through the register files and set the Q to the tag
             if(clonedInstruction.getOp() != InstructionType.SW && clonedInstruction.getOp() != InstructionType.SD &&
                     clonedInstruction.getOp()!= InstructionType.S_D && clonedInstruction.getOp()!= InstructionType.S_S &&
@@ -617,7 +614,6 @@ public class Main {
 
             }
             System.out.println("THE ISSUING CYCLE: " + instructionQueue.get(pc-1).getIssue());
-
             //TODO: HANDLE BRANCH INSTRUCTIONS
         } else {
 //            stall = false;
@@ -638,7 +634,6 @@ public class Main {
 
         System.out.println("WRITE BACK QUEUE");
         printWriteBackQueue();
-
     }
 
     public static void main(String[] args) {
@@ -677,5 +672,4 @@ public class Main {
             System.out.println(entry.getTag()); // Assumes RSBaseEntry has a meaningful toString() method
         }
     }
-
 }
