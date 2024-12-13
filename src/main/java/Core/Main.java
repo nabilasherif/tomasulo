@@ -198,6 +198,9 @@ public class Main {
 
             if (currentRS.getQk().equals("0") && currentRS.getQj().equals("0") && (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
                 currentRS.instruction.setStatus(Status.EXECUTING);
+                List<Integer> currExecution = currentRS.instruction.getExecution();
+                currExecution.add(cycle);
+                currentRS.instruction.setExecution(currExecution);
                 currentRS.remainingCycles--;
 
                 if (currentRS.remainingCycles == 0) {
@@ -215,6 +218,9 @@ public class Main {
             if (currentRS.getQk().equals("0") && currentRS.getQj().equals("0")&&
                     (currentRS.instruction.getStatus() == Status.EXECUTING ||
                             currentRS.instruction.getStatus() == Status.ISSUED)) {
+                List<Integer> currExecution = currentRS.instruction.getExecution();
+                currExecution.add(cycle);
+                currentRS.instruction.setExecution(currExecution);
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
 
@@ -232,6 +238,9 @@ public class Main {
 
             if (currentRS.getValue() != null &&
                     (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
+                List<Integer> currExecution = currentRS.instruction.getExecution();
+                currExecution.add(cycle);
+                currentRS.instruction.setExecution(currExecution);
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
 
@@ -248,6 +257,9 @@ public class Main {
                 continue;
             if (currentRS.instruction != null &&
                     (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
+                List<Integer> currExecution = currentRS.instruction.getExecution();
+                currExecution.add(cycle);
+                currentRS.instruction.setExecution(currExecution);
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
                 if (currentRS.remainingCycles == 0) {
@@ -264,6 +276,9 @@ public class Main {
             if (currentRS.getQk().equals("0") && currentRS.getQj().equals("0")
                     && (currentRS.instruction.getStatus() == Status.EXECUTING
                     || currentRS.instruction.getStatus() == Status.ISSUED)) {
+                List<Integer> currExecution = currentRS.instruction.getExecution();
+                currExecution.add(cycle);
+                currentRS.instruction.setExecution(currExecution);
 
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
@@ -340,6 +355,7 @@ public class Main {
 
             // Update status
             rs.instruction.setStatus(Status.WRITTEN_BACK);
+            rs.instruction.setWrite(cycle);
             rs.setBusy(false);
         }
     }
@@ -507,6 +523,7 @@ public class Main {
                     if (checkAnEmptyStation(addSubRS)) {
                         tag = addToAddSubRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
+                        clonedInstruction.setIssue(cycle);
                         pc++;
                     }
                     break;
@@ -517,6 +534,7 @@ public class Main {
                     if (checkAnEmptyStation(mulDivRS)) {
                         tag = addToMulDivRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
+                        clonedInstruction.setIssue(cycle);
                         pc++;
                     }
                     break;
@@ -527,6 +545,7 @@ public class Main {
                     if (checkAnEmptyStation(loadRS)) {
                         tag = addToLoadRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
+                        clonedInstruction.setIssue(cycle);
                         pc++;
                     }
                     break;
@@ -537,6 +556,7 @@ public class Main {
                     if (checkAnEmptyStation(storeRS)) {
                         tag = addToStoreRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
+                        clonedInstruction.setIssue(cycle);
                         pc++;
                     }
                     break;
@@ -545,6 +565,7 @@ public class Main {
                     if (checkAnEmptyStation(branchRS)) {
                         tag = addToAddSubRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
+                        clonedInstruction.setIssue(cycle);
                         pc++;
                         stall = true;
                     }
