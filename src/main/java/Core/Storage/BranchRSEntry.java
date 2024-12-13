@@ -12,7 +12,11 @@ public class BranchRSEntry extends RSBaseEntry {
     private String qj;
     private String qk;
 
-    public BranchRSEntry(String name, Instruction instruction) {super(name, instruction);}
+    public BranchRSEntry(String name, Instruction instruction) {
+        super(name, instruction);
+        this.qj = "0";
+        this.qk = "0";
+    }
 
     public InstructionType getOp() {return op;}
 
@@ -34,8 +38,6 @@ public class BranchRSEntry extends RSBaseEntry {
 
     public String getQk() {return qk;}
 
-    public void clear() {super.setBusy(false);}
-
     public boolean execute(){
         InstructionType op = this.getOp();
         switch (op) {
@@ -43,6 +45,13 @@ public class BranchRSEntry extends RSBaseEntry {
             case BEQ: return Operations.BEQ((Long)this.vj, (Long)this.vk);
         }
         return false;
+    }
+    public void clear() {
+        super.clear();
+        this.vj = null;
+        this.vk = null;
+        this.qj = "";
+        this.qk = "0";
     }
 
     public void printRSDetails() {

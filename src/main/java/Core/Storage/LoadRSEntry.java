@@ -31,6 +31,11 @@ public class LoadRSEntry extends RSBaseEntry {
         }
     }
 
+    public void clear() {
+        super.clear();
+        this.address = null;
+    }
+
     public void printRSDetails() {
         System.out.println("Tag: " + this.getTag());
         System.out.println("Busy: " + this.isBusy());
