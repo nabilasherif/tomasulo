@@ -201,11 +201,19 @@ TomasuloSimulator extends Application {
             }
         });
 
+        TableColumn<ArithmeticRSEntry, String> vjCol = new TableColumn<>("Vj");
+        vjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVj() != null ? cellData.getValue().getVj().toString() : ""));
+
+        TableColumn<ArithmeticRSEntry, String> vkCol = new TableColumn<>("Vk");
+        vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : ""));
+
+
+
         TableColumn<ArithmeticRSEntry, String> qjCol = new TableColumn<>("Qj");
-        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj() != null ? cellData.getValue().getQj().toString() : ""));
+        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj() != null ? cellData.getValue().getQj() : ""));
 
         TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Qk");
-        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk() != null ? cellData.getValue().getQk().toString() : ""));
+        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk() != null ? cellData.getValue().getQk() : ""));
 
         TableColumn<ArithmeticRSEntry, String> addCol = new TableColumn<>("Address");
         addCol.setCellValueFactory(cellData -> {
@@ -213,7 +221,7 @@ TomasuloSimulator extends Application {
             return new SimpleStringProperty(kValue == null ? "" : kValue);
         });
 
-        table.getColumns().addAll(tagCol, busyCol, qjCol, qkCol, addCol);
+        table.getColumns().addAll(tagCol, busyCol,vjCol, vkCol, qjCol, qkCol, addCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         table.setMinHeight(100);
         return table;
