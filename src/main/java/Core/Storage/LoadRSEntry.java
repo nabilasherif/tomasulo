@@ -15,7 +15,7 @@ public class LoadRSEntry extends RSBaseEntry {
         this.address = address;
     }
 
-    public int getAddress() {
+    public Integer getAddress() {
         return this.address;
     }
 

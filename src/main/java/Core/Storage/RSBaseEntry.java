@@ -57,4 +57,8 @@ public class RSBaseEntry {
     public void setResult(double result) {this.result = result;}
 
     public double getResult() {return this.result;}
+
+    public Instruction getInstruction() {
+        return instruction;
+    }
 }

@@ -17,7 +17,7 @@ public class StoreRSEntry extends RSBaseEntry {
 
     public void setAddress(int address) {this.address = address;}
 
-    public int getAddress() {return address;}
+    public Integer getAddress() {return address;}
 
     public void setValue(Object value) {this.value = value;}
 

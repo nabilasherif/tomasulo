@@ -201,6 +201,9 @@ public class Main {
 
             if (currentRS.getQk().equals("0") && currentRS.getQj().equals("0") && (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
                 currentRS.instruction.setStatus(Status.EXECUTING);
+                List<Integer> currExecution = currentRS.instruction.getExecution();
+                currExecution.add(cycle);
+                currentRS.instruction.setExecution(currExecution);
                 currentRS.remainingCycles--;
 
                 if (currentRS.remainingCycles == 0) {
@@ -218,6 +221,9 @@ public class Main {
             if (currentRS.getQk().equals("0") && currentRS.getQj().equals("0")&&
                     (currentRS.instruction.getStatus() == Status.EXECUTING ||
                             currentRS.instruction.getStatus() == Status.ISSUED)) {
+                List<Integer> currExecution = currentRS.instruction.getExecution();
+                currExecution.add(cycle);
+                currentRS.instruction.setExecution(currExecution);
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
 
@@ -235,6 +241,9 @@ public class Main {
 
             if (currentRS.getValue() != null &&
                     (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
+                List<Integer> currExecution = currentRS.instruction.getExecution();
+                currExecution.add(cycle);
+                currentRS.instruction.setExecution(currExecution);
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
 
@@ -251,6 +260,9 @@ public class Main {
                 continue;
             if (currentRS.instruction != null &&
                     (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
+                List<Integer> currExecution = currentRS.instruction.getExecution();
+                currExecution.add(cycle);
+                currentRS.instruction.setExecution(currExecution);
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
                 if (currentRS.remainingCycles == 0) {
@@ -267,6 +279,9 @@ public class Main {
             if (currentRS.getQk().equals("0") && currentRS.getQj().equals("0")
                     && (currentRS.instruction.getStatus() == Status.EXECUTING
                     || currentRS.instruction.getStatus() == Status.ISSUED)) {
+                List<Integer> currExecution = currentRS.instruction.getExecution();
+                currExecution.add(cycle);
+                currentRS.instruction.setExecution(currExecution);
 
                 currentRS.instruction.setStatus(Status.EXECUTING);
                 currentRS.remainingCycles--;
@@ -343,6 +358,7 @@ public class Main {
 
             // Update status
             rs.instruction.setStatus(Status.WRITTEN_BACK);
+            rs.instruction.setWrite(cycle);
             rs.setBusy(false);
         }
     }
@@ -416,8 +432,6 @@ public class Main {
         printRegisters(registerFile);
     }
 
-
-
     public static void init(){
 
         String filePath = "src/main/java/Core/program3.txt";
@@ -428,7 +442,7 @@ public class Main {
         }
 
         Memory memory=new Memory(2024, blockSize);
-        byte [] loopover = new byte[8];
+        byte [] loopover = new byte[blockSize];
         for(int i =0; i < loopover.length; i++)
             loopover[i]= (byte)i;
         memory.writeBlock(0,loopover );
@@ -495,13 +509,12 @@ public class Main {
         String tag= "0";
         cycle++;
         System.out.println("Cycle " + cycle);
-
+//
 //        Scanner sc = new Scanner(System.in);
 //        sc.nextInt();
         // if previous was a branch so don't issue for 1 cycle until decision is known
         if (pc < instructionQueue.size() && !stall) {
-            Instruction currentInstruction = instructionQueue.get(pc);
-            Instruction clonedInstruction = currentInstruction.deepClone();
+            Instruction clonedInstruction = instructionQueue.get(pc);
             switch (clonedInstruction.getOp()) {
                 case DADDI:
                 case DSUBI:
@@ -512,6 +525,7 @@ public class Main {
                     if (checkAnEmptyStation(addSubRS)) {
                         tag = addToAddSubRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
+                        clonedInstruction.setIssue(cycle);
                         pc++;
                     }
                     break;
@@ -522,6 +536,7 @@ public class Main {
                     if (checkAnEmptyStation(mulDivRS)) {
                         tag = addToMulDivRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
+                        clonedInstruction.setIssue(cycle);
                         pc++;
                     }
                     break;
@@ -532,6 +547,7 @@ public class Main {
                     if (checkAnEmptyStation(loadRS)) {
                         tag = addToLoadRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
+                        clonedInstruction.setIssue(cycle);
                         pc++;
                     }
                     break;
@@ -542,6 +558,7 @@ public class Main {
                     if (checkAnEmptyStation(storeRS)) {
                         tag = addToStoreRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
+                        clonedInstruction.setIssue(cycle);
                         pc++;
                     }
                     break;
@@ -550,6 +567,7 @@ public class Main {
                     if (checkAnEmptyStation(branchRS)) {
                         tag = addToAddSubRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
+                        clonedInstruction.setIssue(cycle);
                         pc++;
                         stall = true;
                     }
@@ -568,6 +586,7 @@ public class Main {
                 registerFile.put(destination, registerEntry);
 
             }
+            System.out.println("THE ISSUING CYCLE: " + instructionQueue.get(pc-1).getIssue());
 
 
 
@@ -604,9 +623,7 @@ public class Main {
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
         // TODO HANDLE INTEGRATION WITH FE
-        while((pc < instructionQueue.size()) || !allStationsEmpty()){
-            incrementCycle();
-        }
+
         printRegisters(registerFile);
         System.out.println(memory.readBlock(0));
     }
