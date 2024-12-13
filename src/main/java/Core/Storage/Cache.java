@@ -40,19 +40,6 @@ public class Cache {
         memory.writeBlock(blockStartAddress, block);
     }
 
-    public byte readByte(int address) {
-        if (!initialized[address]) {
-            loadBlock(address);
-        }
-        return cache[address];
-    }
-
-    public void writeByte(int address, byte value) {
-        cache[address] = value;
-        initialized[address] = true;
-        writeBack(address);
-    }
-
     public float readWord(int address) {
         byte[] word = new byte[4];
         System.arraycopy(cache, address, word, 0, 4);
@@ -85,17 +72,5 @@ public class Cache {
             block[i] = (byte) (i + 1);
         }
         memory.writeBlock(0, block);
-
-        for (int i = 0; i < 8; i++) {
-            System.out.print(cache.readByte(i) + " ");
-        }
-        System.out.println();
-
-        cache.writeByte(4, (byte) 100);
-        memory.displayMemory();
-        System.out.println(cache.readByte(4));
-        cache.writeByte(12, (byte) 123);
-        System.out.println(cache.readByte(12));
-        System.out.println(cache.readByte(12));
     }
 }
