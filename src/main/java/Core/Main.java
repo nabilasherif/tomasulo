@@ -6,6 +6,7 @@ import java.util.*;
 
 public class Main {
 
+    private static String filePath = "src/main/java/Core/program3.txt";
     static boolean stall=false;
     public static int blockSize = 8;
     public static int cacheSize= 64;
@@ -87,7 +88,6 @@ public class Main {
                 String k = addSubRS.get(i).instruction.getK();
 
                 double jvalue = registerFile.get(j).getValue();
-
 
                 if(instruction.getOp() != InstructionType.DSUBI && instruction.getOp() != InstructionType.DADDI){
                     if(instruction.getOp()==InstructionType.BNE || instruction.getOp()==InstructionType.BEQ){
@@ -257,7 +257,8 @@ public class Main {
             if ( currentRS.getTag().equals(tag) || !currentRS.isBusy())
                 continue;
             if (currentRS.instruction != null &&
-                    (currentRS.instruction.getStatus() == Status.EXECUTING || currentRS.instruction.getStatus() == Status.ISSUED)) {
+                    (currentRS.instruction.getStatus() == Status.EXECUTING ||
+                            currentRS.instruction.getStatus() == Status.ISSUED)) {
                 List<Integer> currExecution = currentRS.instruction.getExecution();
                 currExecution.add(cycle);
                 currentRS.instruction.setExecution(currExecution);
@@ -296,7 +297,6 @@ public class Main {
         }
         return justFinished;
     }
-
 
     //TODO HANDLE WRITE BACK FOR ALL INSTRUCTION TYPES
     public static void writeToBusExcept(HashSet<String> tags) {
@@ -339,7 +339,6 @@ public class Main {
                     rs2.setQ("0");
                 }
             }
-
             //Updating the register files
             String destination= rs.instruction.getDest();
             RegisterEntry adjustedEntry = registerFile.get(destination);
@@ -353,7 +352,6 @@ public class Main {
                     registerEntry.setValue(value);
                 }
             }
-
             // Update status
             rs.instruction.setStatus(Status.WRITTEN_BACK);
             rs.instruction.setWrite(cycle);
@@ -386,8 +384,6 @@ public class Main {
                 writeBackQueue.add(rs);
             }
         }
-
-
     }
 
     public static void initReservationStations(){
@@ -431,8 +427,6 @@ public class Main {
     }
 
     public static void init(){
-
-        String filePath = "src/main/java/Core/program3.txt";
         instructionQueueParser = InstructionFileParser.fillInstructionsQueue(filePath);
 
         for (Instruction instruction : instructionQueueParser) {
@@ -459,12 +453,10 @@ public class Main {
                 addressBranch=i;
             }
         }
-
         for (int i=addressLoop;i<=addressBranch;i++){
             instructionQueue.add(instructionQueueParser.get(i).deepClone());
         }
     }
-
 
     public static void clearAllWrittenBack(){
 
@@ -498,28 +490,20 @@ public class Main {
                 rs.clear();
             }
         }
-
     }
-
 
     public static void incrementCycle(){
         clearAllWrittenBack();
         String tag= "0";
         cycle++;
         System.out.println("Cycle " + cycle);
-//
 //        Scanner sc = new Scanner(System.in);
 //        sc.nextInt();
         // if previous was a branch so don't issue for 1 cycle until decision is known
         if (pc < instructionQueue.size() && !stall) {
             Instruction clonedInstruction = instructionQueue.get(pc);
             switch (clonedInstruction.getOp()) {
-                case DADDI:
-                case DSUBI:
-                case ADD_D:
-                case ADD_S:
-                case SUB_D:
-                case SUB_S:
+                case DADDI,DSUBI,ADD_D,ADD_S,SUB_D,SUB_S:
                     if (checkAnEmptyStation(addSubRS)) {
                         tag = addToAddSubRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
@@ -527,10 +511,7 @@ public class Main {
                         pc++;
                     }
                     break;
-                case MUL_D:
-                case MUL_S:
-                case DIV_D:
-                case DIV_S:
+                case MUL_D,MUL_S,DIV_D,DIV_S:
                     if (checkAnEmptyStation(mulDivRS)) {
                         tag = addToMulDivRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
@@ -538,10 +519,7 @@ public class Main {
                         pc++;
                     }
                     break;
-                case LW:
-                case LD:
-                case L_S:
-                case L_D:
+                case LW,LD,L_S,L_D:
                     if (checkAnEmptyStation(loadRS)) {
                         tag = addToLoadRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
@@ -549,10 +527,7 @@ public class Main {
                         pc++;
                     }
                     break;
-                case SW:
-                case SD:
-                case S_S:
-                case S_D:
+                case SW,SD,S_S,S_D:
                     if (checkAnEmptyStation(storeRS)) {
                         tag = addToStoreRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
@@ -560,8 +535,7 @@ public class Main {
                         pc++;
                     }
                     break;
-                case BNE:
-                case BEQ:
+                case BNE,BEQ:
                     if (checkAnEmptyStation(branchRS)) {
                         tag = addToAddSubRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
@@ -586,8 +560,6 @@ public class Main {
             }
             System.out.println("THE ISSUING CYCLE: " + instructionQueue.get(pc-1).getIssue());
 
-
-
             //TODO: HANDLE BRANCH INSTRUCTIONS
         } else {
             stall = false;
@@ -606,7 +578,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
         // TODO: INITIALISE ALL INPUTS FUNCTION FOR INITIALISING ALL GLOBAL VARIABLES
         init();
         initReservationStations();
