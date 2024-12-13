@@ -4,7 +4,8 @@
 
 This project is a simulator that implements the **Tomasulo Algorithm**, which is a dynamic scheduling algorithm used for instruction execution in modern processors. The simulator mimics the out-of-order execution of instructions, manages reservation stations, and handles data hazards in a pipeline, improving the overall throughput of instruction execution.
 
-The simulator processes various instruction types (such as arithmetic, load/store, and branch operations), manages reservation stations, and utilizes a register file with tags to track dependencies between instructions. It uses the concepts of **Reservation Stations (RS)** and **Common Data Bus (CDB)** to simulate the execution of instructions in parallel while resolving data hazards and control hazards.
+Unlike traditional simulators, our system supports both floating-point (FP) and non-floating-point MIPS instructions, including addition, subtraction, multipli-
+cation, division, load, store, and branch operations, utilizes a register file, and manages reservation stations with tags to track dependencies between instructions. It uses the concepts of **Reservation Stations (RS)** and **Common Data Bus (CDB)** to simulate the execution of instructions in parallel while resolving data hazards and control hazards.
 
 ## Key Features
 
@@ -34,12 +35,13 @@ The program operates by maintaining several key components:
 - **Instruction Queue**: A list of instructions to be processed.
 - **Reservation Stations**: Stations for holding instructions waiting for operands (AddSubRS, MulDivRS, LoadRS, StoreRS, BranchRS).
 - **Register File**: A file that stores the values of registers and their dependency status.
-
+- **Cache**:  Is the primary interface for performing read and write operations at the word, or double word level
+- **Memory**: Operates in blocks, where each block is a fixed size defined by the blockSize parameter.
 ### Execution Process:
 1. **Increment Cycle**: The `incrementCycle()` method manages the flow of execution by checking available reservation stations and issuing instructions for execution. It also handles the tagging of registers and checks for dependencies.
 2. **Handling Branches**: If a branch instruction is encountered, the simulator checks whether a decision has been made and stalls the pipeline until the branch is resolved.
 3. **Register Updates**: After executing an instruction, the register file is updated with the appropriate tags to indicate when the register will be updated.
-4. **Loop Until Completion**: The program continues executing instructions in cycles until all instructions are completed.
+4. **Loop Until Completion**: Each iteration is performed via button click. The program continues executing instructions in cycles until all instructions are completed.
 
 ## Prerequisites
 
