@@ -431,7 +431,11 @@ TomasuloSimulator extends Application {
     private TableView<Map.Entry<Integer, byte[]>> createCacheTable() {
         TableView<Map.Entry<Integer, byte[]>> tableView = new TableView<>();
 
+        // Make the table width scrollable by removing constrained resize policy
+        tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+
         TableColumn<Map.Entry<Integer, byte[]>, String> blockAddressCol = new TableColumn<>("Block Address");
+        blockAddressCol.setPrefWidth(150); // Set a fixed width for this column
         blockAddressCol.setCellValueFactory(cellData -> {
             int index = cellData.getValue().getKey();
             int blockStartAddress = index - (index % Main.blockSize);
@@ -439,6 +443,7 @@ TomasuloSimulator extends Application {
         });
 
         TableColumn<Map.Entry<Integer, byte[]>, String> dataCol = new TableColumn<>("Block Data");
+        dataCol.setPrefWidth(600); // Set a wider fixed width for this column to trigger horizontal scrolling
         dataCol.setCellValueFactory(cellData -> {
             byte[] blockData = cellData.getValue().getValue();
             StringBuilder dataString = new StringBuilder();
@@ -460,9 +465,13 @@ TomasuloSimulator extends Application {
         tableView.setItems(cacheDataList);
 
         tableView.getColumns().addAll(blockAddressCol, dataCol);
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        // Set the preferred width for the TableView to be less than the total column width
+        tableView.setPrefWidth(500);
+
         return tableView;
     }
+
 
     public void refreshCacheTable() {
         ObservableList<Map.Entry<Integer, byte[]>> cacheDataList = FXCollections.observableArrayList();

@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Main {
 
-    private static final String filePath = "src/main/java/Core/program5.txt";
+    private static final String filePath = "src/main/java/Core/program4.txt";
     public static boolean isProgramDone = false;
     static boolean stall=false;
     public static int blockSize = 8;
@@ -18,7 +18,6 @@ public class Main {
     public static ArrayList<LoadRSEntry> loadRS = new ArrayList<>();
     public static ArrayList<StoreRSEntry> storeRS = new ArrayList<>();
     public static HashMap<String, RegisterEntry> registerFile = new RegisterFile().getRegisters();
-    // From the GUI
     public static int addReservationStationSize= 3;
     public static int addLatency = 3;
     public static int addFPLatency = 3;
@@ -42,6 +41,7 @@ public class Main {
     public static List<Instruction> instructionQueue = new ArrayList<>();
     public static int cycle = 0;
     public static int pc = 0;
+    public static boolean firstLoad = true;
 
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
         for (RSBaseEntry rs : reservationStation) {
@@ -172,15 +172,28 @@ public class Main {
         for (int i = 0; i < loadRS.size(); i++) {
             // If my reservation station's current entry is not busy, add the instruction to the reservation station
             if (!loadRS.get(i).isBusy()) {
-                //TODO ADD THE PENALTY HERE
-                if (cache.cacheLoadedBlockCheck(Integer.parseInt(instruction.getJ())))
+//                if (cache.cacheLoadedBlockCheck(Integer.parseInt(instruction.getJ())))
+//                    loadRS.get(i).setValues(true, loadLatency, instruction);
+//                else
+//                    loadRS.get(i).setValues(true, loadLatency + loadPenalty, instruction);
+                if(firstLoad){
+                    loadRS.get(i).setValues(true, loadLatency + loadPenalty, instruction);
+                    firstLoad=false;
+                }else{
                     loadRS.get(i).setValues(true, loadLatency, instruction);
-                else
-                    loadRS.get(i).setValues(true, loadLatency + loadPenalty
-                            , instruction);
+                }
 
-                String dest = loadRS.get(i).instruction.getDest();// f3
                 String j = loadRS.get(i).instruction.getJ();//100
+                if(registerFile.containsKey(j)){
+                    RegisterEntry entry = registerFile.get(j);
+                    if(entry.getQ().equals("0")){
+                        loadRS.get(i).setAddress((int) entry.getValue());
+                    }else{
+
+                    }
+                }else{
+                    loadRS.get(i).setAddress(Integer.parseInt(j));
+                }
                 loadRS.get(i).setAddress(Integer.parseInt(j));
                 return loadRS.get(i).getTag();
             }
@@ -218,7 +231,6 @@ public class Main {
         return "";
     }
 
-    //TODO HANDLE EXECUTE FOR ALL INSTRUCTION TYPES
     public static HashSet<String> executeAllExcept(String tag) {
         HashSet<String> justFinished = new HashSet<>();
 
@@ -332,7 +344,6 @@ public class Main {
         return justFinished;
     }
 
-    //TODO HANDLE WRITE BACK FOR ALL INSTRUCTION TYPES
     public static void writeToBusExcept(HashSet<String> tags) {
         // Populate the write-back queue
         populateWritebackQueue(tags);
@@ -340,7 +351,6 @@ public class Main {
         // Write back a single entry from the queue
         if (!writeBackQueue.isEmpty()) {
             RSBaseEntry rs = writeBackQueue.poll();
-            System.out.println(rs);
             String tag = rs.getTag();
             double value = rs.getResult();
 
@@ -442,7 +452,6 @@ public class Main {
         return false;
     }
 
-
     public static void initReservationStations(){
         addSubRS=new ArrayList<>();
         for(int i =1; i <= addReservationStationSize; i++){
@@ -504,12 +513,6 @@ public class Main {
         int addressLoop = Integer.parseInt(instruction.getK());
         int addressBranch=instructionQueueParser.size();
 
-        //moshkela law feh wahda tanya zayaha belzabt fa ow n store lel kol branch its index(hasa ahsan)
-//        for (int i= addressLoop; i<instructionQueueParser.size();i++){
-//            if(instructionQueueParser.get(i).deepClone().equals(instruction)){
-//                addressBranch=i;
-//            }
-//        }
         for (int i=addressLoop;i< instructionQueueParser.size();i++){
             instructionQueue.add(instructionQueueParser.get(i).deepClone());
         }
@@ -520,7 +523,6 @@ public class Main {
     public static void clearAllWrittenBack(){
 
         for (ArithmeticRSEntry rs : mulDivRS) {
-            System.out.println(rs.instruction);
             if (rs.instruction != null && rs.instruction.getStatus() == Status.WRITTEN_BACK) {
                 rs.clear();
             }
@@ -555,7 +557,6 @@ public class Main {
         clearAllWrittenBack();
         String tag= "0";
         cycle++;
-        System.out.println("Cycle " + cycle);
 //        Scanner sc = new Scanner(System.in);
 //        sc.nextInt();
         // if previous was a branch so don't issue for 1 cycle until decision is known
@@ -616,37 +617,17 @@ public class Main {
                 registerFile.put(destination, registerEntry);
 
             }
-            System.out.println("THE ISSUING CYCLE: " + instructionQueue.get(pc-1).getIssue());
-
-            //TODO: HANDLE BRANCH INSTRUCTIONS
-        } else {
-//            stall = false;
         }
         HashSet<String> justExecuted = executeAllExcept(tag);
         writeToBusExcept(justExecuted);
 
-        for (ArithmeticRSEntry addR : addSubRS)
-            addR.printRSDetails();
-//        for (ArithmeticRSEntry mulR : mulDivRS)
-//            mulR.printRSDetails();
-        for(LoadRSEntry load: loadRS)
-            load.printRSDetails();
-        for(StoreRSEntry store : storeRS)
-            store.printRSDetails();
-        for(ArithmeticRSEntry br : branchRS)
-            br.printRSDetails();
-
-        System.out.println("WRITE BACK QUEUE");
-        printWriteBackQueue();
-
     }
 
     public static void main(String[] args) {
-        // TODO: INITIALISE ALL INPUTS FUNCTION FOR INITIALISING ALL GLOBAL VARIABLES
+
         init();
         initReservationStations();
         initRegisterFile();
-        System.out.println("Start: ");
         for (Instruction queueInstance : instructionQueue) {
             System.out.println("Op: " + queueInstance.getOp()
                     + ", Dest: " + queueInstance.getDest()
@@ -655,26 +636,10 @@ public class Main {
                     + ", Issue Cycle: " + queueInstance.getIssue()
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
-        // TODO HANDLE INTEGRATION WITH FE
+
         while(!isProgramDone){
             isProgramDone = pc >= instructionQueue.size() && allStationsEmpty();
             incrementCycle();
-        }
-        printRegisters(registerFile);
-        System.out.println("Done");
-        System.out.println(memory.readBlock(0));
-    }
-
-    public static void printWriteBackQueue() {
-        System.out.println("Contents of writeBackQueue:");
-
-        if (writeBackQueue.isEmpty()) {
-            System.out.println("The queue is empty.");
-            return;
-        }
-
-        for (RSBaseEntry entry : writeBackQueue) {
-            System.out.println(entry.getTag()); // Assumes RSBaseEntry has a meaningful toString() method
         }
     }
 
