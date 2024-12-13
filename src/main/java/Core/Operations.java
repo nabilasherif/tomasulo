@@ -7,10 +7,6 @@ public class Operations {
 
     //a will be the content inside the register, b immediate
 
-    public static long DADDI(long a, short b) {return a + b;}
-
-    public static long SUBBI(long a, short b) {return a - b;}
-
     public static double ADD_D(double a, double b) {return a + b;}
 
     public static double ADD_S(double a, double b) {return a + b;}
@@ -21,17 +17,11 @@ public class Operations {
 
     public static double MUL_D(double a, double b) {return a * b;}
 
-    public static double MUL_S(double a, double b) {
-        return a * b;
-    }
+    public static double MUL_S(double a, double b) {return a * b;}
 
-    public static double DIV_D(double a, double b) {
-        return a / b;
-    }
+    public static double DIV_D(double a, double b) {return a / b;}
 
-    public static double DIV_S(double a, double b) {
-        return a / b;
-    }
+    public static double DIV_S(double a, double b) {return a / b;}
 
     public static int LW(int address){
         return (int)cache.readWord(address) ;
@@ -65,12 +55,10 @@ public class Operations {
         cache.writeDoubleWord(address,(double)registerFile.get(register).getValue());
     }
 
-    //return true if not equal so branch
     public static boolean BNE(double a, double b) {
         return a!=b;
     }
 
-    //return true if equal so branch
     public static boolean BEQ(double a, double b) {
         return a==b;
     }

@@ -1,6 +1,7 @@
 package Core.Register;
 
 public class RegisterEntry {
+
     private double value;
     private String q;
 
@@ -28,6 +29,7 @@ public class RegisterEntry {
     public void isValid(){
         this.q = "0";
     }
+
     public String toString() {
         return "RegisterEntry{value=" + value + ", q='" + q + "'}";
     }
