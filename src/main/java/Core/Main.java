@@ -86,15 +86,24 @@ public class Main {
                 String j = addSubRS.get(i).instruction.getJ();
                 String k = addSubRS.get(i).instruction.getK();
 
+
                 double jvalue = registerFile.get(j).getValue();
-                double kvalue = registerFile.get(k).getValue();
-                String kQ = registerFile.get(k).getQ();
-                String jQ = registerFile.get(j).getQ();
-                if(kQ.equals("0")){
-                    addSubRS.get(i).setVk(kvalue);
+
+
+                if(instruction.getOp() != InstructionType.DSUBI && instruction.getOp() != InstructionType.DADDI){
+                    double kvalue = registerFile.get(k).getValue();
+                    String kQ = registerFile.get(k).getQ();
+                    if(kQ.equals("0")){
+                        addSubRS.get(i).setVk(kvalue);
+                    }else{
+                        addSubRS.get(i).setQk(kQ);
+                    }
                 }else{
-                    addSubRS.get(i).setQk(kQ);
+                    addSubRS.get(i).setVk(Double.parseDouble(instruction.getK()));
                 }
+
+                String jQ = registerFile.get(j).getQ();
+
                 if(jQ.equals("0")){
                     addSubRS.get(i).setVj(jvalue);
                 }else{
@@ -164,7 +173,8 @@ public class Main {
             // If my reservation station's current entry is not busy, add the instruction to the reservation station
             if (!loadRS.get(i).isBusy()) {
                 //TODO ADD THE PENALTY HERE
-                loadRS.get(i).setValues(true, loadLatency, instruction);
+//                if(cache.cache.get(Integer.parseInt(instruction.getJ())   )
+                    loadRS.get(i).setValues(true, loadLatency, instruction);
                 String dest = loadRS.get(i).instruction.getDest();// f3
                 String j = loadRS.get(i).instruction.getJ();//100
                 loadRS.get(i).setAddress(Integer.parseInt(j));
@@ -413,7 +423,7 @@ public class Main {
 
     public static void init(){
 
-        String filePath = "src/main/java/Core/program2.txt";
+        String filePath = "src/main/java/Core/program3.txt";
         instructionQueueParser = InstructionFileParser.fillInstructionsQueue(filePath);
 
         for (Instruction instruction : instructionQueueParser) {
