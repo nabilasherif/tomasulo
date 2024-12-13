@@ -388,44 +388,34 @@ TomasuloSimulator extends Application {
         kCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getK()));
 
         TableColumn<Instruction, String> issuedCol = new TableColumn<>("Issued");
-
-        issuedCol.setCellValueFactory(cellData -> new SimpleStringProperty("" + cellData.getValue().getIssue()));
-
+        issuedCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getIssue() == 0 ? "" : String.valueOf(cellData.getValue().getIssue()))
+        );
         TableColumn<Instruction, String> executedCol = new TableColumn<>("Executed");
         executedCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getExecution().toString()));
 
         TableColumn<Instruction, String> writebackCol = new TableColumn<>("Writeback");
-        writebackCol.setCellValueFactory(cellData -> new SimpleStringProperty(""+cellData.getValue().getWrite()));
-        // Adding the updated columns to the TableView
+        writebackCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getWrite() == 0 ? "" : String.valueOf(cellData.getValue().getWrite())));
+
         tableView.getColumns().addAll(operationCol, destCol, jCol, kCol, issuedCol, executedCol, writebackCol);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
         tableView.setMinHeight(150);
-
         return tableView;
     }
 
     private TableView<Map.Entry<String, RegisterEntry>> createRegisterFileTable() {
         TableView<Map.Entry<String, RegisterEntry>> registerFileTable = new TableView<>();
 
-        // Register Name Column
         TableColumn<Map.Entry<String, RegisterEntry>, String> registerNameCol = new TableColumn<>("Register");
-        registerNameCol.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getKey())
-        );
+        registerNameCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getKey()));
 
-        // Value Column
         TableColumn<Map.Entry<String, RegisterEntry>, String> valueCol = new TableColumn<>("Value");
         valueCol.setCellValueFactory(cellData -> new SimpleStringProperty("" + cellData.getValue().getValue().getValue()));
 
-        // Q Column
         TableColumn<Map.Entry<String, RegisterEntry>, String> qCol = new TableColumn<>("Q");
-        qCol.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getValue().getQ())
-        );
+        qCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getValue().getQ()));
 
         registerFileTable.getColumns().addAll(registerNameCol, valueCol, qCol);
-
+        registerFileTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         registerFileTable.setMinHeight(100);
         return registerFileTable;
     }
