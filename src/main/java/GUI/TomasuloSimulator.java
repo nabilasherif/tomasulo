@@ -38,7 +38,7 @@ public class TomasuloSimulator extends Application {
     private TableView<ArithmeticRSEntry> mulRSTable;
     private TableView<LoadRSEntry> loadRSTable;
     private TableView<StoreRSEntry> storeRSTable;
-//    private TableView<BranchRSEntry> branchRSTable;
+    private TableView<ArithmeticRSEntry> branchRSTable;
 
     //latencies
     private VBox addLatencyField;
@@ -52,7 +52,6 @@ public class TomasuloSimulator extends Application {
     private VBox mulFPLatencyField;
     private VBox divLatencyField;
     private VBox divFPLatencyField;
-//    private VBox branchLatencyField;
     private HBox latencyConfigBox;
 
     //rs
@@ -60,6 +59,7 @@ public class TomasuloSimulator extends Application {
     private VBox loadRSField;
     private VBox storeRSField;
     private VBox mulDivRSField;
+    private VBox branchRSField;
     private HBox rsConfigBox;
 
     //cache
@@ -83,7 +83,7 @@ public class TomasuloSimulator extends Application {
         mulRSTable = createMulDivTable();
         loadRSTable = createLoadRSTable();
         storeRSTable = createStoreRSTable();
-//        branchRSTable = createBranchRSTable();
+        branchRSTable = createBranchRSTable();
 
         //latencies config
         VBox latencyConfigBox = new VBox(10);
@@ -96,7 +96,6 @@ public class TomasuloSimulator extends Application {
         loadLatencyField = createLatencyField("Load Latency:");
         loadPenaltyField = createLatencyField("Load Penalty:");
         storeLatencyField = createLatencyField("Store Latency:");
-//        branchLatencyField = createLatencyField("Branch Latency:");
         addFPLatencyField = createLatencyField("Add FP Latency:");
         subFPLatencyField = createLatencyField("Sub FP Latency:");
         mulFPLatencyField = createLatencyField("Mul FP Latency:");
@@ -120,7 +119,8 @@ public class TomasuloSimulator extends Application {
         mulDivRSField = createRSField("Mul/Div RS Size:");
         loadRSField = createRSField("Load RS Size:");
         storeRSField = createRSField("Store RS Size:");
-        rsConfigBox.getChildren().addAll(addSubRSField, mulDivRSField, loadRSField, storeRSField);
+        branchRSField = createRSField("Branch RS Size:");
+        rsConfigBox.getChildren().addAll(addSubRSField, mulDivRSField, loadRSField, storeRSField, branchRSField);
 
         //cache config
         HBox cacheConfigBox = new HBox(10);
@@ -151,8 +151,8 @@ public class TomasuloSimulator extends Application {
                 new Label("Add/Sub RS"), addRSTable,
                 new Label("Mul/Div RS"), mulRSTable,
                 new Label("Load Buffer"), loadRSTable,
-                new Label("Store Buffer"), storeRSTable
-//                new Label("Branch RS"), branchRSTable
+                new Label("Store Buffer"), storeRSTable,
+                new Label("Branch RS"), branchRSTable
         );
 
         ScrollPane scrollPane = new ScrollPane(root);
@@ -180,32 +180,39 @@ public class TomasuloSimulator extends Application {
         return vbox;
     }
 
-    private TableView<BranchRSEntry> createBranchRSTable() {
-        TableView<BranchRSEntry> table = new TableView<>();
+    private TableView<ArithmeticRSEntry> createBranchRSTable() {
+        TableView<ArithmeticRSEntry> table = new TableView<>();
 
-        // Tag Column
-        TableColumn<BranchRSEntry, String> tagCol = new TableColumn<>("Tag");
+        TableColumn<ArithmeticRSEntry, String> tagCol = new TableColumn<>("Tag");
         tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
 
-        // Busy Column
-        TableColumn<BranchRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
-        busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
+        TableColumn<ArithmeticRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
+        busyCol.setCellFactory(column -> new TableCell<ArithmeticRSEntry, Boolean>() {
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item ? "1" : "0");
+                }
+            }
+        });
 
-        // Vj Column
-        TableColumn<BranchRSEntry, String> vjCol = new TableColumn<>("Vj");
+        TableColumn<ArithmeticRSEntry, String> vjCol = new TableColumn<>("Vj");
         vjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVj() != null ? cellData.getValue().getVj().toString() : "N/A"));
 
-        // Vk Column
-        TableColumn<BranchRSEntry, String> vkCol = new TableColumn<>("Vk");
+        TableColumn<ArithmeticRSEntry, String> vkCol = new TableColumn<>("Vk");
         vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : "N/A"));
 
-        // Address Column
-        TableColumn<BranchRSEntry, String> qkCol = new TableColumn<>("Address");
-        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getInstruction().getK()));
+        TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Address");
+        qkCol.setCellValueFactory(cellData -> {
+            String kValue = cellData.getValue().getInstruction() != null ? cellData.getValue().getInstruction().getK() : null;
+            return new SimpleStringProperty(kValue == null ? "" : kValue);
+        });
 
         table.getColumns().addAll(tagCol, busyCol, vjCol, vkCol, qkCol);
-
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        table.setMinHeight(100);
         return table;
     }
 
@@ -456,6 +463,7 @@ public class TomasuloSimulator extends Application {
             Main.mulReservationStationSize = Integer.parseInt(((TextField) mulDivRSField.getChildren().get(1)).getText());
             Main.loadReservationStationSize = Integer.parseInt(((TextField) loadRSField.getChildren().get(1)).getText());
             Main.storeReservationStationSize = Integer.parseInt(((TextField) storeRSField.getChildren().get(1)).getText());
+            Main.branchReservationStationSize = Integer.parseInt(((TextField) branchRSField.getChildren().get(1)).getText());
         } catch (NumberFormatException e) {
             showErrorDialog("Input Error", "Please enter valid numeric values for reservation station sizes.");
         }
@@ -504,10 +512,10 @@ public class TomasuloSimulator extends Application {
         ObservableList<StoreRSEntry> storeRSList = FXCollections.observableArrayList(Main.storeRS);
         storeRSTable.setItems(storeRSList);
         storeRSTable.refresh();
-//
-//        ObservableList<BranchRSEntry> branchRSList = FXCollections.observableArrayList(Main.branchRS);
-//        branchRSTable.setItems(branchRSList);
-//        branchRSTable.refresh();
+
+        ObservableList<ArithmeticRSEntry> branchRSList = FXCollections.observableArrayList(Main.branchRS);
+        branchRSTable.setItems(branchRSList);
+        branchRSTable.refresh();
     }
 
     private void showErrorDialog(String title, String message) {
