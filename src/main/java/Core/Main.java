@@ -419,25 +419,11 @@ public class Main {
     }
 
     private static void populateWritebackQueue(HashSet<String> tags) {
-
-        for (LoadRSEntry rs : loadRS) {
-            if (!tags.contains(rs.getTag()) && !isAlreadyInQueue(rs)
-                    && rs.isBusy() && rs.instruction.getStatus().equals(Status.EXECUTED)) {
-                writeBackQueue.add(rs);
-            }
-        }
-
-        for (ArithmeticRSEntry rs : addSubRS) {
-            if (!tags.contains(rs.getTag()) && !isAlreadyInQueue(rs)
-                    && rs.isBusy() && rs.instruction.getStatus().equals(Status.EXECUTED)) {
-                writeBackQueue.add(rs);
-            }
-        }
-
-        for (ArithmeticRSEntry rs : mulDivRS) {
-            if (!tags.contains(rs.getTag()) && !isAlreadyInQueue(rs)
-                    && rs.isBusy() && rs.instruction.getStatus().equals(Status.EXECUTED)) {
-                writeBackQueue.add(rs);
+        for (int i = 0; i < instructionQueue.size(); i++) {
+            Instruction instruction = instructionQueue.get(i);
+            if (!tags.contains(instruction.getTag()) && !isAlreadyInQueue(instruction)
+                    && instruction.getStatus().equals(Status.EXECUTED)) {
+                writeBackQueue.add(instruction);
             }
         }
     }
