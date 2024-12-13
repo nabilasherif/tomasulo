@@ -310,10 +310,10 @@ public class TomasuloSimulator extends Application {
         vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : ""));
 
         TableColumn<ArithmeticRSEntry, String> qjCol = new TableColumn<>("Qj");
-        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj() != null ? cellData.getValue().getQj().toString() : ""));
+        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj() != null ? cellData.getValue().getQj() : ""));
 
         TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Qk");
-        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk() != null ? cellData.getValue().getQk().toString() : ""));
+        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk() != null ? cellData.getValue().getQk() : ""));
 
         table.getColumns().addAll(tagCol, busyCol, opCol, vjCol, vkCol, qjCol, qkCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -349,10 +349,10 @@ public class TomasuloSimulator extends Application {
         vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : ""));
 
         TableColumn<ArithmeticRSEntry, String> qjCol = new TableColumn<>("Qj");
-        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj() != null ? cellData.getValue().getQj().toString() : ""));
+        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj() != null ? cellData.getValue().getQj() : ""));
 
         TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Qk");
-        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk() != null ? cellData.getValue().getQk().toString() : ""));
+        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk() != null ? cellData.getValue().getQk() : ""));
 
         table.getColumns().addAll(tagCol, busyCol ,opCol, vjCol, vkCol, qjCol, qkCol);
 
@@ -519,6 +519,7 @@ public class TomasuloSimulator extends Application {
 
         ObservableList<Instruction> instructions = FXCollections.observableArrayList(Main.instructionQueue);
         instructionQueueTable.setItems(instructions);
+        instructionQueueTable.refresh();
 
         ObservableList<Map.Entry<String, RegisterEntry>> registerEntries = FXCollections.observableArrayList(Main.registerFile.entrySet());
         registerFileTable.setItems(registerEntries);
