@@ -502,8 +502,8 @@ public class Main {
         for (int i=addressLoop;i< instructionQueueParser.size();i++){
             instructionQueue.add(instructionQueueParser.get(i).deepClone());
         }
-        pc = addressLoop;
-        instructionQueue.add(instructionQueue.get(pc).deepClone());
+        pc++;
+
     }
 
     public static void clearAllWrittenBack(){
@@ -545,8 +545,8 @@ public class Main {
         String tag= "0";
         cycle++;
         System.out.println("Cycle " + cycle);
-        Scanner sc = new Scanner(System.in);
-        sc.nextInt();
+//        Scanner sc = new Scanner(System.in);
+//        sc.nextInt();
         // if previous was a branch so don't issue for 1 cycle until decision is known
         if (pc < instructionQueue.size() && !stall) {
             Instruction clonedInstruction = instructionQueue.get(pc);
