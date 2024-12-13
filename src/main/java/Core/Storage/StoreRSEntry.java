@@ -10,7 +10,10 @@ public class StoreRSEntry extends RSBaseEntry {
     private Object value;
     private String q;
 
-    public StoreRSEntry(String tag, Instruction instruction) {super(tag, instruction);}
+    public StoreRSEntry(String tag, Instruction instruction) {
+        super(tag, instruction);
+        this.q = "0";
+    }
 
     public void setAddress(int address) {this.address = address;}
 
@@ -34,6 +37,13 @@ public class StoreRSEntry extends RSBaseEntry {
         System.out.println("Address: " + (this.address != null? this.getAddress(): "not assigned yet"));
         System.out.println("Result: " + this.getResult());
         System.out.println("-------------------------");
+    }
+
+    public void clear() {
+        super.clear();
+        this.address = null;
+        this.value = null;
+        this.q = "0";
     }
 
     public void execute() {

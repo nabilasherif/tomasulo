@@ -13,15 +13,15 @@ public class Operations {
 
     public static double ADD_D(double a, double b) {return a + b;}
 
-    public static float ADD_S(float a, float b) {return a + b;}
+    public static double ADD_S(double a, double b) {return a + b;}
 
     public static double SUB_D(double a, double b) {return a - b;}
 
-    public static float SUB_S(float a, float b) {return a - b;}
+    public static double SUB_S(double a, double b) {return a - b;}
 
     public static double MUL_D(double a, double b) {return a * b;}
 
-    public static float MUL_S(float a, float b) {
+    public static double MUL_S(double a, double b) {
         return a * b;
     }
 
@@ -29,7 +29,7 @@ public class Operations {
         return a / b;
     }
 
-    public static float DIV_S(float a, float b) {
+    public static double DIV_S(double a, double b) {
         return a / b;
     }
 
@@ -54,7 +54,7 @@ public class Operations {
     }
 
     public static void SD(String register, int address) {
-        cache.writeDoubleWord(address,(long) registerFile.get(register).getValue());
+        cache.writeDoubleWord(address,(int) registerFile.get(register).getValue());
     }
 
     public static void S_S(String register, int address) {
@@ -66,12 +66,12 @@ public class Operations {
     }
 
     //return true if not equal so branch
-    public static boolean BNE(long a, long b) {
+    public static boolean BNE(double a, double b) {
         return a!=b;
     }
 
     //return true if equal so branch
-    public static boolean BEQ(long a, long b) {
+    public static boolean BEQ(double a, double b) {
         return a==b;
     }
 }
