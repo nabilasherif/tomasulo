@@ -1,16 +1,11 @@
 package GUI;
 
 import Core.Instruction.Instruction;
-import Core.InstructionFileParser;
 import Core.Main;
 import Core.Register.RegisterEntry;
-import Core.Register.RegisterFile;
-import Core.Status;
 import Core.Storage.*;
 import javafx.application.Application;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -18,16 +13,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.*;
-import Core.Instruction.InstructionType;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
-import java.util.List;
 
-public class
-TomasuloSimulator extends Application {
-    //core components
-//    List<Instruction> instructions = new ArrayList<>();
-//    public Map<InstructionType, Integer> latencies = new HashMap<>();
+public class TomasuloSimulator extends Application {
 
     public static boolean isProgramDone = false;
 
@@ -66,10 +55,8 @@ TomasuloSimulator extends Application {
     //cache
     private TextField cacheSizeField;
     private TextField blockSizeField;
-
     private Button applyInputsButton;
     private Button nextCycleButton;
-
     private Label cyclesLabel;
 
     @Override
@@ -200,14 +187,10 @@ TomasuloSimulator extends Application {
                 }
             }
         });
-
         TableColumn<ArithmeticRSEntry, String> vjCol = new TableColumn<>("Vj");
         vjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVj() != null ? cellData.getValue().getVj().toString() : ""));
-
         TableColumn<ArithmeticRSEntry, String> vkCol = new TableColumn<>("Vk");
         vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : ""));
-
-
 
         TableColumn<ArithmeticRSEntry, String> qjCol = new TableColumn<>("Qj");
         qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj() != null ? cellData.getValue().getQj() : ""));
@@ -229,10 +212,8 @@ TomasuloSimulator extends Application {
 
     private TableView<StoreRSEntry> createStoreRSTable() {
         TableView<StoreRSEntry> table = new TableView<>();
-
         TableColumn<StoreRSEntry, String> tagCol = new TableColumn<>("Tag");
         tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
-
         TableColumn<StoreRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
         busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
         busyCol.setCellFactory(column -> new TableCell<StoreRSEntry, Boolean>() {
@@ -246,7 +227,6 @@ TomasuloSimulator extends Application {
                 }
             }
         });
-
         TableColumn<StoreRSEntry, String> addCol = new TableColumn<>("Address");
         addCol.setCellValueFactory(cellData -> {
             Integer address = cellData.getValue().getAddress();
@@ -454,16 +434,13 @@ TomasuloSimulator extends Application {
         });
 
         ObservableList<Map.Entry<Integer, byte[]>> cacheDataList = FXCollections.observableArrayList();
-
         for (int i = 0; i < Main.cache.cache.length; i += Main.blockSize) {
             int blockStartAddress = i;
             byte[] blockData = new byte[Main.blockSize];
             System.arraycopy(Main.cache.cache, i, blockData, 0, Main.blockSize);
             cacheDataList.add(new AbstractMap.SimpleEntry<>(blockStartAddress, blockData));
         }
-
         tableView.setItems(cacheDataList);
-
         tableView.getColumns().addAll(blockAddressCol, dataCol);
 
         // Set the preferred width for the TableView to be less than the total column width
