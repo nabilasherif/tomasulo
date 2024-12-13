@@ -75,8 +75,8 @@ public class ArithmeticRSEntry extends RSBaseEntry {
             case MUL_S: return Operations.MUL_S((Double)this.vj,(Double)this.vk);
             case DIV_D: return Operations.DIV_D((Double)this.vj, (Double)this.vk);
             case DIV_S: return Operations.DIV_S((Double)this.vj, (Double)this.vk);
-            case BNE: if(Operations.BNE((Long)this.vj, (Long)this.vk)) return 1.0; else return 0.0;
-            case BEQ: if(Operations.BEQ((Long)this.vj, (Long)this.vk)) return 1.0; else return 0.0;
+            case BNE: if(Operations.BNE((Double)this.vj, (Double)this.vk)) return 1.0; else return 0.0;
+            case BEQ: if(Operations.BEQ((Double)this.vj, (Double)this.vk)) return 1.0; else return 0.0;
             default:
                 return 0.0;
         }

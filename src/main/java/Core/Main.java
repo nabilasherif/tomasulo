@@ -33,7 +33,7 @@ public class Main {
     public static int storeReservationStationSize= 3;
     public static int storeLatency = 4;
     //do we add a store penalty?
-    public static ArrayList<BranchRSEntry> branchRS = new ArrayList<>();
+    public static ArrayList<ArithmeticRSEntry> branchRS = new ArrayList<>();
     public static int branchReservationStationSize= 3;
     public static int branchLatency = 4;
     public static int branchPenalty = 1;
@@ -83,6 +83,8 @@ public class Main {
                     addSubRS.get(i).setValues(true, subFPLatency, instruction);
                 if(instruction.getOp() == InstructionType.DSUBI)
                     addSubRS.get(i).setValues(true, subLatency, instruction);
+                if(instruction.getOp() == InstructionType.BNE ||instruction.getOp() == InstructionType.BEQ)
+                    addSubRS.get(i).setValues(true, branchLatency, instruction);
                 String j = addSubRS.get(i).instruction.getJ();
                 String k = addSubRS.get(i).instruction.getK();
 
@@ -264,7 +266,7 @@ public class Main {
             }
         }
 
-        for (BranchRSEntry currentRS : branchRS) {
+        for (ArithmeticRSEntry currentRS : branchRS) {
             if ( currentRS.getTag().equals(tag) || !currentRS.isBusy()) continue;
 
             if (currentRS.getQk().equals("0") && currentRS.getQj().equals("0")
@@ -276,8 +278,8 @@ public class Main {
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    boolean branchRes=currentRS.execute(); //not sure what to do
-                    if(branchRes){
+                    double branchRes=currentRS.execute(); //not sure what to do
+                    if(branchRes == 1){
                         handleBranchTrue(currentRS.instruction);
                     }
                     justFinished.add(currentRS.getTag());
@@ -398,7 +400,7 @@ public class Main {
         }
         branchRS=new ArrayList<>();
         for(int i =1; i <= branchReservationStationSize; i++){
-            branchRS.add(new BranchRSEntry("B" + i, null));
+            branchRS.add(new ArithmeticRSEntry("B" + i, null));
         }
     }
 
@@ -484,7 +486,7 @@ public class Main {
             }
         }
 
-        for(BranchRSEntry rs : branchRS){
+        for(ArithmeticRSEntry rs : branchRS){
             if (rs.instruction != null && rs.instruction.getStatus() == Status.WRITTEN_BACK) {
                 rs.clear();
             }
