@@ -23,10 +23,8 @@ public class Main {
     public static int subLatency=4;
     public static int subFPLatency=4;
     public static int mulReservationStationSize= 3;
-    public static int mulLatency = 6;
-    public static int mulFPLatency = 4;
-    public static int divLatency = 4;
-    public static int divFPLatency = 5;
+    public static int mulFPLatency = 6;
+    public static int divFPLatency = 4;
     public static int loadReservationStationSize= 3;
     public static int loadLatency = 4;
     public static int loadPenalty = 8;
@@ -124,9 +122,9 @@ public class Main {
             // If my reservation station's current entry is not busy, add the instruction to the reservation station
             if (!mulDivRS.get(i).isBusy()) {
                 if(instruction.getOp() == InstructionType.MUL_S || instruction.getOp() == InstructionType.MUL_D )
-                    mulDivRS.get(i).setValues(true, mulLatency, instruction);
+                    mulDivRS.get(i).setValues(true, mulFPLatency, instruction);
                 else
-                    mulDivRS.get(i).setValues(true, divLatency, instruction);
+                    mulDivRS.get(i).setValues(true, divFPLatency, instruction);
                 String j = mulDivRS.get(i).instruction.getJ();
                 String k = mulDivRS.get(i).instruction.getK();
 
@@ -613,7 +611,7 @@ public class Main {
         init();
         initReservationStations();
         initRegisterFile();
-
+        System.out.println("Start: ");
         for (Instruction queueInstance : instructionQueue) {
             System.out.println("Op: " + queueInstance.getOp()
                     + ", Dest: " + queueInstance.getDest()
@@ -625,6 +623,7 @@ public class Main {
         // TODO HANDLE INTEGRATION WITH FE
 
         printRegisters(registerFile);
+        System.out.println("Done");
         System.out.println(memory.readBlock(0));
     }
 }

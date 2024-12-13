@@ -444,8 +444,8 @@ TomasuloSimulator extends Application {
         try {
             Main.addLatency = Integer.parseInt(((TextField) addLatencyField.getChildren().get(1)).getText());
             Main.subLatency = Integer.parseInt(((TextField) subLatencyField.getChildren().get(1)).getText());
-            Main.mulLatency = Integer.parseInt(((TextField) mulLatencyField.getChildren().get(1)).getText());
-            Main.divLatency = Integer.parseInt(((TextField) divLatencyField.getChildren().get(1)).getText());
+            Main.mulFPLatency = Integer.parseInt(((TextField) mulLatencyField.getChildren().get(1)).getText());
+            Main.divFPLatency = Integer.parseInt(((TextField) divLatencyField.getChildren().get(1)).getText());
             Main.loadLatency = Integer.parseInt(((TextField) loadLatencyField.getChildren().get(1)).getText());
             Main.loadPenalty = Integer.parseInt(((TextField) loadPenaltyField.getChildren().get(1)).getText());
             Main.storeLatency = Integer.parseInt(((TextField) storeLatencyField.getChildren().get(1)).getText());
