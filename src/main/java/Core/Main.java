@@ -88,11 +88,13 @@ public class Main {
                 String j = addSubRS.get(i).instruction.getJ();
                 String k = addSubRS.get(i).instruction.getK();
 
-
                 double jvalue = registerFile.get(j).getValue();
 
 
                 if(instruction.getOp() != InstructionType.DSUBI && instruction.getOp() != InstructionType.DADDI){
+                    if(instruction.getOp()==InstructionType.BNE || instruction.getOp()==InstructionType.BEQ){
+                        k = addSubRS.get(i).instruction.getDest();
+                    }
                     double kvalue = registerFile.get(k).getValue();
                     String kQ = registerFile.get(k).getQ();
                     if(kQ.equals("0")){
@@ -181,16 +183,6 @@ public class Main {
                 String j = loadRS.get(i).instruction.getJ();//100
                 loadRS.get(i).setAddress(Integer.parseInt(j));
                 return loadRS.get(i).getTag();
-            }
-        }
-        return "";
-    }
-
-    private static String addToBranchRS(Instruction instruction) {
-        for (int i = 0; i < branchRS.size(); i++) {
-            if (!branchRS.get(i).isBusy()) {
-                branchRS.get(i).setValues(true, 1, instruction); // Assuming 1 cycle for branch evaluation
-                return branchRS.get(i).getTag();
             }
         }
         return "";
@@ -553,7 +545,7 @@ public class Main {
                 case BNE:
                 case BEQ:
                     if (checkAnEmptyStation(branchRS)) {
-                        tag = addToBranchRS(clonedInstruction);
+                        tag = addToAddSubRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
                         pc++;
                         stall = true;

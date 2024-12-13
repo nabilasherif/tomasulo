@@ -49,6 +49,7 @@ public class Memory {
         System.arraycopy(data, 0, memory, blockStartAddress, blockSize);
     }
 
+
     // Check if the address is within bounds
     private boolean isValidAddress(int address) {
         return address >= 0 && address < memory.length;
