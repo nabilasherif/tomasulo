@@ -35,7 +35,6 @@ public class Main {
     public static ArrayList<ArithmeticRSEntry> branchRS = new ArrayList<>();
     public static int branchReservationStationSize= 3;
     public static int branchLatency = 1;
-    public static int branchPenalty = 1;
     public static  Queue<RSBaseEntry> writeBackQueue = new LinkedList<>();
     public static List<Instruction> instructionQueueParser = new ArrayList<>();
     public static List<Instruction> instructionQueue = new ArrayList<>();
