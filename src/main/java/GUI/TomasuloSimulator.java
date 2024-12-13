@@ -310,7 +310,7 @@ TomasuloSimulator extends Application {
         });
 
         TableColumn<ArithmeticRSEntry, String> opCol = new TableColumn<>("Operation");
-        opCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOp() == null ? "" : cellData.getValue().getOp().toString()));
+        opCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getInstruction() == null ? "" : cellData.getValue().getInstruction().getOp().toString()));
 
         TableColumn<ArithmeticRSEntry, String> vjCol = new TableColumn<>("Vj");
         vjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVj() != null ?  String.valueOf(cellData.getValue().getVj()) : ""));
@@ -351,7 +351,7 @@ TomasuloSimulator extends Application {
         });
 
         TableColumn<ArithmeticRSEntry, String> opCol = new TableColumn<>("Operation");
-        opCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOp() == null ? "" : cellData.getValue().getOp().toString()));
+        opCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getInstruction() == null ? "" : cellData.getValue().getInstruction().getOp().toString()));
 
         TableColumn<ArithmeticRSEntry, String> vjCol = new TableColumn<>("Vj");
         vjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVj() != null ?  String.valueOf(cellData.getValue().getVj()) : ""));

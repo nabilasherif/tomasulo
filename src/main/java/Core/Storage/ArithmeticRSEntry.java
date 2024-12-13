@@ -21,6 +21,11 @@ public class ArithmeticRSEntry extends RSBaseEntry {
         return op;
     }
 
+    public String getOpGUI() {
+        return this.instruction.getOp().toFormattedString();
+    }
+
+
     public void setOp(InstructionType op) {
         this.op = op;
     }

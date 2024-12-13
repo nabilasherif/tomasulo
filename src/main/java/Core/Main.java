@@ -121,9 +121,11 @@ public class Main {
                     mulDivRS.get(i).setValues(true, mulFPLatency, instruction);
                 else
                     mulDivRS.get(i).setValues(true, divFPLatency, instruction);
+
+                addSubRS.get(i).setOp(instruction.getOp());
+
                 String j = mulDivRS.get(i).instruction.getJ();
                 String k = mulDivRS.get(i).instruction.getK();
-
                 double jvalue = registerFile.get(j).getValue();
                 double kvalue = registerFile.get(k).getValue();
                 String kQ = registerFile.get(k).getQ();
