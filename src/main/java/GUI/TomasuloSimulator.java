@@ -29,7 +29,7 @@ TomasuloSimulator extends Application {
 //    List<Instruction> instructions = new ArrayList<>();
 //    public Map<InstructionType, Integer> latencies = new HashMap<>();
 
-    public int cycles=0;
+    public static boolean isProgramDone = false;
 
     //tables
     private TableView<Instruction> instructionQueueTable;
@@ -137,7 +137,7 @@ TomasuloSimulator extends Application {
         nextCycleButton = new Button("Next Cycle");
         nextCycleButton.setOnAction(event -> getNextCycle());
 
-        cyclesLabel = new Label("Current Cycle: " + cycles);
+        cyclesLabel = new Label("Current Cycle: " + 0);
 
         root.getChildren().addAll(
                 new Label("Latencies (cycles):"), latencyConfigBox,
@@ -515,6 +515,11 @@ TomasuloSimulator extends Application {
     }
 
     private void getNextCycle(){
+        isProgramDone = Main.pc >= Main.instructionQueue.size() && Main.allStationsEmpty();
+        if(isProgramDone){
+            return;
+        }
+
         Main.incrementCycle();
         cyclesLabel.setText("Current Cycle: " + Main.cycle);
 

@@ -43,8 +43,6 @@ public class Main {
     public static int cycle = 0;
     public static int pc = 0;
 
-    public static boolean isProgramDone = false;
-
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
         for (RSBaseEntry rs : reservationStation) {
             if (!rs.isBusy()) {
@@ -623,10 +621,6 @@ public class Main {
         }
         // TODO HANDLE INTEGRATION WITH FE
 
-        while(!isProgramDone){
-            isProgramDone = pc >= instructionQueue.size() && allStationsEmpty();
-            incrementCycle();
-        }
         printRegisters(registerFile);
         System.out.println(memory.readBlock(0));
     }
