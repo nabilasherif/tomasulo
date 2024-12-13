@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Main {
 
-    private static String filePath = "src/main/java/Core/program3.txt";
+    private static String filePath = "src/main/java/Core/program5.txt";
     public static boolean isProgramDone = false;
     static boolean stall=false;
     public static int blockSize = 8;
@@ -35,7 +35,7 @@ public class Main {
     //do we add a store penalty?
     public static ArrayList<ArithmeticRSEntry> branchRS = new ArrayList<>();
     public static int branchReservationStationSize= 3;
-    public static int branchLatency = 4;
+    public static int branchLatency = 1;
     public static int branchPenalty = 1;
     public static  Queue<RSBaseEntry> writeBackQueue = new LinkedList<>();
     public static List<Instruction> instructionQueueParser = new ArrayList<>();
@@ -83,17 +83,12 @@ public class Main {
                     addSubRS.get(i).setValues(true, subFPLatency, instruction);
                 if(instruction.getOp() == InstructionType.DSUBI)
                     addSubRS.get(i).setValues(true, subLatency, instruction);
-                if(instruction.getOp() == InstructionType.BNE ||instruction.getOp() == InstructionType.BEQ)
-                    addSubRS.get(i).setValues(true, branchLatency, instruction);
                 String j = addSubRS.get(i).instruction.getJ();
                 String k = addSubRS.get(i).instruction.getK();
 
                 double jvalue = registerFile.get(j).getValue();
 
                 if(instruction.getOp() != InstructionType.DSUBI && instruction.getOp() != InstructionType.DADDI){
-                    if(instruction.getOp()==InstructionType.BNE || instruction.getOp()==InstructionType.BEQ){
-                        k = addSubRS.get(i).instruction.getDest();
-                    }
                     double kvalue = registerFile.get(k).getValue();
                     String kQ = registerFile.get(k).getQ();
                     if(kQ.equals("0")){
@@ -185,6 +180,36 @@ public class Main {
                 String j = loadRS.get(i).instruction.getJ();//100
                 loadRS.get(i).setAddress(Integer.parseInt(j));
                 return loadRS.get(i).getTag();
+            }
+        }
+        return "";
+    }
+
+    private static String addToBranchRS(Instruction instruction) {
+        for (int i = 0; i < branchRS.size(); i++) {
+            // If my reservation station's current entry is not busy, add the instruction to the reservation station
+            if (!branchRS.get(i).isBusy()) {
+                branchRS.get(i).setValues(true, branchLatency, instruction);
+                String j = branchRS.get(i).instruction.getJ();
+                String k = branchRS.get(i).instruction.getDest();
+
+                double jvalue = registerFile.get(j).getValue();
+                double kvalue = registerFile.get(k).getValue();
+                String kQ = registerFile.get(k).getQ();
+                String jQ = registerFile.get(j).getQ();
+
+                if(kQ.equals("0")){
+                    branchRS.get(i).setVk(kvalue);
+                }else{
+                    branchRS.get(i).setQk(kQ);
+                }
+
+                if(jQ.equals("0")){
+                    branchRS.get(i).setVj(jvalue);
+                }else{
+                    branchRS.get(i).setQj(jQ);
+                }
+                return branchRS.get(i).getTag();
             }
         }
         return "";
@@ -288,10 +313,12 @@ public class Main {
 
                 if (currentRS.remainingCycles == 0) {
                     currentRS.instruction.setStatus(Status.EXECUTED);
-                    double branchRes=currentRS.execute(); //not sure what to do
+                    double branchRes= currentRS.execute(); //not sure what to do
                     if(branchRes == 1){
                         handleBranchTrue(currentRS.instruction);
                     }
+                    stall = false;
+
                     justFinished.add(currentRS.getTag());
                 }
             }
@@ -340,6 +367,18 @@ public class Main {
                     rs2.setQ("0");
                 }
             }
+
+            for (ArithmeticRSEntry rs2 : branchRS) {
+                if (rs2.getQj().equals(tag)) {
+                    rs2.setVj(value);
+                    rs2.setQj("0");
+                }
+                if (rs2.getQk().equals(tag)) {
+                    rs2.setVk(value);
+                    rs2.setQk("0");
+
+                }
+            }
             //Updating the register files
             String destination= rs.instruction.getDest();
             RegisterEntry adjustedEntry = registerFile.get(destination);
@@ -374,17 +413,23 @@ public class Main {
             }
         }
 
-        for (StoreRSEntry rs : storeRS) {
-            if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
-                writeBackQueue.add(rs);
-            }
-        }
+//        for (StoreRSEntry rs : storeRS) {
+//            if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
+//                writeBackQueue.add(rs);
+//            }
+//        }
 
         for (ArithmeticRSEntry rs : mulDivRS) {
             if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
                 writeBackQueue.add(rs);
             }
         }
+//
+//        for (ArithmeticRSEntry rs : branchRS) {
+//            if (!tags.contains(rs.getTag()) && rs.instruction != null && rs.instruction.getStatus().equals(Status.EXECUTED)) {
+//                writeBackQueue.add(rs);
+//            }
+//        }
     }
 
     public static void initReservationStations(){
@@ -445,18 +490,20 @@ public class Main {
     }
 
     public static void handleBranchTrue(Instruction instruction){
-        int addressLoop = Integer.parseInt(instruction.getJ());
+        int addressLoop = Integer.parseInt(instruction.getK());
         int addressBranch=instructionQueueParser.size();
 
         //moshkela law feh wahda tanya zayaha belzabt fa ow n store lel kol branch its index(hasa ahsan)
-        for (int i=0;i<instructionQueueParser.size();i++){
-            if(instructionQueueParser.get(i).deepClone().equals(instruction)){
-                addressBranch=i;
-            }
-        }
-        for (int i=addressLoop;i<=addressBranch;i++){
+//        for (int i= addressLoop; i<instructionQueueParser.size();i++){
+//            if(instructionQueueParser.get(i).deepClone().equals(instruction)){
+//                addressBranch=i;
+//            }
+//        }
+        for (int i=addressLoop;i< instructionQueueParser.size();i++){
             instructionQueue.add(instructionQueueParser.get(i).deepClone());
         }
+        pc = addressLoop;
+        instructionQueue.add(instructionQueue.get(pc).deepClone());
     }
 
     public static void clearAllWrittenBack(){
@@ -487,7 +534,7 @@ public class Main {
         }
 
         for(ArithmeticRSEntry rs : branchRS){
-            if (rs.instruction != null && rs.instruction.getStatus() == Status.WRITTEN_BACK) {
+            if (rs.instruction != null && rs.instruction.getStatus() == Status.EXECUTED) {
                 rs.clear();
             }
         }
@@ -498,8 +545,8 @@ public class Main {
         String tag= "0";
         cycle++;
         System.out.println("Cycle " + cycle);
-//        Scanner sc = new Scanner(System.in);
-//        sc.nextInt();
+        Scanner sc = new Scanner(System.in);
+        sc.nextInt();
         // if previous was a branch so don't issue for 1 cycle until decision is known
         if (pc < instructionQueue.size() && !stall) {
             Instruction clonedInstruction = instructionQueue.get(pc);
@@ -538,10 +585,10 @@ public class Main {
                     break;
                 case BNE,BEQ:
                     if (checkAnEmptyStation(branchRS)) {
-                        tag = addToAddSubRS(clonedInstruction);
+                        tag = addToBranchRS(clonedInstruction);
                         clonedInstruction.setStatus(Status.ISSUED);
                         clonedInstruction.setIssue(cycle);
-                        pc++;
+//                        pc++;
                         stall = true;
                     }
                     break;
@@ -563,19 +610,21 @@ public class Main {
 
             //TODO: HANDLE BRANCH INSTRUCTIONS
         } else {
-            stall = false;
+//            stall = false;
         }
         HashSet<String> justExecuted = executeAllExcept(tag);
         writeToBusExcept(justExecuted);
 
         for (ArithmeticRSEntry addR : addSubRS)
             addR.printRSDetails();
-        for (ArithmeticRSEntry mulR : mulDivRS)
-            mulR.printRSDetails();
+//        for (ArithmeticRSEntry mulR : mulDivRS)
+//            mulR.printRSDetails();
         for(LoadRSEntry load: loadRS)
             load.printRSDetails();
         for(StoreRSEntry store : storeRS)
             store.printRSDetails();
+        for(ArithmeticRSEntry br : branchRS)
+            br.printRSDetails();
     }
 
     public static void main(String[] args) {
