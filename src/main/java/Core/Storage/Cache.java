@@ -5,11 +5,13 @@ import java.nio.ByteBuffer;
 public class Cache {
 
     private byte[] cache;
+    private boolean[] initialized;
     private final int blockSize;
     private final Memory memory;
 
     public Cache(int size, int blockSize, Memory memory) {
         this.cache = new byte[size];
+        this.initialized = new boolean[size];
         this.blockSize = blockSize;
         this.memory = memory;
     }
@@ -18,6 +20,17 @@ public class Cache {
         int blockStartAddress = address - (address % blockSize);
         byte[] block = memory.readBlock(blockStartAddress);
         System.arraycopy(block, 0, cache, blockStartAddress, blockSize);
+
+        for (int i = blockStartAddress; i < blockStartAddress + blockSize; i++) {
+            if (i < initialized.length) {
+                initialized[i] = true;
+            }
+        }
+    }
+
+    public boolean cacheLoadedBlockCheck(int address) {
+        int blockStartAddress = address - (address % blockSize);
+        return initialized[blockStartAddress];
     }
 
     private void writeBack(int address) {
@@ -28,7 +41,7 @@ public class Cache {
     }
 
     public byte readByte(int address) {
-        if (cache[address] == 0) {
+        if (!initialized[address]) {
             loadBlock(address);
         }
         return cache[address];
@@ -36,6 +49,7 @@ public class Cache {
 
     public void writeByte(int address, byte value) {
         cache[address] = value;
+        initialized[address] = true;
         writeBack(address);
     }
 

@@ -177,8 +177,11 @@ public class Main {
             // If my reservation station's current entry is not busy, add the instruction to the reservation station
             if (!loadRS.get(i).isBusy()) {
                 //TODO ADD THE PENALTY HERE
-//                if(cache.cache.get(Integer.parseInt(instruction.getJ())   )
+                if (cache.cacheLoadedBlockCheck(Integer.parseInt(instruction.getJ())))
                     loadRS.get(i).setValues(true, loadLatency, instruction);
+                else
+                    loadRS.get(i).setValues(true, loadLatency+loadPenalty, instruction);
+
                 String dest = loadRS.get(i).instruction.getDest();// f3
                 String j = loadRS.get(i).instruction.getJ();//100
                 loadRS.get(i).setAddress(Integer.parseInt(j));
