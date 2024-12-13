@@ -1,8 +1,9 @@
 package Core.Register;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class RegisterFile {
+
     private HashMap<String, RegisterEntry> registers;
 
     public RegisterFile() {
@@ -14,24 +15,27 @@ public class RegisterFile {
         for (int i = 0; i < 32; i++) {
             registers.put("F" + i, new RegisterEntry());
         }
+        registers = sortRegisters(registers);
     }
 
-    public void updateRegister(String registerName, Object value) {
-        RegisterEntry register = registers.get(registerName);
-        if (value instanceof Integer) {
-            register.setValue((Integer) value);
+    private LinkedHashMap<String, RegisterEntry> sortRegisters(HashMap<String, RegisterEntry> map) {
+        List<String> keys = new ArrayList<>(map.keySet());
+        keys.sort((key1, key2) -> {
+            char prefix1 = key1.charAt(0);
+            char prefix2 = key2.charAt(0);
+            int number1 = Integer.parseInt(key1.substring(1));
+            int number2 = Integer.parseInt(key2.substring(1));
+
+            if (prefix1 != prefix2) {
+                return Character.compare(prefix1, prefix2);
+            }
+            return Integer.compare(number1, number2);
+        });
+        LinkedHashMap<String, RegisterEntry> sortedMap = new LinkedHashMap<>();
+        for (String key : keys) {
+            sortedMap.put(key, map.get(key));
         }
-        else if(value instanceof Float){
-            register.setValue((Float) value);
-        }
-        else if(value instanceof Double){
-            register.setValue((Double) value);
-        }
-        else if (value instanceof String) {
-            register.setQ((String) value);
-            return;
-        }
-        register.setQ("0");
+        return sortedMap;
     }
 
     public HashMap<String, RegisterEntry> getRegisters() {
