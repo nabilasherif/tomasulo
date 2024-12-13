@@ -621,7 +621,9 @@ public class Main {
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
         // TODO HANDLE INTEGRATION WITH FE
-
+        while((pc < instructionQueue.size()) || !allStationsEmpty()){
+            incrementCycle();
+        }
         printRegisters(registerFile);
         System.out.println("Done");
         System.out.println(memory.readBlock(0));
