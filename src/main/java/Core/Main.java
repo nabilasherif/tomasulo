@@ -441,7 +441,7 @@ public class Main {
         }
         return false;
     }
-    
+
     public static void initReservationStations(){
         addSubRS=new ArrayList<>();
         for(int i =1; i <= addReservationStationSize; i++){
