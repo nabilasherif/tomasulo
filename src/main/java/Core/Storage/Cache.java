@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 public class Cache {
 
-    private byte[] cache;
+    public byte[] cache;
     private boolean[] initialized;
     private final int blockSize;
     private final Memory memory;
