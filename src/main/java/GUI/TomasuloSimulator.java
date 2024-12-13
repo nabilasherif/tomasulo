@@ -199,11 +199,11 @@ TomasuloSimulator extends Application {
             }
         });
 
-        TableColumn<ArithmeticRSEntry, String> vjCol = new TableColumn<>("Vj");
-        vjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVj() != null ? cellData.getValue().getVj().toString() : ""));
+        TableColumn<ArithmeticRSEntry, String> qjCol = new TableColumn<>("Qj");
+        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj() != null ? cellData.getValue().getQj().toString() : ""));
 
-        TableColumn<ArithmeticRSEntry, String> vkCol = new TableColumn<>("Vk");
-        vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : ""));
+        TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Qk");
+        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk() != null ? cellData.getValue().getQk().toString() : ""));
 
         TableColumn<ArithmeticRSEntry, String> addCol = new TableColumn<>("Address");
         addCol.setCellValueFactory(cellData -> {
@@ -211,13 +211,7 @@ TomasuloSimulator extends Application {
             return new SimpleStringProperty(kValue == null ? "" : kValue);
         });
 
-        TableColumn<ArithmeticRSEntry, String> qjCol = new TableColumn<>("Qj");
-        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj() != null ? cellData.getValue().getQj() : ""));
-
-        TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Qk");
-        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk() != null ? cellData.getValue().getQk() : ""));
-
-        table.getColumns().addAll(tagCol, busyCol, vjCol, vkCol, qjCol, qkCol);
+        table.getColumns().addAll(tagCol, busyCol, qjCol, qkCol, addCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         table.setMinHeight(100);
         return table;
@@ -430,11 +424,7 @@ TomasuloSimulator extends Application {
         TableView<Map.Entry<Integer, byte[]>> tableView = new TableView<>();
 
         TableColumn<Map.Entry<Integer, byte[]>, String> blockAddressCol = new TableColumn<>("Block Address");
-        blockAddressCol.setCellValueFactory(cellData -> {
-            int index = cellData.getValue().getKey();
-            int blockStartAddress = index - (index % Main.blockSize);
-            return new SimpleStringProperty(String.valueOf(blockStartAddress));
-        });
+        blockAddressCol.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getKey())));
 
         TableColumn<Map.Entry<Integer, byte[]>, String> dataCol = new TableColumn<>("Block Data");
         dataCol.setCellValueFactory(cellData -> {
@@ -446,34 +436,8 @@ TomasuloSimulator extends Application {
             return new SimpleStringProperty(dataString.toString());
         });
 
-        ObservableList<Map.Entry<Integer, byte[]>> cacheDataList = FXCollections.observableArrayList();
-
-        for (int i = 0; i < Main.cache.cache.length; i += Main.blockSize) {
-            int blockStartAddress = i;
-            byte[] blockData = new byte[Main.blockSize];
-            System.arraycopy(Main.cache.cache, i, blockData, 0, Main.blockSize);
-            cacheDataList.add(new AbstractMap.SimpleEntry<>(blockStartAddress, blockData));
-        }
-
-        tableView.setItems(cacheDataList);
-
         tableView.getColumns().addAll(blockAddressCol, dataCol);
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return tableView;
-    }
-
-    public void refreshCacheTable() {
-        ObservableList<Map.Entry<Integer, byte[]>> cacheDataList = FXCollections.observableArrayList();
-
-        for (int i = 0; i < Main.cache.cache.length; i += Main.blockSize) {
-            int blockStartAddress = i;
-            byte[] blockData = new byte[Main.blockSize];
-            System.arraycopy(Main.cache.cache, i, blockData, 0, Main.blockSize);
-            cacheDataList.add(new AbstractMap.SimpleEntry<>(blockStartAddress, blockData));
-        }
-
-        cacheTable.setItems(cacheDataList);
-        cacheTable.refresh();
     }
 
     private void applyLatencies() {
@@ -548,8 +512,6 @@ TomasuloSimulator extends Application {
         ObservableList<ArithmeticRSEntry> branchRSList = FXCollections.observableArrayList(Main.branchRS);
         branchRSTable.setItems(branchRSList);
         branchRSTable.refresh();
-
-        refreshCacheTable();
     }
 
     private void getNextCycle(){
@@ -588,8 +550,6 @@ TomasuloSimulator extends Application {
         ObservableList<ArithmeticRSEntry> branchRSList = FXCollections.observableArrayList(Main.branchRS);
         branchRSTable.setItems(branchRSList);
         branchRSTable.refresh();
-
-        refreshCacheTable();
     }
 
     private void showErrorDialog(String title, String message) {
