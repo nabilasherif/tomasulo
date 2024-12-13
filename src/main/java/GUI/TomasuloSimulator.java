@@ -205,13 +205,19 @@ TomasuloSimulator extends Application {
         TableColumn<ArithmeticRSEntry, String> vkCol = new TableColumn<>("Vk");
         vkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getVk() != null ? cellData.getValue().getVk().toString() : ""));
 
-        TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Address");
-        qkCol.setCellValueFactory(cellData -> {
+        TableColumn<ArithmeticRSEntry, String> addCol = new TableColumn<>("Address");
+        addCol.setCellValueFactory(cellData -> {
             String kValue = cellData.getValue().getInstruction() != null ? cellData.getValue().getInstruction().getK() : null;
             return new SimpleStringProperty(kValue == null ? "" : kValue);
         });
 
-        table.getColumns().addAll(tagCol, busyCol, vjCol, vkCol, qkCol);
+        TableColumn<ArithmeticRSEntry, String> qjCol = new TableColumn<>("Qj");
+        qjCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQj() != null ? cellData.getValue().getQj() : ""));
+
+        TableColumn<ArithmeticRSEntry, String> qkCol = new TableColumn<>("Qk");
+        qkCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQk() != null ? cellData.getValue().getQk() : ""));
+
+        table.getColumns().addAll(tagCol, busyCol, vjCol, vkCol, qjCol, qkCol);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         table.setMinHeight(100);
         return table;
