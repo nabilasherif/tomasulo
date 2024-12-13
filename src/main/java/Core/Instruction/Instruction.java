@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 
-// TODO RENAME TO INSTRUCTION
 public class Instruction {
     private InstructionType op;
     private String dest;

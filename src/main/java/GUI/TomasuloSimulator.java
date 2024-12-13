@@ -23,7 +23,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import java.util.List;
 
-public class TomasuloSimulator extends Application {
+public class
+TomasuloSimulator extends Application {
     //core components
 //    List<Instruction> instructions = new ArrayList<>();
 //    public Map<InstructionType, Integer> latencies = new HashMap<>();

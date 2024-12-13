@@ -43,6 +43,8 @@ public class Main {
     public static int cycle = 0;
     public static int pc = 0;
 
+    public static boolean isProgramDone = false;
+
     public static boolean checkAnEmptyStation(List<? extends RSBaseEntry> reservationStation) {
         for (RSBaseEntry rs : reservationStation) {
             if (!rs.isBusy()) {
@@ -506,13 +508,12 @@ public class Main {
         String tag= "0";
         cycle++;
         System.out.println("Cycle " + cycle);
-
+//
 //        Scanner sc = new Scanner(System.in);
 //        sc.nextInt();
         // if previous was a branch so don't issue for 1 cycle until decision is known
         if (pc < instructionQueue.size() && !stall) {
-            Instruction currentInstruction = instructionQueue.get(pc);
-            Instruction clonedInstruction = currentInstruction.deepClone();
+            Instruction clonedInstruction = instructionQueue.get(pc);
             switch (clonedInstruction.getOp()) {
                 case DADDI:
                 case DSUBI:
@@ -584,6 +585,7 @@ public class Main {
                 registerFile.put(destination, registerEntry);
 
             }
+            System.out.println("THE ISSUING CYCLE: " + instructionQueue.get(pc-1).getIssue());
 
 
 
@@ -620,7 +622,9 @@ public class Main {
                     + ", Write Cycle: " + queueInstance.getWrite());
         }
         // TODO HANDLE INTEGRATION WITH FE
-        while((pc < instructionQueue.size()) || !allStationsEmpty()){
+
+        while(!isProgramDone){
+            isProgramDone = pc >= instructionQueue.size() && allStationsEmpty();
             incrementCycle();
         }
         printRegisters(registerFile);
