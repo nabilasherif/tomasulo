@@ -188,13 +188,15 @@ TomasuloSimulator extends Application {
         tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
 
         TableColumn<ArithmeticRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
+        busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
         busyCol.setCellFactory(column -> new TableCell<ArithmeticRSEntry, Boolean>() {
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            @Override
+            protected void updateItem(Boolean busy, boolean empty) {
+                super.updateItem(busy, empty);
+                if (empty || busy == null) {
                     setText(null);
                 } else {
-                    setText(item ? "1" : "0");
+                    setText(busy ? "1" : "0");
                 }
             }
         });
@@ -224,13 +226,15 @@ TomasuloSimulator extends Application {
         tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
 
         TableColumn<StoreRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
+        busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
         busyCol.setCellFactory(column -> new TableCell<StoreRSEntry, Boolean>() {
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            @Override
+            protected void updateItem(Boolean busy, boolean empty) {
+                super.updateItem(busy, empty);
+                if (empty || busy == null) {
                     setText(null);
                 } else {
-                    setText(item ? "1" : "0");
+                    setText(busy ? "1" : "0");
                 }
             }
         });
@@ -260,13 +264,15 @@ TomasuloSimulator extends Application {
         tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
 
         TableColumn<LoadRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
+        busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
         busyCol.setCellFactory(column -> new TableCell<LoadRSEntry, Boolean>() {
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            @Override
+            protected void updateItem(Boolean busy, boolean empty) {
+                super.updateItem(busy, empty);
+                if (empty || busy == null) {
                     setText(null);
                 } else {
-                    setText(item ? "1" : "0");
+                    setText(busy ? "1" : "0");
                 }
             }
         });
@@ -290,13 +296,15 @@ TomasuloSimulator extends Application {
         tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
 
         TableColumn<ArithmeticRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
+        busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
         busyCol.setCellFactory(column -> new TableCell<ArithmeticRSEntry, Boolean>() {
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            @Override
+            protected void updateItem(Boolean busy, boolean empty) {
+                super.updateItem(busy, empty);
+                if (empty || busy == null) {
                     setText(null);
                 } else {
-                    setText(item ? "1" : "0");
+                    setText(busy ? "1" : "0");
                 }
             }
         });
@@ -329,13 +337,15 @@ TomasuloSimulator extends Application {
         tagCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTag()));
 
         TableColumn<ArithmeticRSEntry, Boolean> busyCol = new TableColumn<>("Busy");
+        busyCol.setCellValueFactory(cellData -> new SimpleBooleanProperty(cellData.getValue().isBusy()));
         busyCol.setCellFactory(column -> new TableCell<ArithmeticRSEntry, Boolean>() {
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
+            @Override
+            protected void updateItem(Boolean busy, boolean empty) {
+                super.updateItem(busy, empty);
+                if (empty || busy == null) {
                     setText(null);
                 } else {
-                    setText(item ? "1" : "0");
+                    setText(busy ? "1" : "0");
                 }
             }
         });
