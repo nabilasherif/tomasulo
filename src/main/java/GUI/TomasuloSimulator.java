@@ -421,10 +421,8 @@ TomasuloSimulator extends Application {
     }
 
     private TableView<Map.Entry<Integer, byte[]>> createCacheTable() {
-        // Create the TableView
         TableView<Map.Entry<Integer, byte[]>> tableView = new TableView<>();
 
-        // Create columns for Block Address and Block Data
         TableColumn<Map.Entry<Integer, byte[]>, String> blockAddressCol = new TableColumn<>("Block Address");
         blockAddressCol.setCellValueFactory(cellData -> {
             int index = cellData.getValue().getKey();
@@ -442,10 +440,8 @@ TomasuloSimulator extends Application {
             return new SimpleStringProperty(dataString.toString());
         });
 
-        // Create an ObservableList to hold the cache data (blocks)
         ObservableList<Map.Entry<Integer, byte[]>> cacheDataList = FXCollections.observableArrayList();
 
-        // Populate the ObservableList with the current cache state
         for (int i = 0; i < Main.cache.cache.length; i += Main.blockSize) {
             int blockStartAddress = i;
             byte[] blockData = new byte[Main.blockSize];
@@ -453,20 +449,16 @@ TomasuloSimulator extends Application {
             cacheDataList.add(new AbstractMap.SimpleEntry<>(blockStartAddress, blockData));
         }
 
-        // Set the ObservableList as the data source for the table
         tableView.setItems(cacheDataList);
 
-        // Add the columns to the TableView
         tableView.getColumns().addAll(blockAddressCol, dataCol);
-        
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return tableView;
     }
 
-    // To refresh the table at any point after the cache changes
     public void refreshCacheTable() {
         ObservableList<Map.Entry<Integer, byte[]>> cacheDataList = FXCollections.observableArrayList();
 
-        // Re-populate the ObservableList whenever the cache changes
         for (int i = 0; i < Main.cache.cache.length; i += Main.blockSize) {
             int blockStartAddress = i;
             byte[] blockData = new byte[Main.blockSize];
@@ -474,9 +466,10 @@ TomasuloSimulator extends Application {
             cacheDataList.add(new AbstractMap.SimpleEntry<>(blockStartAddress, blockData));
         }
 
-        cacheTable.setItems(cacheDataList); // Update the table with the new data
-        cacheTable.refresh(); // Refresh the table to reflect changes
+        cacheTable.setItems(cacheDataList);
+        cacheTable.refresh();
     }
+
     private void applyLatencies() {
         try {
             Main.addLatency = Integer.parseInt(((TextField) addLatencyField.getChildren().get(1)).getText());

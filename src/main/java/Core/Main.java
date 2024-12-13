@@ -441,12 +441,12 @@ public class Main {
             instructionQueue.add(instruction.deepClone());
         }
 
-        Memory memory=new Memory(2024, blockSize);
+        memory = new Memory(2024, blockSize);
         byte [] loopover = new byte[blockSize];
         for(int i =0; i < loopover.length; i++)
             loopover[i]= (byte)i;
         memory.writeBlock(0,loopover );
-        Cache cache=new Cache(cacheSize,blockSize,memory);
+        cache=new Cache(cacheSize,blockSize,memory);
         initReservationStations();
         initRegisterFile();
     }
