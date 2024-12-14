@@ -4,8 +4,10 @@
 
 This project is a simulator that implements the **Tomasulo Algorithm**, which is a dynamic scheduling algorithm used for instruction execution in modern processors. The simulator mimics the out-of-order execution of instructions, manages reservation stations, and handles data hazards in a pipeline, improving the overall throughput of instruction execution.
 
-Unlike traditional simulators, our system supports both floating-point (FP) and non-floating-point MIPS instructions, including addition, subtraction, multipli-
-cation, division, load, store, and branch operations, utilizes a register file, and manages reservation stations with tags to track dependencies between instructions. It uses the concepts of **Reservation Stations (RS)** and **Common Data Bus (CDB)** to simulate the execution of instructions in parallel while resolving data hazards and control hazards.
+Unlike traditional simulators, our system supports both floating-point (FP) and non-floating-point MIPS instructions, including addition, subtraction, multiplication, division, load, store, and branch operations, utilizes a register file, and manages reservation stations with tags to track dependencies between instructions. It uses the concepts of **Reservation Stations (RS)** and **Common Data Bus (CDB)** to simulate the execution of instructions in parallel while resolving data hazards and control hazards.
+
+<img width="608" alt="tomasulo" src="https://github.com/user-attachments/assets/7cdb61aa-738a-4ede-91e8-480ca899c6cf" />
+
 
 ## Key Features
 
@@ -20,13 +22,13 @@ cation, division, load, store, and branch operations, utilizes a register file, 
 The simulator supports the following instruction types:
 
 - **Arithmetic Instructions**: 
-  - DADDI, DSUBI, ADD_D, ADD_S, SUB_D, SUB_S
+  - ```DADDI, DSUBI, ADD_D, ADD_S, SUB_D, SUB_S```
 - **Multiplication and Division**: 
-  - MUL_D, MUL_S, DIV_D, DIV_S
+  - ```MUL_D, MUL_S, DIV_D, DIV_S```
 - **Load and Store Instructions**: 
-  - LW, LD, L_S, L_D, SW, SD, S_S, S_D
+  - ```LW, LD, L_S, L_D, SW, SD, S_S, S_D```
 - **Branch Instructions**: 
-  - BNE, BEQ
+  - ```BNE, BEQ```
 
 ## How It Works
 
@@ -40,9 +42,8 @@ The program operates by maintaining several key components:
 ### Execution Process:
 1. **Increment Cycle**: The `incrementCycle()` method manages the flow of execution by checking available reservation stations and issuing instructions for execution. It also handles the tagging of registers and checks for dependencies.
 2. **Handling Branches**: If a branch instruction is encountered, the simulator checks whether a decision has been made and stalls the pipeline until the branch is resolved.
-3. **Register Updates**: After executing an instruction, the register file is updated with the appropriate tags to indicate when the register will be updated.
+3. **Register Updates**: After executing an instruction, the register file is updated with the appropriate tags to indicate when the register will be updated, all instructions write-back except for stores and branches.
 4. **Loop Until Completion**: Each iteration is performed via button click. The program continues executing instructions in cycles until all instructions are completed.
-
 ## Prerequisites
 
 Before running the project, make sure you have the following installed on your system:
@@ -58,7 +59,7 @@ Before running the project, make sure you have the following installed on your s
 Clone the repository to your local machine using Git:
 
 ```bash
-git clone https://github.com/your-username/tomasulo-algorithm-simulator.git
+git clone https://github.com/nabilasherif/tomasulo.git
 ```
 
 ### 2. Navigate to the project directory
@@ -66,7 +67,7 @@ git clone https://github.com/your-username/tomasulo-algorithm-simulator.git
 Once you've cloned the repository, navigate to the project directory:
 
 ```bash
-cd tomasulo-algorithm-simulator
+cd tomasulo
 ```
 
 
