@@ -4,7 +4,7 @@
 
 This project is a simulator that implements the **Tomasulo Algorithm**, which is a dynamic scheduling algorithm used for instruction execution in modern processors. The simulator mimics the out-of-order execution of instructions, manages reservation stations, and handles data hazards in a pipeline, improving the overall throughput of instruction execution.
 
-Unlike traditional simulators, our system supports both floating-point (FP) and non-floating-point MIPS instructions, including addition, subtraction, multiplication, division, load, store, and branch operations, utilizes a register file, and manages reservation stations with tags to track dependencies between instructions. It uses the concepts of **Reservation Stations (RS)** and **Common Data Bus (CDB)** to simulate the execution of instructions in parallel while resolving data hazards and control hazards.
+Unlike traditional tomasulo, our system supports both floating-point (FP) and non-floating-point MIPS instructions, including addition, subtraction, multiplication, division, load, store, and branch operations, utilizes a register file, and manages reservation stations with tags to track dependencies between instructions. It uses the concepts of **Reservation Stations (RS)** and **Common Data Bus (CDB)** to simulate the execution of instructions in parallel while resolving data hazards and control hazards.
 
 <img width="608" alt="tomasulo" src="https://github.com/user-attachments/assets/7cdb61aa-738a-4ede-91e8-480ca899c6cf" />
 
