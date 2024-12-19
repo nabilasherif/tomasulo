@@ -39,6 +39,7 @@ The program operates by maintaining several key components:
 - **Register File**: A file that stores the values of registers and their dependency status.
 - **Cache**:  Is the primary interface for performing read and write operations at the word, or double word level
 - **Memory**: Operates in blocks, where each block is a fixed size defined by the blockSize parameter.
+- In this implementation, it is assumed that the cache size is equivalent to the memory size. As a result, no block replacement mechanism is employed; once a block is placed at a specific index, it is never replaced.
 ### Execution Process:
 1. **Increment Cycle**: The `incrementCycle()` method manages the flow of execution by checking available reservation stations and issuing instructions for execution. It also handles the tagging of registers and checks for dependencies.
 2. **Handling Branches**: If a branch instruction is encountered, the simulator checks whether a decision has been made and stalls the pipeline until the branch is resolved.
